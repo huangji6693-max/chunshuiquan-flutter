@@ -51,11 +51,16 @@ class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String> {
     try {
       final sent = await ref.read(messageRepositoryProvider).sendMessage(_matchId, content);
       final updated = state.valueOrNull ?? [];
-      state = AsyncData(
-        updated.map((m) => m.id == optimistic.id ? sent : m).toList(),
-      );
+      // 轮询可能在 API 返回前刷新了 state，导致 optimistic 消息消失
+      // 若 optimistic 还在 → 替换；若已被轮询覆盖 → 插到最前（去重）
+      if (updated.any((m) => m.id == optimistic.id)) {
+        state = AsyncData(updated.map((m) => m.id == optimistic.id ? sent : m).toList());
+      } else {
+        final withoutDup = updated.where((m) => m.id != sent.id).toList();
+        state = AsyncData([sent, ...withoutDup]);
+      }
     } catch (e) {
-      // 回滚
+      // 回滚：仅在 optimistic 仍存在时删除
       final updated = state.valueOrNull ?? [];
       state = AsyncData(updated.where((m) => m.id != optimistic.id).toList());
       rethrow;

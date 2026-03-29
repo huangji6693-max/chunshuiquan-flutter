@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../call/presentation/voice_call_screen.dart';
 import '../providers/messages_provider.dart';
 import '../../../core/providers/current_user_provider.dart';
+import '../../../features/auth/data/auth_repository.dart';
 import '../data/message_repository.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -67,8 +68,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final messagesAsync = ref.watch(messagesProvider(widget.matchId));
-    final currentUser = ref.watch(currentUserProvider).asData?.value;
-    final myId = currentUser?.id ?? '';
+    final currentUserAsync = ref.watch(currentUserProvider);
+    final myId = currentUserAsync.asData?.value.id ?? '';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -124,7 +125,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
         ],
       ),
-      body: messagesAsync.when(
+      body: myId.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : messagesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('加载失败: $e')),
         data: (messages) => Chat(
@@ -197,7 +200,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               backgroundColor: Colors.grey[200],
               child: author.imageUrl == null
                   ? Text(
-                      (author.firstName ?? '?')[0].toUpperCase(),
+                      (author.firstName?.isNotEmpty == true ? author.firstName! : '?')[0].toUpperCase(),
                       style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600),
                     )
