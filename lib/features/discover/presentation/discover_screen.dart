@@ -144,15 +144,56 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('春水圈',
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        title: ShaderMask(
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (bounds) => const LinearGradient(
+            colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ).createShader(bounds),
+          child: const Text(
+            '春水圈',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.w800,
-              fontSize: 24,
-            )),
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              letterSpacing: 2,
+            ),
+          ),
+        ),
         centerTitle: false,
         actions: [
-          IconButton(icon: const Icon(Icons.tune), onPressed: () {}),
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.tune_rounded,
+                      color: Color(0xFF1A1A2E), size: 26),
+                  onPressed: () {},
+                ),
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFFFF4D88),
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
       body: discoverState.isLoading && discoverState.cards.isEmpty
@@ -186,13 +227,32 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _ActionBtn(Icons.close, Colors.red, '不喜欢',
-                              () => _swiperCtrl.swipe(CardSwiperDirection.left)),
-                          _ActionBtn(Icons.star, Colors.amber, '超级喜欢',
-                              () => _swiperCtrl.swipe(CardSwiperDirection.top)),
-                          _ActionBtn(Icons.favorite, Colors.pink, '喜欢',
-                              () => _swiperCtrl.swipe(CardSwiperDirection.right)),
+                          _ActionBtn(
+                            icon: Icons.close_rounded,
+                            color: const Color(0xFFFF5A5A),
+                            semanticLabel: '不喜欢',
+                            size: 68,
+                            onTap: () => _swiperCtrl.swipe(CardSwiperDirection.left),
+                          ),
+                          Transform.translate(
+                            offset: const Offset(0, -8),
+                            child: _ActionBtn(
+                              icon: Icons.star_rounded,
+                              color: const Color(0xFF5B9AFF),
+                              semanticLabel: '超级喜欢',
+                              size: 52,
+                              onTap: () => _swiperCtrl.swipe(CardSwiperDirection.top),
+                            ),
+                          ),
+                          _ActionBtn(
+                            icon: Icons.favorite_rounded,
+                            color: const Color(0xFFFF4D88),
+                            semanticLabel: '喜欢',
+                            size: 68,
+                            onTap: () => _swiperCtrl.swipe(CardSwiperDirection.right),
+                          ),
                         ],
                       ),
                     ),
@@ -206,8 +266,16 @@ class _ActionBtn extends StatelessWidget {
   final IconData icon;
   final Color color;
   final String semanticLabel;
+  final double size;
   final VoidCallback onTap;
-  const _ActionBtn(this.icon, this.color, this.semanticLabel, this.onTap);
+
+  const _ActionBtn({
+    required this.icon,
+    required this.color,
+    required this.semanticLabel,
+    required this.size,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -217,17 +285,25 @@ class _ActionBtn extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          width: 64, height: 64,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,
-            boxShadow: [BoxShadow(
-                color: color.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4))],
-            border: Border.all(color: color.withOpacity(0.3)),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.30),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Icon(icon, color: color, size: 30),
+          child: Icon(icon, color: color, size: size * 0.44),
         ),
       ),
     );
