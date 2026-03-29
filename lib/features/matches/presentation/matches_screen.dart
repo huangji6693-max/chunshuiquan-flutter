@@ -233,8 +233,13 @@ class _ConversationTile extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
-      trailing: const Icon(Icons.chevron_right,
-          color: Colors.grey, size: 20),
+      trailing: IconButton(
+        icon: const Icon(Icons.call, color: Color(0xFFFF4D88), size: 22),
+        onPressed: () => context.push('/call/${match.matchId}', extra: {
+          'partnerName': match.otherName,
+          'partnerAvatarUrl': match.otherAvatarUrl,
+        }),
+      ),
       onTap: () => context.go('/chat/${match.matchId}', extra: {
         'partnerName': match.otherName,
         'partnerAvatarUrl': match.otherAvatarUrl,
