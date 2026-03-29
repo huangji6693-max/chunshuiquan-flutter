@@ -53,21 +53,26 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('加载失败: $e')),
               data: (messages) {
-                  return messages.isEmpty
-                      ? const Center(child: Text('发送第一条消息吧 👋', style: TextStyle(color: Colors.grey)))
-                      : ListView.builder(
-                          controller: _scrollCtrl,
-                          padding: const EdgeInsets.all(16),
-                          itemCount: messages.length,
-                          itemBuilder: (ctx, i) {
-                            final msg = messages[i];
-                            final isMe = ref.watch(currentUserProvider).maybeWhen(
-                              data: (user) => user.id == msg.senderId,
-                              orElse: () => false,
-                            );
-                            return _MessageBubble(message: msg, isMe: isMe);
-                          },
-                        );
+                  // P0 fix: 把 ref.watch 移出 itemBuilder，避免每个 cell 都订阅
+                  final currentUserId = ref.watch(currentUserProvider).maybeWhen(
+                    data: (user) => user.id,
+                    orElse: () => null,
+                  );
+                  if (messages.isEmpty) {
+                    return const Center(
+                      child: Text('发送第一条消息吧 👋',
+                          style: TextStyle(color: Colors.grey)));
+                  }
+                  return ListView.builder(
+                    controller: _scrollCtrl,
+                    padding: const EdgeInsets.all(16),
+                    itemCount: messages.length,
+                    itemBuilder: (ctx, i) {
+                      final msg = messages[i];
+                      final isMe = currentUserId != null && currentUserId == msg.senderId;
+                      return _MessageBubble(message: msg, isMe: isMe);
+                    },
+                  );
                 },
             ),
           ),
@@ -125,28 +130,46 @@ class _MessageBubble extends StatelessWidget {
   final bool isMe;
   const _MessageBubble({required this.message, required this.isMe});
 
+  String _formatTime(DateTime t) {
+    final h = t.hour.toString().padLeft(2, '0');
+    final m = t.minute.toString().padLeft(2, '0');
+    return '$h:$m';
+  }
+
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
-        decoration: BoxDecoration(
-          color: isMe ? primary : Colors.grey[200],
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(18),
-            topRight: const Radius.circular(18),
-            bottomLeft: Radius.circular(isMe ? 18 : 4),
-            bottomRight: Radius.circular(isMe ? 4 : 18),
+      child: Column(
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+            decoration: BoxDecoration(
+              color: isMe ? primary : Colors.grey[200],
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(18),
+                topRight: const Radius.circular(18),
+                bottomLeft: Radius.circular(isMe ? 18 : 4),
+                bottomRight: Radius.circular(isMe ? 4 : 18),
+              ),
+            ),
+            child: Text(
+              message.content,
+              style: TextStyle(color: isMe ? Colors.white : Colors.black87, fontSize: 15),
+            ),
           ),
-        ),
-        child: Text(
-          message.content,
-          style: TextStyle(color: isMe ? Colors.white : Colors.black87, fontSize: 15),
-        ),
+          Padding(
+            padding: const EdgeInsets.only(left: 4, right: 4, bottom: 4),
+            child: Text(
+              _formatTime(message.createdAt),
+              style: const TextStyle(fontSize: 11, color: Colors.grey),
+            ),
+          ),
+        ],
       ),
     );
   }

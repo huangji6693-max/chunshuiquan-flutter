@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../../auth/data/auth_repository.dart';
-import '../../../core/network/dio_client.dart';
 import '../../../core/errors/app_exception.dart';
+import '../../profile/data/profile_repository.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -49,15 +48,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Future<void> _finish() async {
     setState(() { _uploading = true; _error = null; });
     try {
-      final dio = ref.read(dioProvider);
-      final authRepo = ref.read(authRepositoryProvider);
-
-      // 更新资料
-      await dio.put('/api/users/profile', data: {
-        'bio': _bioCtrl.text.trim(),
-        'jobTitle': _jobCtrl.text.trim(),
-        'lookingFor': _lookingFor,
-      });
+      await ref.read(profileRepositoryProvider).updateProfile(
+        bio: _bioCtrl.text.trim(),
+        jobTitle: _jobCtrl.text.trim(),
+        lookingFor: _lookingFor,
+      );
 
       // 上传头像（简化：直接用本地路径作为占位，真实场景需上传到 CDN）
       // 这里演示流程，实际需要 multipart upload 到 S3/Cloudinary
@@ -128,23 +123,49 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
 
             Padding(
-              padding: const EdgeInsets.all(24),
-              child: ElevatedButton(
-                onPressed: _uploading ? null : () {
-                  if (_page < 2) {
-                    setState(() => _page++);
-                    _pageCtrl.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  } else {
-                    _finish();
-                  }
-                },
-                child: _uploading
-                    ? const SizedBox(height: 20, width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : Text(_page < 2 ? '下一步' : '开始使用 🎉'),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: Row(
+                children: [
+                  if (_page > 0) ...[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: _uploading ? null : () {
+                          setState(() { _page--; _error = null; });
+                          _pageCtrl.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        child: const Text('上一步'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _uploading ? null : () {
+                        if (_page == 0 && _photos.isEmpty) {
+                          setState(() => _error = '请至少上传一张照片');
+                          return;
+                        }
+                        setState(() => _error = null);
+                        if (_page < 2) {
+                          setState(() => _page++);
+                          _pageCtrl.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        } else {
+                          _finish();
+                        }
+                      },
+                      child: _uploading
+                          ? const SizedBox(height: 20, width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : Text(_page < 2 ? '下一步' : '开始使用 🎉'),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

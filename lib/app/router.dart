@@ -16,13 +16,27 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     initialLocation: '/',
+    errorBuilder: (context, state) => Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('页面不存在', style: TextStyle(fontSize: 18)),
+            TextButton(
+              onPressed: () => context.go('/discover'),
+              child: const Text('回到首页'),
+            ),
+          ],
+        ),
+      ),
+    ),
     redirect: (context, state) async {
       final token = await tokenManager.getAccessToken();
       final isLoggedIn = token != null && token.isNotEmpty;
       final isAuthRoute = state.matchedLocation.startsWith('/auth');
       final isOnboarding = state.matchedLocation == '/onboarding';
 
-      if (!isLoggedIn && !isAuthRoute) return '/auth/login';
+      if (!isLoggedIn && !isAuthRoute && !isOnboarding) return '/auth/login';
       if (isLoggedIn && isAuthRoute) return '/discover';
       return null;
     },

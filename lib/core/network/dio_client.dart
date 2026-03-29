@@ -2,21 +2,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../storage/token_manager.dart';
 import 'auth_interceptor.dart';
+import 'session_provider.dart';
 
 const _baseUrl = String.fromEnvironment(
   'API_BASE_URL',
   defaultValue: 'https://chunshuiquan-backend-production.up.railway.app',
 );
 
-// 外部注入 session 过期回调（由 app.dart 在启动时设置）
-void Function()? _onSessionExpiredCallback;
-
-void setSessionExpiredCallback(void Function() cb) {
-  _onSessionExpiredCallback = cb;
-}
-
 final dioProvider = Provider<Dio>((ref) {
   final tokenManager = ref.watch(tokenManagerProvider);
+  final onSessionExpired = ref.watch(sessionExpiredCallbackProvider);
 
   final dio = Dio(BaseOptions(
     baseUrl: _baseUrl,
@@ -28,10 +23,7 @@ final dioProvider = Provider<Dio>((ref) {
   dio.interceptors.add(AuthInterceptor(
     dio: dio,
     tokenManager: tokenManager,
-    onSessionExpired: () async {
-      await tokenManager.clearTokens();
-      _onSessionExpiredCallback?.call();
-    },
+    onSessionExpired: onSessionExpired,
   ));
 
   return dio;
