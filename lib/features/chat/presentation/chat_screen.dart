@@ -62,7 +62,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           itemCount: messages.length,
                           itemBuilder: (ctx, i) {
                             final msg = messages[i];
-                            final isMe = msg.senderId == myId;
+                            final isMe = ref.watch(currentUserProvider).maybeWhen(
+                              data: (user) => user.id == msg.senderId,
+                              orElse: () => false,
+                            );
                             return _MessageBubble(message: msg, isMe: isMe);
                           },
                         );
