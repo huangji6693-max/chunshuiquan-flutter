@@ -1,0 +1,68 @@
+name: dating_app
+description: 春水圈 - 交友 App
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # 网络
+  dio: ^5.4.0
+  pretty_dio_logger: ^1.3.1
+
+  # 状态管理
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.4
+
+  # 路由
+  go_router: ^13.2.0
+
+  # 本地存储
+  flutter_secure_storage: ^9.0.0
+  shared_preferences: ^2.2.3
+
+  # UI
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  lottie: ^3.1.0
+  flutter_card_swiper: ^7.0.1
+
+  # 图片
+  image_picker: ^1.1.1
+
+  # 表单
+  formz: ^0.7.0
+
+  # 时间
+  intl: ^0.19.0
+
+  # WebSocket
+  web_socket_channel: ^2.4.5
+
+  # 工具
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  build_runner: ^2.4.8
+  freezed: ^2.5.2
+  json_serializable: ^6.7.1
+  riverpod_generator: ^2.4.0
+
+  mockito: ^5.4.4
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/animations/
