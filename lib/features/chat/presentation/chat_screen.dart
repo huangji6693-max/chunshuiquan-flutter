@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../call/presentation/voice_call_screen.dart';
 import '../providers/messages_provider.dart';
 import '../../../core/providers/current_user_provider.dart';
 import '../data/message_repository.dart';
@@ -103,9 +104,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.call_outlined),
-            onPressed: () {
-              // TODO: Agora 语音通话
-            },
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => VoiceCallScreen(
+                  matchId: widget.matchId,
+                  partnerName: widget.partnerName ?? '对方',
+                  partnerAvatarUrl: widget.partnerAvatarUrl,
+                ),
+              ),
+            ),
           ),
         ],
       ),
