@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../core/errors/app_exception.dart';
 import '../../profile/data/profile_repository.dart';
+import '../../profile/data/upload_repository.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -45,9 +46,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
   }
 
+  Future<void> _uploadPhotos() async {
+    for (final photo in _photos) {
+      try {
+        await ref.read(uploadRepositoryProvider).uploadAvatar(photo);
+      } catch (_) {
+        // 上传失败继续，不阻断 onboarding 流程
+      }
+    }
+  }
+
   Future<void> _finish() async {
     setState(() { _uploading = true; _error = null; });
     try {
+      await _uploadPhotos();
       await ref.read(profileRepositoryProvider).updateProfile(
         bio: _bioCtrl.text.trim(),
         jobTitle: _jobCtrl.text.trim(),

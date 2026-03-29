@@ -17,11 +17,8 @@ class ProfileScreen extends ConsumerWidget {
         title: const Text('我的'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await ref.read(authRepositoryProvider).logout();
-              if (context.mounted) context.go('/auth/login');
-            },
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => context.push('/settings'),
           ),
         ],
       ),

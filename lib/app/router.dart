@@ -8,6 +8,7 @@ import '../features/discover/presentation/discover_screen.dart';
 import '../features/matches/presentation/matches_screen.dart';
 import '../features/chat/presentation/chat_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
+import '../features/settings/presentation/settings_screen.dart';
 import '../core/storage/token_manager.dart';
 import '../shared/widgets/main_scaffold.dart';
 
@@ -62,6 +63,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             },
           ),
           GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
+          GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
         ],
       ),
     ],
