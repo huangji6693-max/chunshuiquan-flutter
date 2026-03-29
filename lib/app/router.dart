@@ -16,7 +16,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   final tokenManager = ref.watch(tokenManagerProvider);
 
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/auth/login',
     errorBuilder: (context, state) => Scaffold(
       body: Center(
         child: Column(
