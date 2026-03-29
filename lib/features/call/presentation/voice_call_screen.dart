@@ -1,14 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
+import '../../../core/network/dio_client.dart';
 
-// TODO: 替换为你的 Agora App ID
-const _agoraAppId = 'YOUR_AGORA_APP_ID';
-
-class VoiceCallScreen extends StatefulWidget {
+class VoiceCallScreen extends ConsumerStatefulWidget {
   final String matchId;
   final String partnerName;
   final String? partnerAvatarUrl;
@@ -21,16 +21,17 @@ class VoiceCallScreen extends StatefulWidget {
   });
 
   @override
-  State<VoiceCallScreen> createState() => _VoiceCallScreenState();
+  ConsumerState<VoiceCallScreen> createState() => _VoiceCallScreenState();
 }
 
-class _VoiceCallScreenState extends State<VoiceCallScreen>
+class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
     with SingleTickerProviderStateMixin {
   late RtcEngine _engine;
   bool _muted = false;
   bool _speakerOn = true;
   bool _joined = false;
-  String _statusText = '连接中...';
+  bool _loading = true;
+  String _statusText = '获取通话凭证...';
   int _duration = 0;
 
   late final AnimationController _pulseCtrl;
@@ -46,47 +47,70 @@ class _VoiceCallScreenState extends State<VoiceCallScreen>
     _pulse = Tween<double>(begin: 1.0, end: 1.1)
         .animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
 
-    // 强制竖屏
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     _initAgora();
   }
 
   Future<void> _initAgora() async {
-    // 请求麦克风权限
     await Permission.microphone.request();
 
-    _engine = createAgoraRtcEngine();
-    await _engine.initialize(RtcEngineContext(appId: _agoraAppId));
+    try {
+      // 从后端获取 Agora token
+      final dio = ref.read(dioProvider);
+      final resp = await dio.get(
+        '/api/agora/token',
+        queryParameters: {'channelName': widget.matchId},
+      );
+      final data = resp.data as Map<String, dynamic>;
+      final token = data['token'] as String;
+      final appId = data['appId'] as String;
+      final uid = (data['uid'] as num).toInt();
 
-    _engine.registerEventHandler(RtcEngineEventHandler(
-      onJoinChannelSuccess: (connection, elapsed) {
-        if (mounted) setState(() { _joined = true; _statusText = '通话中'; });
-        // 计时
-        Stream.periodic(const Duration(seconds: 1)).listen((_) {
-          if (mounted && _joined) setState(() => _duration++);
-        });
-      },
-      onUserJoined: (_, __, ___) {
-        if (mounted) setState(() => _statusText = '通话中');
-      },
-      onUserOffline: (_, __, ___) => _hangUp(),
-      onLeaveChannel: (_, __) {},
-    ));
+      setState(() => _statusText = '连接中...');
 
-    await _engine.enableAudio();
-    await _engine.setEnableSpeakerphone(true);
-    await _engine.setChannelProfile(
-        ChannelProfileType.channelProfileCommunication);
-    await _engine.joinChannel(
-      token: '',
-      channelId: widget.matchId,
-      uid: 0,
-      options: const ChannelMediaOptions(
-        autoSubscribeAudio: true,
-        publishMicrophoneTrack: true,
-        clientRoleType: ClientRoleType.clientRoleBroadcaster,
-      ),
-    );
+      _engine = createAgoraRtcEngine();
+      await _engine.initialize(RtcEngineContext(appId: appId));
+
+      _engine.registerEventHandler(RtcEngineEventHandler(
+        onJoinChannelSuccess: (connection, elapsed) {
+          if (mounted) {
+            setState(() {
+              _joined = true;
+              _loading = false;
+              _statusText = '通话中';
+            });
+            Stream.periodic(const Duration(seconds: 1)).listen((_) {
+              if (mounted && _joined) setState(() => _duration++);
+            });
+          }
+        },
+        onUserJoined: (_, __, ___) {
+          if (mounted) setState(() => _statusText = '通话中');
+        },
+        onUserOffline: (_, __, ___) => _hangUp(),
+        onLeaveChannel: (_, __) {},
+      ));
+
+      await _engine.enableAudio();
+      await _engine.setEnableSpeakerphone(true);
+      await _engine.setChannelProfile(
+          ChannelProfileType.channelProfileCommunication);
+      await _engine.joinChannel(
+        token: token,
+        channelId: widget.matchId,
+        uid: uid,
+        options: const ChannelMediaOptions(
+          autoSubscribeAudio: true,
+          publishMicrophoneTrack: true,
+          clientRoleType: ClientRoleType.clientRoleBroadcaster,
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() => _statusText = '连接失败，请重试');
+        Future.delayed(const Duration(seconds: 2), _hangUp);
+      }
+    }
   }
 
   String get _durationText {
@@ -137,20 +161,16 @@ class _VoiceCallScreenState extends State<VoiceCallScreen>
                   child: CachedNetworkImage(
                     imageUrl: widget.partnerAvatarUrl!,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) =>
-                        _GradientBackground(),
+                    errorWidget: (_, __, ___) => _GradientBackground(),
                   ),
                 )
               : _GradientBackground(),
 
-          // 深色遮罩
           Container(color: Colors.black.withOpacity(0.5)),
 
-          // 内容
           SafeArea(
             child: Column(
               children: [
-                // 顶部关闭按钮
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
@@ -162,7 +182,6 @@ class _VoiceCallScreenState extends State<VoiceCallScreen>
 
                 const Spacer(flex: 2),
 
-                // 头像（呼吸动画）
                 AnimatedBuilder(
                   animation: _pulse,
                   builder: (_, child) => Transform.scale(
@@ -222,7 +241,6 @@ class _VoiceCallScreenState extends State<VoiceCallScreen>
 
                 const Spacer(flex: 3),
 
-                // 功能按钮行
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: Row(
@@ -294,9 +312,7 @@ class _RoundButton extends StatelessWidget {
             width: 62,
             height: 62,
             decoration: BoxDecoration(
-              color: active
-                  ? Colors.white
-                  : Colors.white.withOpacity(0.2),
+              color: active ? Colors.white : Colors.white.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(
