@@ -43,7 +43,13 @@ class MatchesScreen extends ConsumerWidget {
                     title: Text(m.otherName, style: const TextStyle(fontWeight: FontWeight.w600)),
                     subtitle: m.otherBio != null ? Text(m.otherBio!, maxLines: 1, overflow: TextOverflow.ellipsis) : null,
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.push('/chat/${m.matchId}'),
+                    onTap: () => context.go(
+                      '/chat/' + m.matchId,
+                      extra: {
+                        'partnerName': m.otherName,
+                        'partnerAvatarUrl': m.otherAvatarUrl,
+                      },
+                    ),
                   );
                 },
               ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/errors/app_exception.dart';
 import '../domain/user_profile.dart';
+import '../domain/swipe_result.dart';
 import '../../auth/domain/user_profile.dart';
 
 final discoverRepositoryProvider = Provider<DiscoverRepository>(
@@ -23,12 +24,15 @@ class DiscoverRepository {
     }
   }
 
-  Future<void> sendSwipe(String userId, String direction) async {
+  Future<SwipeResult> sendSwipe(String userId, String direction) async {
     try {
-      await _dio.post('/api/swipe', data: {
+      final res = await _dio.post('/api/swipe', data: {
         'swipedId': userId,
         'direction': direction,
       });
+      final data = res.data;
+      if (data is Map<String, dynamic>) return SwipeResult.fromJson(data);
+      return SwipeResult.noMatch;
     } on DioException catch (e) {
       throw AppException.network(e.message ?? '滑动失败');
     }

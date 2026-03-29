@@ -51,7 +51,15 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/matches', builder: (_, __) => const MatchesScreen()),
           GoRoute(
             path: '/chat/:matchId',
-            builder: (_, state) => ChatScreen(matchId: state.pathParameters['matchId']!),
+            builder: (_, state) {
+              final matchId = state.pathParameters['matchId']!;
+              final extra = state.extra as Map<String, String?>? ?? {};
+              return ChatScreen(
+                matchId: matchId,
+                partnerName: extra['partnerName'],
+                partnerAvatarUrl: extra['partnerAvatarUrl'],
+              );
+            },
           ),
           GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
         ],
