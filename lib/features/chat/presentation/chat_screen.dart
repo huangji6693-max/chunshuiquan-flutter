@@ -45,7 +45,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   Future<void> _handleSend(types.PartialText msg) async {
-    final myId = ref.read(currentUserProvider).asData?.value.id ?? '';
+    // currentUserProvider가 아직 로딩 중일 수 있으므로 직접 getMe() 호출
+    String myId = ref.read(currentUserProvider).asData?.value.id ?? '';
+    if (myId.isEmpty) {
+      try {
+        final profile = await ref.read(authRepositoryProvider).getMe();
+        myId = profile.id;
+      } catch (_) {}
+    }
     try {
       await ref.read(messagesProvider(widget.matchId).notifier)
           .sendMessage(msg.text, myId);
