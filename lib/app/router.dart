@@ -51,6 +51,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: '/discover', builder: (_, __) => const DiscoverScreen()),
           GoRoute(path: '/matches', builder: (_, __) => const MatchesScreen()),
+          GoRoute(path: '/messages', builder: (_, __) => const MatchesScreen()),
           GoRoute(
             path: '/chat/:matchId',
             builder: (_, state) {

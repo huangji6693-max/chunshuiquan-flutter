@@ -8,8 +8,8 @@ class MainScaffold extends StatelessWidget {
 
   int _currentIndex(BuildContext context) {
     final loc = GoRouterState.of(context).matchedLocation;
-    if (loc.startsWith('/matches') || loc.startsWith('/chat')) return 1;
-    if (loc.startsWith('/messages')) return 2;
+    if (loc.startsWith('/matches')) return 1;
+    if (loc.startsWith('/messages') || loc.startsWith('/chat')) return 2;
     if (loc.startsWith('/profile') || loc.startsWith('/settings')) return 3;
     return 0;
   }
@@ -26,7 +26,7 @@ class MainScaffold extends StatelessWidget {
           switch (i) {
             case 0: context.go('/discover');
             case 1: context.go('/matches');
-            case 2: context.go('/matches'); // 暂时指向matches，后续加messages tab
+            case 2: context.go('/messages');
             case 3: context.go('/profile');
           }
         },
