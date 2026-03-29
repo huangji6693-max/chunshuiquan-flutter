@@ -1,19 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'app/app.dart';
 import 'core/network/session_provider.dart';
 
-void main() {
+// 后台消息处理（必须是顶级函数）
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  // 后台消息静默处理，点击后由 onMessageOpenedApp 处理
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化 Firebase
+  await Firebase.initializeApp();
+
+  // 注册后台消息处理
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // 请求推送权限（iOS）
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
   runApp(
     ProviderScope(
       overrides: [
-        // session 过期回调在 app.dart 构建后由 router 填充
-        // 这里提供一个安全默认值，router.dart 会在初始化后覆盖
-        sessionExpiredCallbackProvider.overrideWith((ref) {
-          // router 初始化后会通过 ref.watch(routerProvider) 拿到实例
-          // 真正的跳转逻辑在 app.dart 的 routerProvider 里处理
-          return () async {};
-        }),
+        sessionExpiredCallbackProvider.overrideWith((ref) => () async {}),
       ],
       child: const ChunShuiQuanApp(),
     ),

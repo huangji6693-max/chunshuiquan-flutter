@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1069051428028",
+    "project_id": "csqq-1926a",
+    "storage_bucket": "csqq-1926a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1069051428028:android:9b91b72e0104f7767264b9",
+        "android_client_info": {
+          "package_name": "com.chunshuiquan.dating_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmgEVwG0iVwsQAwtDOW4XeJMooitlzE9c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
