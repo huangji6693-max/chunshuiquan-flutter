@@ -53,14 +53,14 @@ class _MatchDialogState extends State<MatchDialog>
           child: Container(
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFFF4E6A), Color(0xFFFF8E53)],
+                colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(28),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF4E6A).withOpacity(0.4),
+                  color: const Color(0xFFFF4D88).withOpacity(0.4),
                   blurRadius: 30,
                   offset: const Offset(0, 10),
                 ),
@@ -118,7 +118,7 @@ class _MatchDialogState extends State<MatchDialog>
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFFFF4E6A),
+                          foregroundColor: const Color(0xFFFF4D88),
                           minimumSize: const Size(double.infinity, 52),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(26)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dating_app/features/auth/domain/user_profile.dart';
+import '../../features/auth/domain/user_profile.dart';
+import '../../features/discover/widgets/card_info_overlay.dart';
 
 class UserCard extends StatelessWidget {
   final UserProfile user;
@@ -12,55 +13,76 @@ class UserCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 20, offset: const Offset(0, 8))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.18),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           fit: StackFit.expand,
           children: [
+            // 背景图片
             user.firstAvatar.isNotEmpty
                 ? CachedNetworkImage(
                     imageUrl: user.firstAvatar,
                     fit: BoxFit.cover,
-                    placeholder: (_, __) => Container(color: Colors.grey[200]),
+                    placeholder: (_, __) => Container(
+                      color: const Color(0xFFF0F0F0),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFFF4D88),
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
                     errorWidget: (_, __, ___) => Container(
-                      color: Colors.grey[200],
-                      child: const Icon(Icons.person, size: 80, color: Colors.grey),
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          user.name.isNotEmpty ? user.name[0] : '?',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 80,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
                     ),
                   )
                 : Container(
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.person, size: 80, color: Colors.grey),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        user.name.isNotEmpty ? user.name[0] : '?',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 80,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                   ),
-            // 渐变遮罩
+            // 信息遮罩层
             Positioned(
               bottom: 0, left: 0, right: 0,
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [Colors.black87, Colors.transparent],
-                    stops: [0, 0.7],
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(user.name,
-                        style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w700)),
-                    if (user.bio != null && user.bio!.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(user.bio!,
-                            style: const TextStyle(color: Colors.white70, fontSize: 14),
-                            maxLines: 2, overflow: TextOverflow.ellipsis),
-                      ),
-                  ],
-                ),
-              ),
+              child: CardInfoOverlay(user: user),
             ),
           ],
         ),

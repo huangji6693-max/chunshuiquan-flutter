@@ -120,7 +120,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           showUserAvatars: true,
           showUserNames: false,
           theme: DefaultChatTheme(
-            primaryColor: const Color(0xFFFF4E6A),
+            primaryColor: const Color(0xFFFF4D88),
             secondaryColor: const Color(0xFFF8F8F8),
             backgroundColor: Colors.white,
             inputBackgroundColor: const Color(0xFFF5F5F5),
@@ -146,7 +146,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             sendButtonIcon: const Icon(
               Icons.send_rounded,
-              color: Color(0xFFFF4E6A),
+              color: Color(0xFFFF4D88),
             ),
             sendingIcon: const Icon(
               Icons.access_time,

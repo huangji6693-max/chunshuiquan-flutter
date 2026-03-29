@@ -14,6 +14,7 @@ class MatchItem {
   final String? otherAvatarUrl;
   final String? otherBio;
   final DateTime createdAt;
+  final bool? isNew;
 
   MatchItem({
     required this.matchId,
@@ -22,6 +23,7 @@ class MatchItem {
     this.otherAvatarUrl,
     this.otherBio,
     required this.createdAt,
+    this.isNew,
   });
 
   factory MatchItem.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class MatchItem {
       otherAvatarUrl: avatarUrls != null && avatarUrls.isNotEmpty ? avatarUrls.first as String : null,
       otherBio: other['bio'] as String?,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime.now(),
+      isNew: json['isNew'] as bool?,
     );
   }
 }
