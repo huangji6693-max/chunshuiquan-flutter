@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../storage/auth_storage.dart';
 
-const _baseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://10.0.2.2:8080');
+const _baseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'https://chunshuiquan-backend-production.up.railway.app');
 
 final dioProvider = Provider<Dio>((ref) {
   final authStorage = ref.watch(authStorageProvider);
