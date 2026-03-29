@@ -26,7 +26,7 @@ class UploadRepository {
   /// 从后端获取 Cloudinary 签名
   Future<Map<String, dynamic>> _getSignature() async {
     try {
-      final res = await _dio.post('/api/upload/signature');
+      final res = await _dio.get('/api/upload/signature');
       return res.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw AppException.network(e.message ?? '获取上传签名失败');
