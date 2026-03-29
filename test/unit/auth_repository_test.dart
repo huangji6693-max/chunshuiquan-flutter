@@ -3,48 +3,63 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dio/dio.dart';
 import 'package:dating_app/features/auth/data/auth_repository.dart';
-import 'package:dating_app/core/storage/auth_storage.dart';
+import 'package:dating_app/core/storage/token_manager.dart';
 import 'package:dating_app/core/errors/app_exception.dart';
 
-@GenerateMocks([Dio, AuthStorage])
+@GenerateMocks([Dio, TokenManager])
 import 'auth_repository_test.mocks.dart';
 
 void main() {
   late MockDio mockDio;
-  late MockAuthStorage mockStorage;
+  late MockTokenManager mockTm;
   late AuthRepository repo;
 
   setUp(() {
     mockDio = MockDio();
-    mockStorage = MockAuthStorage();
-    repo = AuthRepository(mockDio, mockStorage);
+    mockTm = MockTokenManager();
+    repo = AuthRepository(mockDio, mockTm);
   });
 
   group('AuthRepository - login', () {
     test('成功登录，保存 token 并返回 UserProfile', () async {
       when(mockDio.post('/api/auth/login', data: anyNamed('data')))
           .thenAnswer((_) async => Response(
-                data: {'token': 'test_jwt_token', 'id': '123', 'email': 'a@b.com', 'name': '测试', 'gender': 'male', 'lookingFor': 'everyone', 'avatarUrls': [], 'tags': []},
+                data: {
+                  'token': 'access_jwt',
+                  'refreshToken': 'refresh_jwt',
+                  'id': '00000000-0000-0000-0000-000000000001',
+                  'email': 'a@b.com',
+                  'name': '测试',
+                  'gender': 'male',
+                  'lookingFor': 'everyone',
+                  'avatarUrls': [],
+                  'tags': [],
+                },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: '/api/auth/login'),
               ));
-      when(mockStorage.saveToken(any)).thenAnswer((_) async {});
+      when(mockTm.saveTokens(
+              accessToken: anyNamed('accessToken'),
+              refreshToken: anyNamed('refreshToken')))
+          .thenAnswer((_) async {});
 
       final profile = await repo.login(email: 'a@b.com', password: '123456');
       expect(profile.email, 'a@b.com');
-      verify(mockStorage.saveToken('test_jwt_token')).called(1);
+      verify(mockTm.saveTokens(
+              accessToken: 'access_jwt', refreshToken: 'refresh_jwt'))
+          .called(1);
     });
 
-    // 边界测试：空邮箱
+    // 边界测试：响应中缺少 token
     test('响应中缺少 token 抛出 AppException', () async {
       when(mockDio.post('/api/auth/login', data: anyNamed('data')))
           .thenAnswer((_) async => Response(
-                data: {'message': '密码错误'},
+                data: {'error': '密码错误'},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: '/api/auth/login'),
               ));
-
-      expect(() => repo.login(email: 'a@b.com', password: 'wrong'),
+      expect(
+          () => repo.login(email: 'a@b.com', password: 'wrong'),
           throwsA(isA<AppException>()));
     });
 
@@ -52,13 +67,18 @@ void main() {
     test('401 响应抛出 unauthorized 异常', () async {
       when(mockDio.post('/api/auth/login', data: anyNamed('data'))).thenThrow(
         DioException(
-          response: Response(statusCode: 401, requestOptions: RequestOptions(path: '')),
+          response: Response(
+              statusCode: 401,
+              requestOptions: RequestOptions(path: '')),
           requestOptions: RequestOptions(path: ''),
           type: DioExceptionType.badResponse,
         ),
       );
-      expect(() => repo.login(email: 'a@b.com', password: '123'),
-          throwsA(predicate((e) => e is AppException && e.type == AppExceptionType.unauthorized)));
+      expect(
+          () => repo.login(email: 'a@b.com', password: '123'),
+          throwsA(predicate((e) =>
+              e is AppException &&
+              e.type == AppExceptionType.unauthorized)));
     });
 
     // 边界测试：网络超时
@@ -69,23 +89,23 @@ void main() {
           type: DioExceptionType.connectionTimeout,
         ),
       );
-      expect(() => repo.login(email: 'a@b.com', password: '123'),
-          throwsA(predicate((e) => e is AppException && e.type == AppExceptionType.network)));
+      expect(
+          () => repo.login(email: 'a@b.com', password: '123'),
+          throwsA(predicate((e) =>
+              e is AppException && e.type == AppExceptionType.network)));
     });
-  });
 
-  group('AuthRepository - register 边界测试', () {
-    test('响应格式不是 Map 抛出异常', () async {
-      when(mockDio.post('/api/auth/register', data: anyNamed('data')))
+    // 边界测试：响应不是 Map
+    test('响应格式不是 Map 抛出 server 异常', () async {
+      when(mockDio.post('/api/auth/login', data: anyNamed('data')))
           .thenAnswer((_) async => Response(
-                data: 'plain string response',
+                data: 'plain string',
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
               ));
       expect(
-        () => repo.register(name: '张三', email: 'a@b.com', password: '123456', birthDate: '2000-01-01', gender: 'male'),
-        throwsA(isA<AppException>()),
-      );
+          () => repo.login(email: 'a@b.com', password: '123'),
+          throwsA(isA<AppException>()));
     });
   });
 }

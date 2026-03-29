@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i8;
 
-import 'package:dating_app/core/storage/auth_storage.dart' as _i10;
+import 'package:dating_app/core/storage/token_manager.dart' as _i10;
 import 'package:dio/src/adapter.dart' as _i3;
 import 'package:dio/src/cancel_token.dart' as _i9;
 import 'package:dio/src/dio.dart' as _i7;
@@ -835,22 +835,59 @@ class MockDio extends _i1.Mock implements _i7.Dio {
       ) as _i7.Dio);
 }
 
-/// A class which mocks [AuthStorage].
+/// A class which mocks [TokenManager].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthStorage extends _i1.Mock implements _i10.AuthStorage {
-  MockAuthStorage() {
+class MockTokenManager extends _i1.Mock implements _i10.TokenManager {
+  MockTokenManager() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i8.Future<String?> getToken() => (super.noSuchMethod(
+  _i8.Future<String?> getAccessToken() => (super.noSuchMethod(
         Invocation.method(
-          #getToken,
+          #getAccessToken,
           [],
         ),
         returnValue: _i8.Future<String?>.value(),
       ) as _i8.Future<String?>);
+
+  @override
+  _i8.Future<String?> getRefreshToken() => (super.noSuchMethod(
+        Invocation.method(
+          #getRefreshToken,
+          [],
+        ),
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
+
+  @override
+  _i8.Future<void> saveTokens({
+    required String? accessToken,
+    required String? refreshToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #saveTokens,
+          [],
+          {
+            #accessToken: accessToken,
+            #refreshToken: refreshToken,
+          },
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> clearTokens() => (super.noSuchMethod(
+        Invocation.method(
+          #clearTokens,
+          [],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
   _i8.Future<void> saveToken(String? token) => (super.noSuchMethod(
@@ -861,6 +898,15 @@ class MockAuthStorage extends _i1.Mock implements _i10.AuthStorage {
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<String?> getToken() => (super.noSuchMethod(
+        Invocation.method(
+          #getToken,
+          [],
+        ),
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
 
   @override
   _i8.Future<void> deleteToken() => (super.noSuchMethod(

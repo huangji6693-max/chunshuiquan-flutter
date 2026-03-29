@@ -53,7 +53,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('加载失败: $e')),
               data: (messages) {
-                  final myId = ref.watch(currentUserProvider).asData?.value.id ?? '';
                   return messages.isEmpty
                       ? const Center(child: Text('发送第一条消息吧 👋', style: TextStyle(color: Colors.grey)))
                       : ListView.builder(

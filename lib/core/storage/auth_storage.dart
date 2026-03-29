@@ -1,13 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'token_manager.dart';
 
-final authStorageProvider = Provider<AuthStorage>((ref) => AuthStorage());
+// 向后兼容：auth_storage 直接代理 token_manager
+final authStorageProvider = Provider<AuthStorage>((ref) {
+  return AuthStorage(ref.watch(tokenManagerProvider));
+});
 
 class AuthStorage {
-  static const _storage = FlutterSecureStorage();
-  static const _tokenKey = 'jwt_token';
+  final TokenManager _tm;
+  AuthStorage(this._tm);
 
-  Future<String?> getToken() => _storage.read(key: _tokenKey);
-  Future<void> saveToken(String token) => _storage.write(key: _tokenKey, value: token);
-  Future<void> deleteToken() => _storage.delete(key: _tokenKey);
+  Future<String?> getToken() => _tm.getAccessToken();
+  Future<void> saveToken(String token) => _tm.saveToken(token);
+  Future<void> deleteToken() => _tm.clearTokens();
 }
