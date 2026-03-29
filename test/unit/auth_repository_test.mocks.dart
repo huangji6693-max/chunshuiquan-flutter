@@ -890,16 +890,6 @@ class MockTokenManager extends _i1.Mock implements _i10.TokenManager {
       ) as _i8.Future<void>);
 
   @override
-  _i8.Future<void> saveToken(String? token) => (super.noSuchMethod(
-        Invocation.method(
-          #saveToken,
-          [token],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
-
-  @override
   _i8.Future<String?> getToken() => (super.noSuchMethod(
         Invocation.method(
           #getToken,

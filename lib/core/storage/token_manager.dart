@@ -25,10 +25,6 @@ class TokenManager {
         _storage.delete(key: _kRefresh),
       ]);
 
-  // 兼容旧的单 token 存储
-  Future<void> saveToken(String token) =>
-      _storage.write(key: _kAccess, value: token);
-
   Future<String?> getToken() => getAccessToken();
   Future<void> deleteToken() => clearTokens();
 }

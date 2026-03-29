@@ -61,11 +61,10 @@ class AuthRepository {
     final token = data['token'];
     if (token is! String || token.isEmpty) throw AppException.server('认证失败：未收到 token');
     final refreshToken = data['refreshToken'] as String?;
-    if (refreshToken != null && refreshToken.isNotEmpty) {
-      await _tm.saveTokens(accessToken: token, refreshToken: refreshToken);
-    } else {
-      await _tm.saveToken(token);
-    }
+    await _tm.saveTokens(
+      accessToken: token,
+      refreshToken: refreshToken ?? '',  // 后端必须返回 refreshToken
+    );
     return UserProfile.fromJson(data);
   }
 

@@ -67,13 +67,15 @@ class AuthInterceptor extends Interceptor {
     _refreshCompleter = Completer<String>();
     try {
       final newToken = await _doRefresh();
-      _refreshCompleter!.complete(newToken);
+      final completer = _refreshCompleter!;
+      _refreshCompleter = null;  // 先置 null 再 complete，避免逻辑竞态
+      completer.complete(newToken);
       return newToken;
     } catch (e) {
-      _refreshCompleter!.completeError(e);
-      rethrow;
-    } finally {
+      final completer = _refreshCompleter!;
       _refreshCompleter = null;
+      completer.completeError(e);
+      rethrow;
     }
   }
 

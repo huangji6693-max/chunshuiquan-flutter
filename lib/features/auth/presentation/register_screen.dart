@@ -46,7 +46,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         birthDate: '${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2,'0')}-${_birthDate!.day.toString().padLeft(2,'0')}',
         gender: _gender,
       );
-      if (mounted) context.go('/discover');
+      if (mounted) context.go('/onboarding');
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } finally {
