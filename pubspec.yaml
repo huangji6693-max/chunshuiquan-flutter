@@ -37,10 +37,6 @@ dependencies:
   # 表单
   formz: ^0.7.0
 
-  # 语音通话
-  agora_rtc_engine: ^6.3.0
-  permission_handler: ^11.3.0
-
   # 时间
   intl: ^0.19.0
   url_launcher: ^6.3.0
