@@ -40,6 +40,10 @@ dependencies:
   # 时间
   intl: ^0.19.0
   url_launcher: ^6.3.0
+  flutter_chat_ui: ^1.6.13
+  flutter_chat_types: ^3.6.2
+  agora_rtc_engine: ^6.3.2
+  permission_handler: ^11.3.1
 
   # WebSocket
   web_socket_channel: ^2.4.5
