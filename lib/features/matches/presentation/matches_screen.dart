@@ -8,11 +8,24 @@ final matchesProvider = FutureProvider<List<MatchItem>>((ref) {
   return ref.watch(matchRepositoryProvider).fetchMatches();
 });
 
-class MatchesScreen extends ConsumerWidget {
+class MatchesScreen extends ConsumerStatefulWidget {
   const MatchesScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MatchesScreen> createState() => _MatchesScreenState();
+}
+
+class _MatchesScreenState extends ConsumerState<MatchesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.invalidate(matchesProvider);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(matchesProvider);
     return Scaffold(
       backgroundColor: Colors.white,

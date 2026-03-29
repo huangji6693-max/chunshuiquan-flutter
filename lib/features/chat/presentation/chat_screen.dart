@@ -54,6 +54,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         myId = profile.id;
       } catch (_) {}
     }
+    if (myId.isEmpty) return;
     try {
       await ref.read(messagesProvider(widget.matchId).notifier)
           .sendMessage(msg.text, myId);
