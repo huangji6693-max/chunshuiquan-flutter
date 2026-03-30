@@ -2,9 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dio/dio.dart';
-import 'package:dating_app/features/auth/data/auth_repository.dart';
-import 'package:dating_app/core/storage/token_manager.dart';
-import 'package:dating_app/core/errors/app_exception.dart';
+import 'package:chunshuiquan_flutter/features/auth/data/auth_repository.dart';
+import 'package:chunshuiquan_flutter/core/storage/token_manager.dart';
+import 'package:chunshuiquan_flutter/core/errors/app_exception.dart';
 
 @GenerateMocks([Dio, TokenManager])
 import 'auth_repository_test.mocks.dart';
