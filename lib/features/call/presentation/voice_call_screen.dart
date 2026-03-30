@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import '../../../core/network/dio_client.dart';
 
 class VoiceCallScreen extends ConsumerStatefulWidget {
@@ -26,13 +25,16 @@ class VoiceCallScreen extends ConsumerStatefulWidget {
 
 class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
     with SingleTickerProviderStateMixin {
-  late RtcEngine _engine;
+  RtcEngine? _engine;
+  bool _engineReady = false;
+  bool _ending = false;
   bool _muted = false;
   bool _speakerOn = true;
   bool _joined = false;
   bool _loading = true;
   String _statusText = '获取通话凭证...';
   int _duration = 0;
+  StreamSubscription<int>? _durationSub;
 
   late final AnimationController _pulseCtrl;
   late final Animation<double> _pulse;
@@ -68,10 +70,12 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
 
       setState(() => _statusText = '连接中...');
 
-      _engine = createAgoraRtcEngine();
-      await _engine.initialize(RtcEngineContext(appId: appId));
+      final engine = createAgoraRtcEngine();
+      _engine = engine;
+      await engine.initialize(RtcEngineContext(appId: appId));
+      _engineReady = true;
 
-      _engine.registerEventHandler(RtcEngineEventHandler(
+      engine.registerEventHandler(RtcEngineEventHandler(
         onJoinChannelSuccess: (connection, elapsed) {
           if (mounted) {
             setState(() {
@@ -79,7 +83,9 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
               _loading = false;
               _statusText = '通话中';
             });
-            Stream.periodic(const Duration(seconds: 1)).listen((_) {
+            _durationSub?.cancel();
+            _durationSub =
+                Stream.periodic(const Duration(seconds: 1), (x) => x).listen((_) {
               if (mounted && _joined) setState(() => _duration++);
             });
           }
@@ -91,11 +97,11 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
         onLeaveChannel: (_, __) {},
       ));
 
-      await _engine.enableAudio();
-      await _engine.setEnableSpeakerphone(true);
-      await _engine.setChannelProfile(
+      await engine.enableAudio();
+      await engine.setEnableSpeakerphone(true);
+      await engine.setChannelProfile(
           ChannelProfileType.channelProfileCommunication);
-      await _engine.joinChannel(
+      await engine.joinChannel(
         token: token,
         channelId: widget.matchId,
         uid: uid,
@@ -120,30 +126,56 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
   }
 
   Future<void> _hangUp() async {
+    if (_ending) return;
+    _ending = true;
     _pulseCtrl.stop();
-    await _engine.leaveChannel();
-    await _engine.release();
+    await _durationSub?.cancel();
+    _durationSub = null;
+
+    final engine = _engine;
+    _engine = null;
+
+    if (engine != null && _engineReady) {
+      try {
+        await engine.leaveChannel();
+      } catch (_) {}
+      try {
+        await engine.release();
+      } catch (_) {}
+    }
+
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     if (mounted) Navigator.of(context).pop();
   }
 
   Future<void> _toggleMute() async {
+    final engine = _engine;
+    if (engine == null) return;
     setState(() => _muted = !_muted);
-    await _engine.muteLocalAudioStream(_muted);
+    await engine.muteLocalAudioStream(_muted);
     HapticFeedback.lightImpact();
   }
 
   Future<void> _toggleSpeaker() async {
+    final engine = _engine;
+    if (engine == null) return;
     setState(() => _speakerOn = !_speakerOn);
-    await _engine.setEnableSpeakerphone(_speakerOn);
+    await engine.setEnableSpeakerphone(_speakerOn);
     HapticFeedback.lightImpact();
   }
 
   @override
   void dispose() {
+    _durationSub?.cancel();
     _pulseCtrl.dispose();
-    _engine.leaveChannel();
-    _engine.release();
+
+    final engine = _engine;
+    _engine = null;
+    if (engine != null && _engineReady) {
+      engine.leaveChannel();
+      engine.release();
+    }
+
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
