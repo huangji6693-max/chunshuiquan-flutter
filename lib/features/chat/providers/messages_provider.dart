@@ -4,6 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/message_repository.dart';
 import '../data/realtime_chat_service.dart';
 
+enum ChatSyncMode { realtime, polling }
+
+final chatSyncModeProvider =
+    StateProvider.family<ChatSyncMode, String>((ref, matchId) => ChatSyncMode.polling);
+
 final messagesProvider = AsyncNotifierProviderFamily<MessagesNotifier, List<ChatMessage>, String>(
   MessagesNotifier.new,
 );
@@ -44,12 +49,15 @@ class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String>
         state = AsyncData([event.message, ...current]);
       });
       _realtimeActive = true;
+      ref.read(chatSyncModeProvider(_matchId).notifier).state = ChatSyncMode.realtime;
     } catch (_) {
       _realtimeActive = false;
+      ref.read(chatSyncModeProvider(_matchId).notifier).state = ChatSyncMode.polling;
     }
   }
 
   void _startPolling() {
+    ref.read(chatSyncModeProvider(_matchId).notifier).state = ChatSyncMode.polling;
     _pollTimer?.cancel();
     _pollTimer = Timer.periodic(
       const Duration(seconds: 5),

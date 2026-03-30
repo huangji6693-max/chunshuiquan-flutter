@@ -55,6 +55,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final messagesAsync = ref.watch(messagesProvider(widget.matchId));
     final currentUserAsync = ref.watch(currentUserProvider);
+    final syncMode = ref.watch(chatSyncModeProvider(widget.matchId));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -88,8 +89,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       fontWeight: FontWeight.w700,
                       color: Colors.black87),
                 ),
-                const Text('开始聊天吧',
-                    style: TextStyle(fontSize: 12, color: Color(0xFF4CAF50))),
+                Text(
+                  syncMode == ChatSyncMode.realtime ? '实时连接中' : '轮询兜底中',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: syncMode == ChatSyncMode.realtime
+                        ? const Color(0xFF4CAF50)
+                        : Colors.orange,
+                  ),
+                ),
               ],
             ),
           ],
