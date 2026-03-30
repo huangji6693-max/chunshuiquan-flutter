@@ -29,7 +29,10 @@ class ProfileScreen extends ConsumerWidget {
                 const Icon(Icons.person_off_outlined,
                     size: 48, color: Color(0xFFFFCDD2)),
                 const SizedBox(height: 12),
-                Text('加载失败: $e', textAlign: TextAlign.center),
+                Text(
+                  e is AppException ? e.message : '个人资料加载失败，请稍后重试',
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 12),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(currentUserProvider),

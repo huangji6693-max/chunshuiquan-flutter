@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/messages_provider.dart';
 import '../../../core/providers/current_user_provider.dart';
+import '../../../core/errors/app_exception.dart';
 import '../../../features/auth/data/auth_repository.dart';
 import '../data/message_repository.dart';
 
@@ -151,7 +152,10 @@ class _ChatBody extends StatelessWidget {
             children: [
               const Icon(Icons.chat_bubble_outline, size: 48, color: Color(0xFFFFCDD2)),
               const SizedBox(height: 12),
-              Text('加载失败: $e', textAlign: TextAlign.center),
+              Text(
+                e is AppException ? e.message : '消息加载失败，请稍后重试',
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         ),

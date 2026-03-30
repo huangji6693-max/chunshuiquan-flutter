@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../core/errors/app_exception.dart';
 import '../data/match_repository.dart';
 
 final matchesProvider = FutureProvider<List<MatchItem>>((ref) {
@@ -55,7 +56,10 @@ class _MatchesScreenState extends ConsumerState<MatchesScreen> {
               children: [
                 const Icon(Icons.cloud_off, size: 48, color: Color(0xFFFFCDD2)),
                 const SizedBox(height: 12),
-                Text('加载失败: $e', textAlign: TextAlign.center),
+                Text(
+                  e is AppException ? e.message : '匹配列表加载失败，请稍后重试',
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 12),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(matchesProvider),
