@@ -51,7 +51,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       try {
         await ref.read(uploadRepositoryProvider).uploadAvatar(photo);
       } catch (_) {
-        // 上传失败继续，不阻断 onboarding 流程
+        // 头像上传失败暂不阻断 onboarding，但后续应补用户提示与重试机制
       }
     }
   }
@@ -65,13 +65,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         jobTitle: _jobCtrl.text.trim(),
         lookingFor: _lookingFor,
       );
-
-      // 上传头像（简化：直接用本地路径作为占位，真实场景需上传到 CDN）
-      // 这里演示流程，实际需要 multipart upload 到 S3/Cloudinary
-      if (_photos.isNotEmpty) {
-        // TODO: 上传到 CDN，获取 URL 后调用 POST /api/users/avatar
-        // 暂时跳过，后续接 Cloudinary
-      }
 
       if (mounted) context.go('/discover');
     } on AppException catch (e) {

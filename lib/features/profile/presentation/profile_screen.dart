@@ -81,13 +81,20 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   Future<void> _uploadAvatar() async {
     setState(() => _uploading = true);
     try {
-      await ref.read(uploadRepositoryProvider).pickAndUpload();
+      final result = await ref.read(uploadRepositoryProvider).pickAndUpload();
+      if (result == null) return;
       ref.invalidate(currentUserProvider);
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('✅ 头像已更新')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('✅ 头像已更新')),
+        );
+      }
     } on AppException catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message)));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)),
+        );
+      }
     } finally {
       if (mounted) setState(() => _uploading = false);
     }
