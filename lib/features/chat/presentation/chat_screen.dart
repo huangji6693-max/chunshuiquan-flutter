@@ -88,7 +88,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       fontWeight: FontWeight.w700,
                       color: Colors.black87),
                 ),
-                const Text('在线',
+                const Text('开始聊天吧',
                     style: TextStyle(fontSize: 12, color: Color(0xFF4CAF50))),
               ],
             ),

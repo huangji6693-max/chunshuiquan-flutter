@@ -269,7 +269,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                       : Text(
                           user.bio?.isNotEmpty == true
                               ? user.bio!
-                              : '还没有简介，点右上角编辑 ✏️',
+                              : '暂时还没有简介',
                           style: TextStyle(
                               color: user.bio?.isNotEmpty == true
                                   ? Colors.black87
@@ -292,7 +292,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                       : Text(
                           user.jobTitle?.isNotEmpty == true
                               ? user.jobTitle!
-                              : '未填写',
+                              : '暂未填写职业信息',
                           style: TextStyle(
                               color: user.jobTitle?.isNotEmpty == true
                                   ? Colors.black87

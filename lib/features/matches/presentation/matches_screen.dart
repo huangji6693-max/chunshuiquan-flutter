@@ -263,7 +263,10 @@ class _ConversationTile extends StatelessWidget {
       title: Text(match.otherName,
           style: const TextStyle(
               fontWeight: FontWeight.w600, fontSize: 16)),
-      subtitle: Text(match.otherBio ?? '点击开始聊天',
+      subtitle: Text(
+          (match.otherBio?.trim().isNotEmpty == true)
+              ? match.otherBio!
+              : '和 Ta 打个招呼吧',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
