@@ -1,18 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/network/session_provider.dart';
 import '../../../core/errors/app_exception.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  bool _loggingOut = false;
+  bool _deleting = false;
+
+  Future<void> _openExternal(String url) async {
+    final uri = Uri.parse(url);
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('链接打开失败，请稍后重试')),
+      );
+    }
+  }
+
+  Future<void> _logout() async {
+    if (_loggingOut) return;
+    setState(() => _loggingOut = true);
+    try {
+      await ref.read(authRepositoryProvider).logout();
+      await ref.read(sessionExpiredCallbackProvider)();
+    } finally {
+      if (mounted) setState(() => _loggingOut = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('设置')),
       body: ListView(
@@ -37,40 +65,54 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.privacy_tip_outlined),
             title: const Text('隐私政策'),
             trailing: const Icon(Icons.open_in_new, size: 18),
-            onTap: () => launchUrl(
-              Uri.parse('https://huangji6693-max.github.io/chunshuiquan-privacy'),
-              mode: LaunchMode.externalApplication,
+            onTap: () => _openExternal(
+              'https://huangji6693-max.github.io/chunshuiquan-privacy',
             ),
           ),
           ListTile(
             leading: const Icon(Icons.description_outlined),
             title: const Text('用户协议'),
             trailing: const Icon(Icons.open_in_new, size: 18),
-            onTap: () => launchUrl(
-              Uri.parse('https://huangji6693-max.github.io/chunshuiquan-privacy/terms'),
-              mode: LaunchMode.externalApplication,
+            onTap: () => _openExternal(
+              'https://huangji6693-max.github.io/chunshuiquan-privacy/terms',
             ),
           ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.orange),
             title: const Text('退出登录'),
-            onTap: () async {
-              await ref.read(authRepositoryProvider).logout();
-              await ref.read(sessionExpiredCallbackProvider)();
-            },
+            trailing: _loggingOut
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : null,
+            enabled: !_loggingOut && !_deleting,
+            onTap: _logout,
           ),
           ListTile(
             leading: const Icon(Icons.delete_forever, color: Colors.red),
-            title: const Text('删除账号', style: TextStyle(color: Colors.red)),
-            onTap: () => _confirmDelete(context, ref),
+            title: Text(
+              '删除账号',
+              style: TextStyle(color: _deleting ? Colors.red.shade200 : Colors.red),
+            ),
+            trailing: _deleting
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : null,
+            enabled: !_loggingOut && !_deleting,
+            onTap: () => _confirmDelete(context),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+  Future<void> _confirmDelete(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -90,8 +132,9 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
 
-    if (confirmed != true || !context.mounted) return;
+    if (confirmed != true || !context.mounted || _deleting) return;
 
+    setState(() => _deleting = true);
     try {
       await ref.read(dioProvider).delete('/api/users/me');
       await ref.read(authRepositoryProvider).logout();
@@ -104,8 +147,12 @@ class SettingsScreen extends ConsumerWidget {
       }
     } on AppException catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)),
+        );
       }
+    } finally {
+      if (mounted) setState(() => _deleting = false);
     }
   }
 }
