@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/message_repository.dart';
+import '../data/realtime_chat_service.dart';
 
 final messagesProvider = AsyncNotifierProviderFamily<MessagesNotifier, List<ChatMessage>, String>(
   MessagesNotifier.new,
@@ -10,19 +11,43 @@ final messagesProvider = AsyncNotifierProviderFamily<MessagesNotifier, List<Chat
 class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String>
     with WidgetsBindingObserver {
   Timer? _pollTimer;
+  StreamSubscription<RealtimeChatEvent>? _realtimeSub;
+  bool _realtimeActive = false;
 
   @override
   Future<List<ChatMessage>> build(String arg) async {
     WidgetsBinding.instance.addObserver(this);
-    _startPolling();
-    ref.onDispose(() {
+    await _startRealtime();
+    if (!_realtimeActive) {
+      _startPolling();
+    }
+    ref.onDispose(() async {
       WidgetsBinding.instance.removeObserver(this);
       _pollTimer?.cancel();
+      await _realtimeSub?.cancel();
     });
     return _fetch();
   }
 
   String get _matchId => arg;
+
+  Future<void> _startRealtime() async {
+    await _realtimeSub?.cancel();
+    _realtimeSub = null;
+    _realtimeActive = false;
+
+    try {
+      final stream = ref.read(realtimeChatServiceProvider).subscribe(_matchId);
+      _realtimeSub = stream.listen((event) {
+        final current = state.valueOrNull ?? const <ChatMessage>[];
+        if (current.any((m) => m.id == event.message.id)) return;
+        state = AsyncData([event.message, ...current]);
+      });
+      _realtimeActive = true;
+    } catch (_) {
+      _realtimeActive = false;
+    }
+  }
 
   void _startPolling() {
     _pollTimer?.cancel();
@@ -37,16 +62,25 @@ class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String>
     _pollTimer = null;
   }
 
+  Future<void> _stopRealtime() async {
+    await _realtimeSub?.cancel();
+    _realtimeSub = null;
+    _realtimeActive = false;
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _startPolling();
       _silentRefresh();
+      _startRealtime().then((_) {
+        if (!_realtimeActive) _startPolling();
+      });
     } else if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive ||
         state == AppLifecycleState.detached ||
         state == AppLifecycleState.hidden) {
       _stopPolling();
+      _stopRealtime();
     }
   }
 
