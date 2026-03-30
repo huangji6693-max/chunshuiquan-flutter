@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/errors/app_exception.dart';
-import '../domain/user_profile.dart';
 import '../domain/swipe_result.dart';
 import '../../auth/domain/user_profile.dart';
 

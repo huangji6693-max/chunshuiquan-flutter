@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../call/presentation/voice_call_screen.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/messages_provider.dart';
 import '../../../core/providers/current_user_provider.dart';
 import '../../../features/auth/data/auth_repository.dart';
@@ -26,25 +26,6 @@ class ChatScreen extends ConsumerStatefulWidget {
 }
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
-
-  List<types.Message> _toUiMessages(
-      List<ChatMessage> messages, String myId, String? partnerName, String? partnerAvatar) {
-    return messages.map((m) {
-      final isMe = m.senderId == myId;
-      return types.TextMessage(
-        id: m.id,
-        text: m.content,
-        createdAt: m.createdAt.millisecondsSinceEpoch,
-        author: types.User(
-          id: m.senderId,
-          firstName: isMe ? null : (partnerName ?? 'Ta'),
-          imageUrl: isMe ? null : partnerAvatar,
-        ),
-      );
-    }).toList()
-      ..sort((a, b) => (b.createdAt ?? 0).compareTo(a.createdAt ?? 0));
-  }
-
   Future<void> _handleSend(types.PartialText msg) async {
     // currentUserProvider가 아직 로딩 중일 수 있으므로 직접 getMe() 호출
     String myId = ref.read(currentUserProvider).asData?.value.id ?? '';
@@ -70,7 +51,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final messagesAsync = ref.watch(messagesProvider(widget.matchId));
     final currentUserAsync = ref.watch(currentUserProvider);
-    final myId = currentUserAsync.asData?.value.id ?? '';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -113,29 +93,71 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.call_outlined),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => VoiceCallScreen(
-                  matchId: widget.matchId,
-                  partnerName: widget.partnerName ?? '对方',
-                  partnerAvatarUrl: widget.partnerAvatarUrl,
-                ),
-              ),
-            ),
+            onPressed: () => context.push('/call/${widget.matchId}', extra: {
+              'partnerName': widget.partnerName,
+              'partnerAvatarUrl': widget.partnerAvatarUrl,
+            }),
           ),
         ],
       ),
-      body: myId.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : messagesAsync.when(
+      body: currentUserAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('加载失败: $e')),
-        data: (messages) => Chat(
-          messages: _toUiMessages(
-              messages, myId, widget.partnerName, widget.partnerAvatarUrl),
+        error: (_, __) => _ChatBody(
+          messagesAsync: messagesAsync,
+          myId: '',
+          partnerName: widget.partnerName,
+          partnerAvatarUrl: widget.partnerAvatarUrl,
           onSendPressed: _handleSend,
-          user: types.User(id: myId),
+        ),
+        data: (user) => _ChatBody(
+          messagesAsync: messagesAsync,
+          myId: user.id,
+          partnerName: widget.partnerName,
+          partnerAvatarUrl: widget.partnerAvatarUrl,
+          onSendPressed: _handleSend,
+        ),
+      ),
+    );
+  }
+}
+
+class _ChatBody extends StatelessWidget {
+  final AsyncValue<List<ChatMessage>> messagesAsync;
+  final String myId;
+  final String? partnerName;
+  final String? partnerAvatarUrl;
+  final void Function(types.PartialText) onSendPressed;
+
+  const _ChatBody({
+    required this.messagesAsync,
+    required this.myId,
+    required this.partnerName,
+    required this.partnerAvatarUrl,
+    required this.onSendPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return messagesAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => Center(child: Text('加载失败: $e')),
+      data: (messages) => Chat(
+          messages: messages.map((m) {
+            final isMe = myId.isNotEmpty && m.senderId == myId;
+            return types.TextMessage(
+              id: m.id,
+              text: m.content,
+              createdAt: m.createdAt.millisecondsSinceEpoch,
+              author: types.User(
+                id: m.senderId,
+                firstName: isMe ? null : (partnerName ?? 'Ta'),
+                imageUrl: isMe ? null : partnerAvatarUrl,
+              ),
+            );
+          }).toList()
+            ..sort((a, b) => (b.createdAt ?? 0).compareTo(a.createdAt ?? 0)),
+          onSendPressed: onSendPressed,
+          user: types.User(id: myId.isNotEmpty ? myId : 'me'),
           showUserAvatars: true,
           showUserNames: false,
           theme: DefaultChatTheme(
@@ -185,7 +207,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     size: 64, color: Color(0xFFFFCDD2)),
                 const SizedBox(height: 16),
                 Text(
-                  '跟 ${widget.partnerName ?? "Ta"} 说声 Hi 吧 👋',
+                  '跟 ${partnerName ?? "Ta"} 说声 Hi 吧 👋',
                   style: TextStyle(color: Colors.grey[500], fontSize: 15),
                 ),
               ],
