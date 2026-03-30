@@ -6,143 +6,191 @@
 - 优先直接接入或二创
 - 禁止从 0 造车
 
-## 当前前端基础
+## 当前结论
 
-春水圈 Flutter 端已经在使用：
-- `flyerhq/flutter_chat_ui`
-
-这意味着：
-- **聊天 UI 层不用重写**
-- 重点应该放在：
-  - 实时消息传输层
-  - 会话同步
-  - 已读/重连/历史恢复
-
-## 候选方案判断
-
-### 方案 A：继续自己用 Spring Boot + WebSocket + Redis + Kafka 全量搭
-
-优点：
-- 自主可控
-- 与现有 Java 技术栈天然一致
-
-缺点：
-- 这其实还是在造大量轮子
-- 连接管理、重连恢复、订阅模型、在线状态、消息恢复、横向扩容都要自己兜
-- 容易掉进“看起来不复杂，实际上全是坑”的深坑
-
-结论：
-- **不推荐作为第一选择**
-- 除非只是做 very thin 的业务层，底层实时能力仍借成熟项目
-
----
-
-### 方案 B：Centrifugo 作为实时消息层（推荐） ✅
-
-GitHub:
-- https://github.com/centrifugal/centrifugo
-
-为什么它适合春水圈：
-- 开源、成熟、专门做实时消息分发
-- 支持 WebSocket / SSE / HTTP-streaming / GRPC
-- 天然适合聊天、在线状态、实时通知
-- 可与任何后端语言配合，**非常适合 Java Spring Boot 业务后端 + 独立实时层**
-- 支持 Redis 扩展
-- 支持 Kafka / PostgreSQL consumer/outbox 方向
-- 自带很多“自己造车最容易翻车”的能力：
-  - 连接管理
-  - 订阅
-  - 恢复
-  - presence
-  - history
-  - reconnect
-
-春水圈接法建议：
-1. Flutter 端继续使用 `flutter_chat_ui` 负责展示
-2. Spring Boot 负责：
-   - 鉴权
-   - 会话/消息入库
-   - 业务规则
-3. Centrifugo 负责：
-   - 实时消息推送
-   - 频道订阅
-   - 在线连接层
-4. Redis 作为实时层扩展/缓存支撑
-5. Kafka 作为异步事件总线
-
-这是最符合“从 1 到 2”的路线。
-
----
-
-### 方案 C：GetStream Flutter Chat SDK（不推荐作为春水圈主线）
-
-GitHub:
-- https://github.com/GetStream/stream-chat-flutter
-
-优点：
-- 非常成熟
-- SDK 完整
-- 真正可用的实时聊天能力很强
-
-缺点：
-- 更偏 SaaS 平台接入
-- 不适合你这套“Java / Spring Cloud / Redis / Kafka / TiDB / Nacos / S3”的自控后端路线
-- 会把核心聊天能力绑到第三方服务
-
-结论：
-- 可以作为参考样板
-- **不建议作为春水圈主线方案**
-
----
-
-### 方案 D：Chatwoot
-
-GitHub:
-- https://github.com/chatwoot/chatwoot
-
-优点：
-- 非常成熟
-- 开源客服聊天平台能力强
-
-缺点：
-- 更适合客服/工单/客服工作台
-- 不适合直接做 dating app 的用户对用户私聊主链路
-
-结论：
-- 不适合作为春水圈主聊天主链路
-- 未来如果做客服后台，可以参考或接入
-
-## 最终建议
-
-春水圈实时聊天优先采用：
+春水圈实时聊天主线确定为：
 
 ### **Flutter Chat UI + Spring Boot 业务层 + Centrifugo 实时层 + Redis + Kafka**
 
-也就是：
+即：
 - UI：`flyerhq/flutter_chat_ui`
-- 实时传输：`centrifugal/centrifugo`
+- 实时层：`centrifugal/centrifugo`
 - 业务后端：Java / Spring Boot / Spring Cloud
-- 缓存与扩展：Redis
-- 异步事件：Kafka
-- 存储：TiDB
+- 缓存：Redis
+- 事件总线：Kafka
+- 数据库存储：TiDB
 
-## 后续推进原则
+这是最符合“从 1 到 2、不从 0 造车”的路线。
+
+---
+
+## 为什么不用纯手搓 WebSocket
+
+自己用 Spring Boot + WebSocket + Redis + Kafka 从零搭整套实时聊天，会反复踩这些坑：
+
+- 长连接管理
+- 连接状态恢复
+- 频道订阅
+- 在线状态 presence
+- 历史恢复
+- reconnect/backoff
+- 横向扩容
+- reconnect storm 时的消息恢复
+
+这些都不是“写个 websocket endpoint”就结束的。
+
+Centrifugo 的价值就在于：
+- 它把实时传输层单独做成熟了
+- 后端继续专注业务规则、鉴权、落库、发布事件
+
+---
+
+## GitHub 直连确认到的关键点
+
+### Centrifugo
+GitHub:
+- https://github.com/centrifugal/centrifugo
+
+从官方文档/仓库可确认：
+- 是独立实时消息服务器
+- 适合 chat / live comments / collaborative tools
+- 支持 WebSocket / SSE / HTTP-streaming / GRPC / WebTransport
+- 支持 Redis 扩展
+- 支持 Kafka / PostgreSQL consumer / outbox 方向
+- 提供 history / recovery / presence / reconnect 能力
+
+### Centrifuge Java
+GitHub:
+- https://github.com/centrifugal/centrifuge-java
+
+可确认：
+- Java / Android 客户端存在
+- 说明围绕 Centrifugo 的客户端生态是成熟可用的
+
+---
+
+## Spring Boot + Centrifugo 的推荐职责划分
+
+### Spring Boot 负责
+- 用户鉴权
+- 消息合法性校验
+- 写入 TiDB
+- 会话权限判断
+- 生成实时连接 token / 订阅 token
+- 调用 Centrifugo server API 发布消息
+
+### Centrifugo 负责
+- 长连接维护
+- 频道订阅
+- 实时消息广播
+- reconnect / recovery
+- presence / history 热缓存
+
+### Redis 负责
+- 实时层扩展 / broker / history 支撑
+
+### Kafka 负责
+- 业务异步事件总线
+- 消息投递后的事件扩散
+- 通知、未读数、风控、审计等异步链路
+
+---
+
+## 推荐消息流
+
+### 发送消息
+1. Flutter 发 HTTP 请求给 Spring Boot：发送消息
+2. Spring Boot 校验身份、会话关系、消息内容
+3. Spring Boot 写入 TiDB
+4. Spring Boot 向 Centrifugo publish 到对应 channel
+5. Centrifugo 将消息实时推送给在线订阅者
+6. Flutter 收到推送，直接插入消息列表
+
+### 拉历史消息
+1. Flutter 进入聊天页
+2. 先走 HTTP 拉历史消息
+3. 再建立实时订阅
+4. 后续只接收增量推送
+5. 若短断线，则优先用 Centrifugo recovery 恢复
+6. 若 recovery 不完整，再回源 Spring Boot 拉历史补齐
+
+---
+
+## Channel 设计建议
+
+### 会话 channel
+推荐：
+```text
+conversation:{matchId}
+```
+
+例如：
+```text
+conversation:match_123456
+```
+
+不要把太多业务字段塞进 channel 名。
+channel 的核心目的是：
+- 稳定
+- 可订阅
+- 易鉴权
+
+---
+
+## Token 策略建议
+
+### 连接 token
+- 用户登录后，由 Spring Boot 下发 Centrifugo connection token
+- token 中至少包含用户 id / 过期时间 / 签名
+
+### 订阅权限
+- 由 Spring Boot 控制用户是否有权订阅某个 `conversation:{matchId}`
+- 避免客户端自行决定可订阅哪些频道
+
+---
+
+## Flutter 端推进策略
+
+当前 Flutter 端已经完成：
+- 聊天 UI
+- 实时消息抽象层
+- 实时/轮询模式可见化
+- 实时失败自动降级到轮询
+
+下一步不是重写 UI，而是：
+1. 把当前 `realtime_chat_service.dart` 从“通用 ws 协议”升级为“面向 Centrifugo 的接入适配层”
+2. 增加：
+   - connect state
+   - reconnect state
+   - subscription state
+   - recovery 后补消息逻辑
+3. 最终让 Flutter 端只感知：
+   - 历史消息来源
+   - 实时事件流
+   - 同步状态
+
+---
+
+## 不推荐主线方案
+
+### Stream Chat Flutter
+- 强，但更偏 SaaS
+- 不适合春水圈当前自控后端方向
+
+### Chatwoot
+- 更适合客服系统
+- 不适合 dating app 用户私聊主链路
+
+### 自研全套实时传输层
+- 禁止作为主线
+- 违反“禁止从 0 造车”规则
+
+---
+
+## 当前执行原则
 
 1. 不重写聊天 UI
 2. 不自己从零搭整套实时连接层
-3. 优先把 Centrifugo 作为实时层候选接入方向
-4. Spring Boot 只保留业务控制权，不亲自承担所有实时传输细节
-
-## 下一步动作建议
-
-1. 为春水圈后端单独整理一份 realtime architecture 草图
-2. 设计：
-   - conversation channel 命名规则
-   - 鉴权 token 下发方式
-   - message publish 流程
-   - 历史消息拉取 + 实时增量推送协同
-3. Flutter 端把当前轮询消息模型，逐步替换为：
-   - 首次拉历史
-   - 建立实时订阅
-   - 增量插入消息
-   - 断线重连恢复
+3. 优先围绕 Centrifugo 进行适配
+4. Spring Boot 保持业务控制权
+5. 前端只做接入和呈现，不造基础设施轮子
