@@ -17,6 +17,22 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('设置')),
       body: ListView(
         children: [
+          const ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('春水圈'),
+            subtitle: Text('当前版本 1.0.0+1'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.code_outlined),
+            title: const Text('开源接入策略'),
+            subtitle: const Text('优先接入 GitHub 顶级开源能力，避免从零造轮子'),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('当前仓库已整理 OSS 接入策略与候选清单')),
+              );
+            },
+          ),
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
             title: const Text('隐私政策'),

@@ -114,6 +114,7 @@ class DiscoverScreen extends ConsumerStatefulWidget {
 
 class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   final CardSwiperController _swiperCtrl = CardSwiperController();
+  bool _matchDialogOpen = false;
 
   @override
   void dispose() {
@@ -129,7 +130,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
     // 监听 pendingMatch，弹 MatchDialog
     ref.listen<_DiscoverState>(_discoverNotifierProvider, (prev, next) {
-      if (next.pendingMatch != null && prev?.pendingMatch == null) {
+      if (next.pendingMatch != null && prev?.pendingMatch == null && !_matchDialogOpen) {
+        _matchDialogOpen = true;
         final myAvatar = ref
                 .read(currentUserProvider)
                 .asData
@@ -144,7 +146,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             myAvatarUrl: myAvatar,
             onDismiss: notifier.dismissMatch,
           ),
-        );
+        ).whenComplete(() => _matchDialogOpen = false);
       }
     });
 

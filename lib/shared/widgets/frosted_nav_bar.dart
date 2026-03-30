@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class FrostedNavBar extends StatelessWidget {
   final int currentIndex;
