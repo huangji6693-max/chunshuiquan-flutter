@@ -99,8 +99,14 @@ class _ReportBottomSheetState extends ConsumerState<ReportBottomSheet> {
             // 屏蔽快捷按钮
             OutlinedButton.icon(
               onPressed: _loading ? null : _block,
-              icon: const Icon(Icons.block),
-              label: const Text('屏蔽此用户'),
+              icon: _loading
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.block),
+              label: Text(_loading ? '处理中...' : '屏蔽此用户'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.red,
                 side: const BorderSide(color: Colors.red),

@@ -21,6 +21,7 @@ class MatchDialog extends StatefulWidget {
 class _MatchDialogState extends State<MatchDialog>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
+  bool _navigating = false;
   late final Animation<double> _fade;
   late final Animation<Offset> _slide;
 
@@ -142,20 +143,37 @@ class _MatchDialogState extends State<MatchDialog>
                           textStyle: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.w700),
                         ),
-                        onPressed: () {
-                          widget.onDismiss();
-                          if (widget.match.matchId != null) {
-                            context.go('/chat/${widget.match.matchId}', extra: {
-                              'partnerName': widget.match.partnerName,
-                              'partnerAvatarUrl': widget.match.partnerAvatarUrl,
-                            });
-                          }
-                        },
-                        child: const Text('立即发消息 💬'),
+                        onPressed: _navigating
+                            ? null
+                            : () {
+                                if (widget.match.matchId == null) return;
+                                setState(() => _navigating = true);
+                                widget.onDismiss();
+                                Navigator.of(context).pop();
+                                context.go('/chat/${widget.match.matchId}', extra: {
+                                  'partnerName': widget.match.partnerName,
+                                  'partnerAvatarUrl': widget.match.partnerAvatarUrl,
+                                });
+                              },
+                        child: _navigating
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Color(0xFFFF4D88),
+                                ),
+                              )
+                            : const Text('立即发消息 💬'),
                       ),
                       const SizedBox(height: 12),
                       TextButton(
-                        onPressed: widget.onDismiss,
+                        onPressed: _navigating
+                            ? null
+                            : () {
+                                widget.onDismiss();
+                                Navigator.of(context).pop();
+                              },
                         child: const Text('继续滑卡',
                             style: TextStyle(
                                 color: Colors.white70, fontSize: 15)),
