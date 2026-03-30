@@ -8,6 +8,7 @@ import '../../../features/auth/domain/user_profile.dart';
 import '../../../core/providers/current_user_provider.dart';
 import '../../../shared/widgets/user_card.dart';
 import '../../../shared/widgets/match_dialog.dart';
+import '../../report/report_bottom_sheet.dart';
 
 // DiscoverState 包含卡片列表 + 待弹出的 match
 class _DiscoverState {
@@ -67,19 +68,17 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
   }
 
   Future<void> onSwiped(int cardIndex, String direction) async {
+    if (cardIndex >= state.cards.length) return;
+
     _swipedCount++;
     final remaining = state.cards.length - _swipedCount;
     if (remaining <= 2) _loadMore();
 
     if (direction == 'nope') {
-      if (cardIndex < state.cards.length) {
-        _ref.read(discoverRepositoryProvider).sendSwipe(
-            state.cards[cardIndex].id, direction);
-      }
+      _ref.read(discoverRepositoryProvider).sendSwipe(
+          state.cards[cardIndex].id, direction);
       return;
     }
-
-    if (cardIndex >= state.cards.length) return;
     try {
       final result = await _ref
           .read(discoverRepositoryProvider)
@@ -93,6 +92,12 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
   }
 
   void dismissMatch() => state = state.copyWith(clearMatch: true);
+
+  void removeUserById(String userId) {
+    state = state.copyWith(
+      cards: state.cards.where((card) => card.id != userId).toList(),
+    );
+  }
 }
 
 final _discoverNotifierProvider =
@@ -120,6 +125,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   Widget build(BuildContext context) {
     final discoverState = ref.watch(_discoverNotifierProvider);
     final notifier = ref.read(_discoverNotifierProvider.notifier);
+    final currentCard = discoverState.cards.isNotEmpty ? discoverState.cards.first : null;
 
     // 监听 pendingMatch，弹 MatchDialog
     ref.listen<_DiscoverState>(_discoverNotifierProvider, (prev, next) {
@@ -174,9 +180,21 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               alignment: Alignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.tune_rounded,
+                  icon: const Icon(Icons.more_horiz_rounded,
                       color: Color(0xFF1A1A2E), size: 26),
-                  onPressed: () {},
+                  onPressed: currentCard == null
+                      ? null
+                      : () async {
+                          final result = await showReportSheet(
+                            context,
+                            currentCard.id,
+                            currentCard.name,
+                          );
+                          if ((result == 'reported' || result == 'blocked') &&
+                              currentCard.id.isNotEmpty) {
+                            notifier.removeUserById(currentCard.id);
+                          }
+                        },
                 ),
                 Positioned(
                   right: 8,
@@ -186,7 +204,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     height: 8,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: const Color(0xFFFF4D88),
+                      color: currentCard == null
+                          ? Colors.grey.shade300
+                          : const Color(0xFFFF4D88),
                       border: Border.all(color: Colors.white, width: 1.5),
                     ),
                   ),
