@@ -21,7 +21,13 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
   }
 
   Future<void> _setupFCM() async {
-    final messaging = FirebaseMessaging.instance;
+    FirebaseMessaging? messaging;
+
+    try {
+      messaging = FirebaseMessaging.instance;
+    } catch (_) {
+      return;
+    }
 
     // 获取 FCM Token 并上报后端
     try {
