@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../../core/network/dio_client.dart';
+import '../../../core/network/session_provider.dart';
 import '../../../core/errors/app_exception.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -40,7 +41,7 @@ class SettingsScreen extends ConsumerWidget {
             title: const Text('退出登录'),
             onTap: () async {
               await ref.read(authRepositoryProvider).logout();
-              if (context.mounted) context.go('/auth/login');
+              await ref.read(sessionExpiredCallbackProvider)();
             },
           ),
           ListTile(
@@ -78,7 +79,7 @@ class SettingsScreen extends ConsumerWidget {
     try {
       await ref.read(dioProvider).delete('/api/users/me');
       await ref.read(authRepositoryProvider).logout();
-      if (context.mounted) context.go('/auth/login');
+      await ref.read(sessionExpiredCallbackProvider)();
     } on DioException catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
