@@ -42,7 +42,10 @@
 ### 进入聊天页
 1. Flutter 拉取历史消息
 2. Flutter 建立实时订阅
-3. UI 显示“实时连接中”或“轮询兜底中”
+3. UI 显示：
+   - `实时连接建立中`
+   - `实时连接中`
+   - `轮询兜底中`
 
 ### 发送消息
 1. Flutter -> Spring Boot HTTP
@@ -52,7 +55,7 @@
 
 ### 收到消息
 1. Centrifugo 推送 publication
-2. Flutter 解析 publication
+2. Flutter 解析 publication / payload
 3. 插入消息流
 4. 去重
 
@@ -67,7 +70,7 @@
 conversation:{matchId}
 ```
 
-## 最小后端契约
+## 推荐后端契约
 
 ### 历史消息 HTTP
 ```http
@@ -79,14 +82,19 @@ GET /api/matches/{matchId}/messages
 POST /api/matches/{matchId}/messages
 ```
 
-### 获取实时 token
+### 获取 realtime token
 ```http
 GET /api/realtime/token
 ```
 
-### 可选：获取订阅 token
+### 可选：获取 subscription token
 ```http
 GET /api/realtime/subscription-token?channel=conversation:{matchId}
+```
+
+### publish 目标
+```text
+conversation:{matchId}
 ```
 
 ## 当前前端状态
@@ -95,9 +103,12 @@ GET /api/realtime/subscription-token?channel=conversation:{matchId}
 - WebSocket 实时抽象接入
 - 自动 fallback 轮询
 - 同步模式可见化
+- 连接状态可见化
+- channel 概念抽象
 
 待继续：
 - 正式 Centrifugo 协议适配
 - reconnect/recovery 更细粒度状态
 - subscription token 接入
 - 历史补偿策略
+- publication envelope 解析适配
