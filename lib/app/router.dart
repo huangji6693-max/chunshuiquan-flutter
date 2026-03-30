@@ -13,10 +13,16 @@ import '../features/settings/presentation/settings_screen.dart';
 import '../core/storage/token_manager.dart';
 import '../shared/widgets/main_scaffold.dart';
 
+final appNavigatorKeyProvider = Provider<GlobalKey<NavigatorState>>(
+  (_) => GlobalKey<NavigatorState>(),
+);
+
 final routerProvider = Provider<GoRouter>((ref) {
   final tokenManager = ref.watch(tokenManagerProvider);
+  final navigatorKey = ref.watch(appNavigatorKeyProvider);
 
   return GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: '/auth/login',
     errorBuilder: (context, state) => Scaffold(
       body: Center(
