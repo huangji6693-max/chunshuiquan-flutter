@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import '../../features/discover/domain/swipe_result.dart';
 
 class MatchDialog extends StatefulWidget {
@@ -69,15 +68,32 @@ class _MatchDialogState extends State<MatchDialog>
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Lottie 心形爆炸背景动画
                 Positioned.fill(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
-                    child: Lottie.network(
-                      'https://assets5.lottiefiles.com/packages/lf20_ca8aSO.json',
-                      fit: BoxFit.cover,
-                      repeat: false,
-                      errorBuilder: (_, __, ___) => const SizedBox(),
+                  child: IgnorePointer(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            center: const Alignment(0, -0.2),
+                            radius: 1.1,
+                            colors: [
+                              Colors.white.withOpacity(0.18),
+                              Colors.white.withOpacity(0.06),
+                              Colors.transparent,
+                            ],
+                            stops: const [0.0, 0.45, 1.0],
+                          ),
+                        ),
+                        child: Stack(
+                          children: const [
+                            _HeartBurst(top: 36, left: 28, size: 20, opacity: 0.18),
+                            _HeartBurst(top: 72, right: 36, size: 16, opacity: 0.16),
+                            _HeartBurst(bottom: 112, left: 42, size: 18, opacity: 0.14),
+                            _HeartBurst(bottom: 68, right: 26, size: 22, opacity: 0.12),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -151,6 +167,39 @@ class _MatchDialogState extends State<MatchDialog>
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _HeartBurst extends StatelessWidget {
+  final double? top;
+  final double? right;
+  final double? bottom;
+  final double? left;
+  final double size;
+  final double opacity;
+
+  const _HeartBurst({
+    this.top,
+    this.right,
+    this.bottom,
+    this.left,
+    required this.size,
+    required this.opacity,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: top,
+      right: right,
+      bottom: bottom,
+      left: left,
+      child: Icon(
+        Icons.favorite,
+        color: Colors.white.withOpacity(opacity),
+        size: size,
       ),
     );
   }

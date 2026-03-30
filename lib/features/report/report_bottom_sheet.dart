@@ -30,10 +30,12 @@ class _ReportBottomSheetState extends ConsumerState<ReportBottomSheet> {
   }
 
   Future<void> _submit() async {
+    if (_loading) return;
     if (_selectedReason == null) {
       setState(() => _error = '请选择举报原因');
       return;
     }
+    FocusScope.of(context).unfocus();
     setState(() { _loading = true; _error = null; });
     try {
       await ref.read(reportRepositoryProvider).reportUser(
@@ -55,6 +57,7 @@ class _ReportBottomSheetState extends ConsumerState<ReportBottomSheet> {
   }
 
   Future<void> _block() async {
+    if (_loading) return;
     setState(() { _loading = true; _error = null; });
     try {
       await ref.read(reportRepositoryProvider).blockUser(widget.targetUserId);
