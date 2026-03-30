@@ -27,6 +27,9 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   Future<void> _handleSend(types.PartialText msg) async {
+    final content = msg.text.trim();
+    if (content.isEmpty) return;
+
     // currentUserProvider가 아직 로딩 중일 수 있으므로 직접 getMe() 호출
     String myId = ref.read(currentUserProvider).asData?.value.id ?? '';
     if (myId.isEmpty) {
@@ -38,7 +41,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     if (myId.isEmpty) return;
     try {
       await ref.read(messagesProvider(widget.matchId).notifier)
-          .sendMessage(msg.text, myId);
+          .sendMessage(content, myId);
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context)
@@ -140,7 +143,19 @@ class _ChatBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return messagesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('加载失败: $e')),
+      error: (e, _) => Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.chat_bubble_outline, size: 48, color: Color(0xFFFFCDD2)),
+              const SizedBox(height: 12),
+              Text('加载失败: $e', textAlign: TextAlign.center),
+            ],
+          ),
+        ),
+      ),
       data: (messages) => Chat(
           messages: messages.map((m) {
             final isMe = myId.isNotEmpty && m.senderId == myId;

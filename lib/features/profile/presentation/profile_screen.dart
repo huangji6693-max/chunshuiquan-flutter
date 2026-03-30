@@ -20,7 +20,25 @@ class ProfileScreen extends ConsumerWidget {
       body: profileState.when(
         loading: () => const Center(
             child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
-        error: (e, _) => Center(child: Text('加载失败: $e')),
+        error: (e, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.person_off_outlined,
+                    size: 48, color: Color(0xFFFFCDD2)),
+                const SizedBox(height: 12),
+                Text('加载失败: $e', textAlign: TextAlign.center),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () => ref.invalidate(currentUserProvider),
+                  child: const Text('重试'),
+                ),
+              ],
+            ),
+          ),
+        ),
         data: (user) => _ProfileContent(user: user),
       ),
     );
@@ -57,6 +75,8 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   }
 
   Future<void> _saveProfile() async {
+    if (_saving) return;
+    FocusScope.of(context).unfocus();
     setState(() => _saving = true);
     try {
       await ref.read(profileRepositoryProvider).updateProfile(
@@ -79,6 +99,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   }
 
   Future<void> _uploadAvatar() async {
+    if (_uploading) return;
     setState(() => _uploading = true);
     try {
       final result = await ref.read(uploadRepositoryProvider).pickAndUpload();
