@@ -47,7 +47,24 @@ class _MatchesScreenState extends ConsumerState<MatchesScreen> {
       body: state.when(
         loading: () => const Center(
             child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
-        error: (e, _) => Center(child: Text('加载失败: $e')),
+        error: (e, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.cloud_off, size: 48, color: Color(0xFFFFCDD2)),
+                const SizedBox(height: 12),
+                Text('加载失败: $e', textAlign: TextAlign.center),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () => ref.invalidate(matchesProvider),
+                  child: const Text('重试'),
+                ),
+              ],
+            ),
+          ),
+        ),
         data: (matches) {
           if (matches.isEmpty) {
             return Center(

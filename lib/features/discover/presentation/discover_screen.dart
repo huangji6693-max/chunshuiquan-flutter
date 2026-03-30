@@ -54,6 +54,8 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
     }
   }
 
+  Future<void> reload() => _load();
+
   Future<void> _loadMore() async {
     if (_fetchingMore) return;
     _fetchingMore = true;
@@ -221,10 +223,21 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       body: discoverState.isLoading && discoverState.cards.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : discoverState.cards.isEmpty
-              ? const Center(
-                  child: Text('暂时没有更多人了\n明天再来看看 👀',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.grey)))
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('暂时没有更多人了\n明天再来看看 👀',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16, color: Colors.grey)),
+                      const SizedBox(height: 12),
+                      OutlinedButton(
+                        onPressed: notifier.reload,
+                        child: const Text('刷新试试'),
+                      ),
+                    ],
+                  ),
+                )
               : Column(
                   children: [
                     Expanded(

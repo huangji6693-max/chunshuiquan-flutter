@@ -1,24 +1,54 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/providers/current_user_provider.dart';
 import '../data/message_repository.dart';
 
 final messagesProvider = AsyncNotifierProviderFamily<MessagesNotifier, List<ChatMessage>, String>(
   MessagesNotifier.new,
 );
 
-class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String> {
+class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String>
+    with WidgetsBindingObserver {
   Timer? _pollTimer;
 
   @override
   Future<List<ChatMessage>> build(String arg) async {
-    // 5秒轮询兜底实时性
-    _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) => _silentRefresh());
-    ref.onDispose(() => _pollTimer?.cancel());
+    WidgetsBinding.instance.addObserver(this);
+    _startPolling();
+    ref.onDispose(() {
+      WidgetsBinding.instance.removeObserver(this);
+      _pollTimer?.cancel();
+    });
     return _fetch();
   }
 
   String get _matchId => arg;
+
+  void _startPolling() {
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) => _silentRefresh(),
+    );
+  }
+
+  void _stopPolling() {
+    _pollTimer?.cancel();
+    _pollTimer = null;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _startPolling();
+      _silentRefresh();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.hidden) {
+      _stopPolling();
+    }
+  }
 
   Future<List<ChatMessage>> _fetch() {
     return ref.read(messageRepositoryProvider).fetchMessages(_matchId);
