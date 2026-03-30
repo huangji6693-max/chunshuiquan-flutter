@@ -56,6 +56,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final messagesAsync = ref.watch(messagesProvider(widget.matchId));
     final currentUserAsync = ref.watch(currentUserProvider);
     final syncMode = ref.watch(chatSyncModeProvider(widget.matchId));
+    final realtimeState = ref.watch(chatRealtimeStateProvider(widget.matchId));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -90,7 +91,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       color: Colors.black87),
                 ),
                 Text(
-                  syncMode == ChatSyncMode.realtime ? '实时连接中' : '轮询兜底中',
+                  syncMode == ChatSyncMode.realtime
+                      ? (realtimeState == ChatRealtimeState.connecting
+                          ? '实时连接建立中'
+                          : '实时连接中')
+                      : '轮询兜底中',
                   style: TextStyle(
                     fontSize: 12,
                     color: syncMode == ChatSyncMode.realtime

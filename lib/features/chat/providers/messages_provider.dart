@@ -5,9 +5,14 @@ import '../data/message_repository.dart';
 import '../data/realtime_chat_service.dart';
 
 enum ChatSyncMode { realtime, polling }
+enum ChatRealtimeState { connecting, connected, disconnected }
 
 final chatSyncModeProvider =
     StateProvider.family<ChatSyncMode, String>((ref, matchId) => ChatSyncMode.polling);
+
+final chatRealtimeStateProvider = StateProvider.family<ChatRealtimeState, String>(
+  (ref, matchId) => ChatRealtimeState.disconnected,
+);
 
 final messagesProvider = AsyncNotifierProviderFamily<MessagesNotifier, List<ChatMessage>, String>(
   MessagesNotifier.new,
@@ -44,20 +49,35 @@ class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String>
     try {
       final stream = ref.read(realtimeChatServiceProvider).subscribe(_matchId);
       _realtimeSub = stream.listen((event) {
-        final current = state.valueOrNull ?? const <ChatMessage>[];
-        if (current.any((m) => m.id == event.message.id)) return;
-        state = AsyncData([event.message, ...current]);
+        if (event is RealtimeConnectionChanged) {
+          final mapped = switch (event.state) {
+            RealtimeConnectionState.connecting => ChatRealtimeState.connecting,
+            RealtimeConnectionState.connected => ChatRealtimeState.connected,
+            RealtimeConnectionState.disconnected => ChatRealtimeState.disconnected,
+          };
+          ref.read(chatRealtimeStateProvider(_matchId).notifier).state = mapped;
+          return;
+        }
+        if (event is RealtimeMessageReceived) {
+          final current = state.valueOrNull ?? const <ChatMessage>[];
+          if (current.any((m) => m.id == event.message.id)) return;
+          state = AsyncData([event.message, ...current]);
+        }
       });
       _realtimeActive = true;
       ref.read(chatSyncModeProvider(_matchId).notifier).state = ChatSyncMode.realtime;
     } catch (_) {
       _realtimeActive = false;
       ref.read(chatSyncModeProvider(_matchId).notifier).state = ChatSyncMode.polling;
+      ref.read(chatRealtimeStateProvider(_matchId).notifier).state =
+          ChatRealtimeState.disconnected;
     }
   }
 
   void _startPolling() {
     ref.read(chatSyncModeProvider(_matchId).notifier).state = ChatSyncMode.polling;
+    ref.read(chatRealtimeStateProvider(_matchId).notifier).state =
+        ChatRealtimeState.disconnected;
     _pollTimer?.cancel();
     _pollTimer = Timer.periodic(
       const Duration(seconds: 5),
