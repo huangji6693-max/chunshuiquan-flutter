@@ -34,13 +34,14 @@ class CardInfoOverlay extends StatelessWidget {
                     height: 1.1,
                   )),
               const SizedBox(width: 8),
-              const Text('24', // TODO: 从 birthDate 计算年龄
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w400,
-                    height: 1.1,
-                  )),
+              if (user.age != null)
+                Text('${user.age}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w400,
+                      height: 1.1,
+                    )),
             ],
           ),
           if (user.jobTitle != null && user.jobTitle!.isNotEmpty) ...[
