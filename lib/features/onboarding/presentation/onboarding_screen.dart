@@ -61,6 +61,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _finish() async {
+    if (_uploading) return;
+    FocusScope.of(context).unfocus();
     setState(() { _uploading = true; _error = null; });
     try {
       await _uploadPhotos();
@@ -157,6 +159,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           setState(() => _error = '请至少上传一张照片');
                           return;
                         }
+                        FocusScope.of(context).unfocus();
                         setState(() => _error = null);
                         if (_page < 2) {
                           setState(() => _page++);
@@ -199,7 +202,10 @@ class _PhotoPage extends StatelessWidget {
         children: [
           const Text('上传你的照片', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
           const SizedBox(height: 8),
-          const Text('至少上传1张，展示真实的你', style: TextStyle(color: Colors.grey)),
+          Text(
+            '至少上传1张，最多6张（当前 ${photos.length}/6）',
+            style: const TextStyle(color: Colors.grey),
+          ),
           const SizedBox(height: 24),
           Expanded(
             child: GridView.builder(
