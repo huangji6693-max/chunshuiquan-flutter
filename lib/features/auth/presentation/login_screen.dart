@@ -48,11 +48,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   Future<void> _login() async {
+    if (_loading) return;
     if (!_formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
     setState(() { _loading = true; _error = null; });
     try {
       await ref.read(authRepositoryProvider).login(
-        email: _emailCtrl.text.trim(),
+        email: _emailCtrl.text.trim().toLowerCase(),
         password: _passCtrl.text,
       );
       if (mounted) context.go('/discover');
@@ -162,7 +164,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             textInputAction: TextInputAction.done,
                             onFieldSubmitted: (_) => _login(),
                             validator: (v) =>
-                                v == null || v.length < 6 ? '密码至少6位' : null,
+                                v == null || v.trim().length < 6 ? '密码至少6位' : null,
                           ),
                           if (_error != null) ...[
                             const SizedBox(height: 10),

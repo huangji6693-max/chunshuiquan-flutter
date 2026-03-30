@@ -35,6 +35,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _pickPhoto() async {
+    if (_photos.length >= 6) return;
     final picker = ImagePicker();
     final picked = await picker.pickImage(
       source: ImageSource.gallery,
@@ -42,7 +43,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       imageQuality: 85,
     );
     if (picked != null) {
-      setState(() => _photos.add(File(picked.path)));
+      final exists = _photos.any((photo) => photo.path == picked.path);
+      if (!exists) {
+        setState(() => _photos.add(File(picked.path)));
+      }
     }
   }
 

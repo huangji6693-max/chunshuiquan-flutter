@@ -66,16 +66,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 
   Future<void> _register() async {
+    if (_loading) return;
     if (!_formKey.currentState!.validate()) return;
     if (_birthDate == null) {
       setState(() => _error = '请选择生日');
       return;
     }
+    FocusScope.of(context).unfocus();
     setState(() { _loading = true; _error = null; });
     try {
       await ref.read(authRepositoryProvider).register(
         name: _nameCtrl.text.trim(),
-        email: _emailCtrl.text.trim(),
+        email: _emailCtrl.text.trim().toLowerCase(),
         password: _passCtrl.text,
         birthDate:
             '${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}',
@@ -252,9 +254,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                 ),
                                 obscureText: _obscure,
                                 textInputAction: TextInputAction.next,
-                                validator: (v) => v == null || v.length < 6
-                                    ? '密码至少6位'
-                                    : null,
+                                validator: (v) {
+                                  if (v == null || v.length < 6) return '密码至少6位';
+                                  final hasLetter = RegExp(r'[A-Za-z]').hasMatch(v);
+                                  final hasNumber = RegExp(r'\d').hasMatch(v);
+                                  if (!hasLetter || !hasNumber) {
+                                    return '密码需包含字母和数字';
+                                  }
+                                  return null;
+                                },
                               ),
                               const SizedBox(height: 14),
 
