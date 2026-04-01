@@ -38,7 +38,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
     final statusAsync = ref.watch(verificationStatusProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8FA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('实名认证'),
         backgroundColor: Colors.white,

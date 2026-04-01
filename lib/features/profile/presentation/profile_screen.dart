@@ -375,10 +375,10 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                       Row(
                         children: [
                           Text(user.name,
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w800,
-                                  color: Color(0xFF1A1A2E))),
+                                  color: Theme.of(context).colorScheme.onSurface)),
                           if (user.age != null) ...[
                             const SizedBox(width: 8),
                             Text('${user.age}岁',
@@ -687,7 +687,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
       hintText: hint,
       prefixIcon: Icon(icon, size: 18, color: const Color(0xFFFF4D88)),
       filled: true,
-      fillColor: const Color(0xFFF8F8F8),
+      fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide.none,
@@ -714,10 +714,10 @@ class _EditRow extends StatelessWidget {
         SizedBox(
           width: 48,
           child: Text(label,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A2E))),
+                  color: Theme.of(context).colorScheme.onSurface)),
         ),
         const SizedBox(width: 8),
         Expanded(child: child),
@@ -747,7 +747,7 @@ class _DropdownSelector extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(10),
-        color: const Color(0xFFF8F8F8),
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(

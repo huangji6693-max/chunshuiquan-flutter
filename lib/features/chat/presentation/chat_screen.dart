@@ -175,8 +175,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 children: [
                   // 返回按钮
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_ios,
-                        size: 20, color: Color(0xFF1A1A2E)),
+                    icon: Icon(Icons.arrow_back_ios,
+                        size: 20, color: Theme.of(context).colorScheme.onSurface),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
 
@@ -187,7 +187,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             widget.partnerAvatarUrl!.isNotEmpty
                         ? CachedNetworkImageProvider(widget.partnerAvatarUrl!)
                         : null,
-                    backgroundColor: const Color(0xFFF5F5F5),
+                    backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
                     child: widget.partnerAvatarUrl == null ||
                             widget.partnerAvatarUrl!.isEmpty
                         ? const Icon(Icons.person,
@@ -204,10 +204,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       children: [
                         Text(
                           widget.partnerName ?? '聊天',
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF1A1A2E)),
+                              color: Theme.of(context).colorScheme.onSurface),
                         ),
                         const SizedBox(height: 2),
                         Row(
@@ -300,7 +300,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             inputBackgroundColor: Colors.white,
             inputBorderRadius: BorderRadius.circular(28),
             messageBorderRadius: 20,
-            inputTextColor: const Color(0xFF1A1A2E),
+            inputTextColor: Theme.of(context).colorScheme.onSurface,
             inputTextStyle: const TextStyle(fontSize: 15),
             inputPadding: const EdgeInsets.symmetric(
                 horizontal: 16, vertical: 12),
@@ -386,7 +386,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               backgroundImage: author.imageUrl != null
                   ? CachedNetworkImageProvider(author.imageUrl!)
                   : null,
-              backgroundColor: const Color(0xFFF5F5F5),
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
               child: author.imageUrl == null
                   ? Text(
                       (author.firstName ?? '?')[0].toUpperCase(),
@@ -520,7 +520,7 @@ class _ChatInputState extends State<_ChatInput> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
+                color: Theme.of(context).colorScheme.surfaceContainerHigh,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: TextField(

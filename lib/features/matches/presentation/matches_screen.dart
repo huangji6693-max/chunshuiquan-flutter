@@ -264,7 +264,7 @@ class _NewMatchAvatar extends StatelessWidget {
                 backgroundImage: match.otherAvatarUrl != null
                     ? CachedNetworkImageProvider(match.otherAvatarUrl!)
                     : null,
-                backgroundColor: const Color(0xFFF5F5F5),
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
                 child: match.otherAvatarUrl == null
                     ? Text(
                         match.otherName.isNotEmpty
@@ -335,7 +335,7 @@ class _ConversationTile extends ConsumerWidget {
                   backgroundImage: match.otherAvatarUrl != null
                       ? CachedNetworkImageProvider(match.otherAvatarUrl!)
                       : null,
-                  backgroundColor: const Color(0xFFF5F5F5),
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
                   child: match.otherAvatarUrl == null
                       ? Text(
                           match.otherName.isNotEmpty

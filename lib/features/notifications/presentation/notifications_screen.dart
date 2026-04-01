@@ -193,7 +193,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
             height: 80,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFFFFF0F5),
+              color: Theme.of(context).colorScheme.surfaceContainerHigh,
             ),
             child: Icon(
               icons[tabIndex],
@@ -231,7 +231,7 @@ class _NotificationTile extends StatelessWidget {
         : Icons.chat_bubble_rounded;
 
     return Container(
-      color: item.isRead ? Colors.white : const Color(0xFFFFF8FA),
+      color: item.isRead ? Colors.white : Theme.of(context).colorScheme.surfaceContainerLow,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
@@ -245,7 +245,7 @@ class _NotificationTile extends StatelessWidget {
                   backgroundImage: item.avatarUrl != null
                       ? NetworkImage(item.avatarUrl!)
                       : null,
-                  backgroundColor: const Color(0xFFF5F5F5),
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
                   child: item.avatarUrl == null
                       ? Text(
                           item.senderName.isNotEmpty
@@ -288,7 +288,7 @@ class _NotificationTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: item.isRead ? FontWeight.w400 : FontWeight.w600,
-                      color: const Color(0xFF1A1A2E),
+                      color: Theme.of(context).colorScheme.onSurface,
                       height: 1.3,
                     ),
                   ),
