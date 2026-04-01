@@ -107,7 +107,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble>
 
             // 波形
             Expanded(
-              child: AnimatedBuilder(
+              child: _AnimBuilder(
                 listenable: _waveCtrl,
                 builder: (_, __) => CustomPaint(
                   size: const Size(double.infinity, 24),
@@ -186,10 +186,10 @@ class _WavePainter extends CustomPainter {
       old.progress != progress || old.animValue != animValue;
 }
 
-class AnimatedBuilder extends AnimatedWidget {
+class _AnimBuilder extends AnimatedWidget {
   final Widget Function(BuildContext, Widget?) builder;
   final Widget? child;
-  const AnimatedBuilder(
+  const _AnimBuilder(
       {super.key, required super.listenable, required this.builder, this.child});
   @override
   Widget build(BuildContext context) => builder(context, child);

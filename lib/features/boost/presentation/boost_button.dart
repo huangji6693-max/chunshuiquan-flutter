@@ -70,7 +70,7 @@ class _BoostButtonState extends ConsumerState<BoostButton>
 
     return GestureDetector(
       onTap: _active ? null : _handleBoost,
-      child: AnimatedBuilder(
+      child: _AnimBuilder(
         listenable: _pulseController,
         builder: (_, __) {
           final scale = _active ? 1.0 + _pulseController.value * 0.1 : 1.0;
@@ -156,10 +156,10 @@ class _BoostButtonState extends ConsumerState<BoostButton>
   }
 }
 
-class AnimatedBuilder extends AnimatedWidget {
+class _AnimBuilder extends AnimatedWidget {
   final Widget Function(BuildContext, Widget?) builder;
   final Widget? child;
-  const AnimatedBuilder(
+  const _AnimBuilder(
       {super.key, required super.listenable, required this.builder, this.child});
   @override
   Widget build(BuildContext context) => builder(context, child);

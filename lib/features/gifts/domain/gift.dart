@@ -1,6 +1,6 @@
 /// 礼物模型
 class Gift {
-  final String id;
+  final int id;
   final String name;
   final String icon; // emoji
   final int coins;
@@ -13,9 +13,9 @@ class Gift {
   });
 
   factory Gift.fromJson(Map<String, dynamic> json) => Gift(
-        id: json['id'] as String,
+        id: (json['id'] as num).toInt(),
         name: json['name'] as String,
         icon: json['icon'] as String,
-        coins: json['coins'] as int,
+        coins: (json['coins'] as num).toInt(),
       );
 }

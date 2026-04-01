@@ -109,7 +109,7 @@ class _GiftAnimationWidgetState extends State<_GiftAnimationWidget>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
+    return _AnimBuilder(
       listenable: _mainController,
       builder: (context, _) {
         return IgnorePointer(
@@ -123,7 +123,7 @@ class _GiftAnimationWidgetState extends State<_GiftAnimationWidget>
               ),
 
               // 粒子层
-              AnimatedBuilder(
+              _AnimBuilder(
                 listenable: _particleController,
                 builder: (context, _) {
                   return CustomPaint(
@@ -233,11 +233,11 @@ class _ParticlePainter extends CustomPainter {
 }
 
 /// AnimatedBuilder 封装（如果已在其他文件定义则可移除）
-class AnimatedBuilder extends AnimatedWidget {
+class _AnimBuilder extends AnimatedWidget {
   final Widget Function(BuildContext context, Widget? child) builder;
   final Widget? child;
 
-  const AnimatedBuilder({
+  const _AnimBuilder({
     super.key,
     required super.listenable,
     required this.builder,

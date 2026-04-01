@@ -180,7 +180,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
 
               // 签到成功动画 or 签到按钮
               if (_justCheckedIn) ...[
-                AnimatedBuilder(
+                _AnimBuilder(
                   listenable: _coinBounce,
                   builder: (_, __) => Transform.translate(
                     offset: Offset(0, _coinBounce.value),
@@ -290,10 +290,10 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
   }
 }
 
-class AnimatedBuilder extends AnimatedWidget {
+class _AnimBuilder extends AnimatedWidget {
   final Widget Function(BuildContext, Widget?) builder;
   final Widget? child;
-  const AnimatedBuilder(
+  const _AnimBuilder(
       {super.key, required super.listenable, required this.builder, this.child});
   @override
   Widget build(BuildContext context) => builder(context, child);

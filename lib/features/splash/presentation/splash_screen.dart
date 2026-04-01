@@ -103,7 +103,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               // Logo
-              AnimatedBuilder(
+              _AnimBuilder(
                 listenable: _logoController,
                 builder: (_, __) => Opacity(
                   opacity: _logoOpacity.value,
@@ -167,11 +167,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 }
 
 /// AnimatedBuilder
-class AnimatedBuilder extends AnimatedWidget {
+class _AnimBuilder extends AnimatedWidget {
   final Widget Function(BuildContext context, Widget? child) builder;
   final Widget? child;
 
-  const AnimatedBuilder({
+  const _AnimBuilder({
     super.key,
     required super.listenable,
     required this.builder,

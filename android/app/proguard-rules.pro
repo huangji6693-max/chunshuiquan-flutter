@@ -24,3 +24,7 @@
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
+
+# Play Core (deferred components)
+-dontwarn com.google.android.play.core.**
+-keep class com.google.android.play.core.** { *; }

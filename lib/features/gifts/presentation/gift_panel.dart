@@ -217,8 +217,8 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
         setState(() => _selected = gift);
         _bounceController.forward(from: 0);
       },
-      child: AnimatedBuilder(
-        animation: _bounceAnim,
+      child: _AnimBuilder(
+        listenable: _bounceAnim,
         builder: (context, child) {
           final scale =
               isSelected ? _bounceAnim.value : 1.0;
@@ -322,11 +322,11 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
 }
 
 /// AnimatedBuilder 封装
-class AnimatedBuilder extends AnimatedWidget {
+class _AnimBuilder extends AnimatedWidget {
   final Widget Function(BuildContext context, Widget? child) builder;
   final Widget? child;
 
-  const AnimatedBuilder({
+  const _AnimBuilder({
     super.key,
     required super.listenable,
     required this.builder,

@@ -60,8 +60,7 @@ dependencies:
   flutter_animate: ^4.5.0
   confetti: ^0.7.0
 
-  # 录音 & 音频播放
-  record: ^5.1.0
+  # 音频播放
   audioplayers: ^6.0.0
   path_provider: ^2.1.2
 
