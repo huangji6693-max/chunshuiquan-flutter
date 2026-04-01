@@ -154,9 +154,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final currentUser = ref.watch(currentUserProvider).asData?.value;
     final myId = currentUser?.id ?? '';
 
-    // 获取对方在线状态（需要对方userId，这里从消息中推断）
-    // TODO: 后端在match数据中返回otherId后可直接使用
-
     return Scaffold(
       backgroundColor: const Color(0xFFF8F5F5),
       appBar: PreferredSize(

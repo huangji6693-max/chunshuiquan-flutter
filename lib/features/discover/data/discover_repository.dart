@@ -4,7 +4,6 @@ import '../../../core/network/dio_client.dart';
 import '../../../core/errors/app_exception.dart';
 import '../domain/user_profile.dart';
 import '../domain/swipe_result.dart';
-import '../../auth/domain/user_profile.dart';
 
 final discoverRepositoryProvider = Provider<DiscoverRepository>(
   (ref) => DiscoverRepository(ref.watch(dioProvider)),

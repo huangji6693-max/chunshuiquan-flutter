@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../discover/data/discover_repository.dart';
 import '../../discover/domain/user_profile.dart';
+import '../../profile/presentation/user_detail_screen.dart';
 
 /// 附近用户列表 Provider
 final nearbyUsersProvider = FutureProvider.family<List<UserProfile>, double>(
@@ -310,7 +311,10 @@ class _NearbyCard extends StatelessWidget {
   }
 
   void _openProfile(BuildContext context) {
-    // TODO: 跳转用户详情页
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => UserDetailScreen(user: user)),
+    );
   }
 }
 
@@ -323,7 +327,12 @@ class _NearbyListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final avatar = (user.avatarUrls.isNotEmpty) ? user.avatarUrls.first : null;
 
-    return Container(
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => UserDetailScreen(user: user)),
+      ),
+      child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -411,6 +420,7 @@ class _NearbyListTile extends StatelessWidget {
               color: Color(0xFFFF4D88), size: 18),
         ),
       ),
+    ),
     );
   }
 }

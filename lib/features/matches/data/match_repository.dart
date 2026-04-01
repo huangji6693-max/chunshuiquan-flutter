@@ -12,7 +12,13 @@ class MatchItem {
   final String otherId;
   final String otherName;
   final String? otherAvatarUrl;
+  final List<String> otherAvatarUrls;
   final String? otherBio;
+  final String? otherJobTitle;
+  final String? otherCity;
+  final int? otherHeight;
+  final String? otherEducation;
+  final String? otherZodiac;
   final DateTime createdAt;
   final bool? isNew;
   final String? lastMessage;
@@ -24,7 +30,13 @@ class MatchItem {
     required this.otherId,
     required this.otherName,
     this.otherAvatarUrl,
+    this.otherAvatarUrls = const [],
     this.otherBio,
+    this.otherJobTitle,
+    this.otherCity,
+    this.otherHeight,
+    this.otherEducation,
+    this.otherZodiac,
     required this.createdAt,
     this.isNew,
     this.lastMessage,
@@ -34,13 +46,20 @@ class MatchItem {
 
   factory MatchItem.fromJson(Map<String, dynamic> json) {
     final other = json['otherUser'] as Map<String, dynamic>? ?? {};
-    final avatarUrls = other['avatarUrls'] as List<dynamic>?;
+    final avatarUrls = (other['avatarUrls'] as List<dynamic>?)
+        ?.map((e) => e as String).toList() ?? [];
     return MatchItem(
       matchId: json['matchId'] as String,
       otherId: other['id'] as String? ?? '',
       otherName: other['name'] as String? ?? '用户',
-      otherAvatarUrl: avatarUrls != null && avatarUrls.isNotEmpty ? avatarUrls.first as String : null,
+      otherAvatarUrl: avatarUrls.isNotEmpty ? avatarUrls.first : null,
+      otherAvatarUrls: avatarUrls,
       otherBio: other['bio'] as String?,
+      otherJobTitle: other['jobTitle'] as String?,
+      otherCity: other['city'] as String?,
+      otherHeight: other['height'] as int?,
+      otherEducation: other['education'] as String?,
+      otherZodiac: other['zodiac'] as String?,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime.now(),
       isNew: json['isNew'] as bool?,
       lastMessage: json['lastMessage'] as String?,
