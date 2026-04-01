@@ -333,7 +333,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
               padding: EdgeInsets.fromLTRB(
                   20, 16, 20, MediaQuery.of(context).padding.bottom + 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surfaceContainer,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.08),
