@@ -57,30 +57,35 @@ class FrostedNavBar extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          AnimatedSwitcher(
+                          AnimatedScale(
+                            scale: selected ? 1.15 : 1.0,
                             duration: const Duration(milliseconds: 200),
-                            child: selected
-                                ? ShaderMask(
-                                    key: const ValueKey(true),
-                                    shaderCallback: (bounds) => const LinearGradient(
-                                      colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
-                                    ).createShader(bounds),
-                                    child: Icon(
-                                      _icons[i].$1,
+                            curve: Curves.easeOutBack,
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: selected
+                                  ? ShaderMask(
+                                      key: const ValueKey(true),
+                                      shaderCallback: (bounds) => const LinearGradient(
+                                        colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+                                      ).createShader(bounds),
+                                      child: Icon(
+                                        _icons[i].$1,
+                                        size: 24,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Icon(
+                                      key: const ValueKey(false),
+                                      _icons[i].$2,
                                       size: 24,
-                                      color: Colors.white,
+                                      color: Colors.grey.shade400,
                                     ),
-                                  )
-                                : Icon(
-                                    key: const ValueKey(false),
-                                    _icons[i].$2,
-                                    size: 24,
-                                    color: Colors.grey.shade400,
-                                  ),
+                            ),
                           ),
                           const SizedBox(height: 2),
-                          Text(
-                            _labels[i],
+                          AnimatedDefaultTextStyle(
+                            duration: const Duration(milliseconds: 200),
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
@@ -88,6 +93,7 @@ class FrostedNavBar extends StatelessWidget {
                                   ? const Color(0xFFFF4D88)
                                   : Colors.grey.shade400,
                             ),
+                            child: Text(_labels[i]),
                           ),
                         ],
                       ),
