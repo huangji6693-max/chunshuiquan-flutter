@@ -41,6 +41,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   late TextEditingController _jobCtrl;
   bool _saving = false;
   bool _uploading = false;
+  bool _deleting = false;
 
   @override
   void initState() {
@@ -78,19 +79,73 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
     }
   }
 
-  Future<void> _uploadAvatar() async {
+  /// 添加照片：选图 -> 上传Cloudinary -> 保存到后端
+  Future<void> _addPhoto() async {
+    if (widget.user.avatarUrls.length >= 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('最多只能上传6张照片')));
+      return;
+    }
     setState(() => _uploading = true);
     try {
       await ref.read(uploadRepositoryProvider).pickAndUpload();
       ref.invalidate(currentUserProvider);
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('✅ 头像已更新')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('✅ 照片已添加')));
+      }
     } on AppException catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.message)));
     } finally {
       if (mounted) setState(() => _uploading = false);
     }
+  }
+
+  /// 删除指定索引的照片
+  Future<void> _deletePhoto(int index) async {
+    // 至少保留一张照片
+    if (widget.user.avatarUrls.length <= 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('至少需要保留一张照片')));
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('删除照片'),
+        content: const Text('确定要删除这张照片吗？'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('取消')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('删除', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    setState(() => _deleting = true);
+    try {
+      await ref.read(profileRepositoryProvider).deleteAvatar(index);
+      ref.invalidate(currentUserProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('✅ 照片已删除')));
+      }
+    } on AppException catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)));
+    } finally {
+      if (mounted) setState(() => _deleting = false);
+    }
+  }
+
+  /// 兼容旧的上传头像方法（用于AppBar区域点击头像）
+  Future<void> _uploadAvatar() async {
+    await _addPhoto();
   }
 
   @override
@@ -222,6 +277,21 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                 ),
                 const SizedBox(height: 24),
 
+                // 照片管理网格
+                _SectionCard(
+                  title: '我的照片（${user.avatarUrls.length}/6）',
+                  child: _PhotoGrid(
+                    avatarUrls: user.avatarUrls,
+                    editing: _editing,
+                    uploading: _uploading,
+                    deleting: _deleting,
+                    onAdd: _addPhoto,
+                    onDelete: _deletePhoto,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
                 // Bio 编辑
                 _SectionCard(
                   title: '个人简介',
@@ -336,6 +406,170 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// 照片管理网格组件
+/// 显示最多6张照片，支持编辑模式下的删除和添加
+/// TODO: 后端实现重排API后，增加长按拖拽重排功能
+class _PhotoGrid extends StatelessWidget {
+  final List<String> avatarUrls;
+  final bool editing;
+  final bool uploading;
+  final bool deleting;
+  final VoidCallback onAdd;
+  final ValueChanged<int> onDelete;
+
+  const _PhotoGrid({
+    required this.avatarUrls,
+    required this.editing,
+    required this.uploading,
+    required this.deleting,
+    required this.onAdd,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // 总共显示的格子数：已有照片 + 添加按钮（编辑模式且未满6张时）
+    final showAddBtn = editing && avatarUrls.length < 6;
+    final itemCount = avatarUrls.length + (showAddBtn ? 1 : 0);
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 0.75,
+      ),
+      itemCount: itemCount,
+      itemBuilder: (context, index) {
+        // 添加照片按钮
+        if (index == avatarUrls.length && showAddBtn) {
+          return GestureDetector(
+            onTap: uploading ? null : onAdd,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFFFF4D88).withOpacity(0.4),
+                  width: 1.5,
+                  strokeAlign: BorderSide.strokeAlignInside,
+                ),
+              ),
+              child: uploading
+                  ? const Center(
+                      child: SizedBox(
+                        width: 24, height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFFFF4D88),
+                        ),
+                      ),
+                    )
+                  : const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.add_a_photo_outlined,
+                            size: 28, color: Color(0xFFFF4D88)),
+                        SizedBox(height: 4),
+                        Text('添加照片',
+                            style: TextStyle(
+                                fontSize: 11, color: Color(0xFFFF4D88))),
+                      ],
+                    ),
+            ),
+          );
+        }
+
+        // 照片卡片
+        final url = avatarUrls[index];
+        return Stack(
+          children: [
+            // 照片
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CachedNetworkImage(
+                  imageUrl: url,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                  placeholder: (_, __) => Container(
+                    color: Colors.grey.shade200,
+                    child: const Center(
+                      child: SizedBox(
+                        width: 20, height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) => Container(
+                    color: Colors.grey.shade200,
+                    child: const Icon(Icons.broken_image, color: Colors.grey),
+                  ),
+                ),
+              ),
+            ),
+            // 第一张照片的主照片标签
+            if (index == 0)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF4D88).withOpacity(0.85),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                  ),
+                  child: const Text('主照片',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600)),
+                ),
+              ),
+            // 编辑模式下的删除按钮
+            if (editing)
+              Positioned(
+                top: 4,
+                right: 4,
+                child: GestureDetector(
+                  onTap: deleting ? null : () => onDelete(index),
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.close,
+                        size: 14, color: Colors.white),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

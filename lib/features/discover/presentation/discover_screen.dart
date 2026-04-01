@@ -107,11 +107,53 @@ class DiscoverScreen extends ConsumerStatefulWidget {
   ConsumerState<DiscoverScreen> createState() => _DiscoverScreenState();
 }
 
-class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
+class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
+    with TickerProviderStateMixin {
   final CardSwiperController _swiperCtrl = CardSwiperController();
+
+  // Super Like 星星overlay动画控制器
+  late AnimationController _superLikeAnimCtrl;
+  late Animation<double> _superLikeScale;
+  late Animation<double> _superLikeOpacity;
+  bool _showSuperLikeOverlay = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _superLikeAnimCtrl = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _superLikeScale = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.4), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.4, end: 1.0), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.2), weight: 30),
+    ]).animate(CurvedAnimation(
+      parent: _superLikeAnimCtrl,
+      curve: Curves.easeOut,
+    ));
+    _superLikeOpacity = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 30),
+    ]).animate(_superLikeAnimCtrl);
+
+    _superLikeAnimCtrl.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() => _showSuperLikeOverlay = false);
+      }
+    });
+  }
+
+  /// 触发Super Like星星overlay动画
+  void _playSuperLikeAnimation() {
+    setState(() => _showSuperLikeOverlay = true);
+    _superLikeAnimCtrl.forward(from: 0);
+  }
 
   @override
   void dispose() {
+    _superLikeAnimCtrl.dispose();
     _swiperCtrl.dispose();
     super.dispose();
   }
@@ -206,21 +248,60 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               : Column(
                   children: [
                     Expanded(
-                      child: CardSwiper(
-                        key: const Key('swipe_card'),
-                        controller: _swiperCtrl,
-                        cardsCount: discoverState.cards.length,
-                        onSwipe: (prev, curr, dir) {
-                          final direction = switch (dir) {
-                            CardSwiperDirection.right => 'like',
-                            CardSwiperDirection.top => 'superlike',
-                            _ => 'nope',
-                          };
-                          notifier.onSwiped(prev, direction);
-                          return true;
-                        },
-                        cardBuilder: (ctx, idx, _, __) =>
-                            UserCard(user: discoverState.cards[idx]),
+                      child: Stack(
+                        children: [
+                          CardSwiper(
+                            key: const Key('swipe_card'),
+                            controller: _swiperCtrl,
+                            cardsCount: discoverState.cards.length,
+                            onSwipe: (prev, curr, dir) {
+                              final direction = switch (dir) {
+                                CardSwiperDirection.right => 'like',
+                                CardSwiperDirection.top => 'superlike',
+                                _ => 'nope',
+                              };
+                              // 向上滑动触发Super Like动画
+                              if (direction == 'superlike') {
+                                _playSuperLikeAnimation();
+                              }
+                              notifier.onSwiped(prev, direction);
+                              return true;
+                            },
+                            cardBuilder: (ctx, idx, _, __) =>
+                                UserCard(user: discoverState.cards[idx]),
+                          ),
+                          // Super Like 蓝色星星 overlay 动画
+                          if (_showSuperLikeOverlay)
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: AnimatedBuilder(
+                                  animation: _superLikeAnimCtrl,
+                                  builder: (context, child) => Opacity(
+                                    opacity: _superLikeOpacity.value,
+                                    child: Transform.scale(
+                                      scale: _superLikeScale.value,
+                                      child: child,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF5B9AFF)
+                                            .withOpacity(0.15),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.star_rounded,
+                                        size: 100,
+                                        color: Color(0xFF5B9AFF),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                     Padding(
@@ -238,12 +319,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                           ),
                           Transform.translate(
                             offset: const Offset(0, -8),
-                            child: _ActionBtn(
-                              icon: Icons.star_rounded,
-                              color: const Color(0xFF5B9AFF),
-                              semanticLabel: '超级喜欢',
-                              size: 52,
-                              onTap: () => _swiperCtrl.swipe(CardSwiperDirection.top),
+                            child: _SuperLikeBtn(
+                              onTap: () {
+                                _playSuperLikeAnimation();
+                                _swiperCtrl.swipe(CardSwiperDirection.top);
+                              },
                             ),
                           ),
                           _ActionBtn(
@@ -304,6 +384,89 @@ class _ActionBtn extends StatelessWidget {
             ],
           ),
           child: Icon(icon, color: color, size: size * 0.44),
+        ),
+      ),
+    );
+  }
+}
+
+/// Super Like 专用按钮，带蓝色渐变边框和脉冲动画
+class _SuperLikeBtn extends StatefulWidget {
+  final VoidCallback onTap;
+  const _SuperLikeBtn({required this.onTap});
+
+  @override
+  State<_SuperLikeBtn> createState() => _SuperLikeBtnState();
+}
+
+class _SuperLikeBtnState extends State<_SuperLikeBtn>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulseAnim;
+
+  static const double _size = 56;
+  static const Color _blue = Color(0xFF5B9AFF);
+  static const Color _blueLight = Color(0xFF82B4FF);
+
+  @override
+  void initState() {
+    super.initState();
+    // 持续脉冲动画，吸引用户注意
+    _pulseCtrl = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+    _pulseAnim = Tween<double>(begin: 1.0, end: 1.12).animate(
+      CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: '超级喜欢',
+      button: true,
+      child: AnimatedBuilder(
+        animation: _pulseAnim,
+        builder: (context, child) => Transform.scale(
+          scale: _pulseAnim.value,
+          child: child,
+        ),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Container(
+            width: _size,
+            height: _size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              // 蓝色渐变背景
+              gradient: const LinearGradient(
+                colors: [_blue, _blueLight],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: _blue.withOpacity(0.45),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: _blue.withOpacity(0.20),
+                  blurRadius: 40,
+                  spreadRadius: 4,
+                ),
+              ],
+            ),
+            child: const Icon(Icons.star_rounded,
+                color: Colors.white, size: 28),
+          ),
         ),
       ),
     );

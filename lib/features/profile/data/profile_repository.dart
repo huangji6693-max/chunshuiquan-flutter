@@ -34,4 +34,18 @@ class ProfileRepository {
       throw AppException.network(e.message ?? '头像上传失败');
     }
   }
+
+  /// 删除指定索引的头像
+  Future<void> deleteAvatar(int index) async {
+    try {
+      await _dio.delete('/api/users/avatar/$index');
+    } on DioException catch (e) {
+      throw AppException.network(e.message ?? '删除头像失败');
+    }
+  }
+
+  // TODO: 后端暂无重排照片API，待后端实现后补充
+  // Future<void> reorderAvatars(List<String> urls) async {
+  //   await _dio.put('/api/users/avatar/reorder', data: {'urls': urls});
+  // }
 }

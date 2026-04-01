@@ -53,7 +53,19 @@ class AuthRepository {
     }
   }
 
-  Future<void> logout() => _tm.clearTokens();
+  /// 登出：先调后端吊销token，再清除本地存储
+  Future<void> logout() async {
+    try {
+      final refreshToken = await _tm.getRefreshToken();
+      await _dio.post('/api/auth/logout', data: {
+        if (refreshToken != null && refreshToken.isNotEmpty)
+          'refreshToken': refreshToken,
+      });
+    } catch (_) {
+      // 后端调用失败不阻断登出流程
+    }
+    await _tm.clearTokens();
+  }
 
   Future<UserProfile> _handleAuthResponse(dynamic rawData) async {
     final data = rawData;
