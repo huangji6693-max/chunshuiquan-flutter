@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../features/auth/domain/user_profile.dart';
 
 /// 用户卡片 - Tinder级别的全屏卡片
@@ -148,13 +149,11 @@ class _UserCardState extends State<UserCard> {
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
-        placeholder: (_, __) => Container(
-          color: const Color(0xFFF0F0F0),
-          child: const Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFFFF4D88),
-              strokeWidth: 2,
-            ),
+        placeholder: (_, __) => Shimmer.fromColors(
+          baseColor: const Color(0xFFEEEEEE),
+          highlightColor: const Color(0xFFF8F8F8),
+          child: Container(
+            color: Colors.white,
           ),
         ),
         errorWidget: (_, __, ___) => Container(
