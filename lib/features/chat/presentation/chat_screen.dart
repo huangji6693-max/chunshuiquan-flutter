@@ -57,16 +57,31 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       List<ChatMessage> messages, String myId, String? partnerName, String? partnerAvatar) {
     return messages.map((m) {
       final isMe = m.senderId == myId;
+      final author = types.User(
+        id: m.senderId,
+        firstName: isMe ? null : (partnerName ?? 'Ta'),
+        imageUrl: isMe ? null : partnerAvatar,
+      );
+
+      // 识别图片消息: "[图片] https://..."
+      if (m.content.startsWith('[图片] ')) {
+        final url = m.content.substring(5).trim();
+        return types.ImageMessage(
+          id: m.id,
+          uri: url,
+          name: 'photo',
+          size: 0,
+          createdAt: m.createdAt.millisecondsSinceEpoch,
+          author: author,
+          metadata: {'isRead': m.isRead},
+        );
+      }
+
       return types.TextMessage(
         id: m.id,
         text: m.content,
         createdAt: m.createdAt.millisecondsSinceEpoch,
-        author: types.User(
-          id: m.senderId,
-          firstName: isMe ? null : (partnerName ?? 'Ta'),
-          imageUrl: isMe ? null : partnerAvatar,
-        ),
-        // 已读状态通过metadata传递
+        author: author,
         metadata: {'isRead': m.isRead},
       );
     }).toList()

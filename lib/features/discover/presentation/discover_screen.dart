@@ -10,6 +10,10 @@ import '../../../features/auth/domain/user_profile.dart';
 import '../../../core/providers/current_user_provider.dart';
 import '../../../shared/widgets/user_card.dart';
 import '../../../shared/widgets/match_dialog.dart';
+import '../../checkin/presentation/checkin_dialog.dart';
+import '../../likes/presentation/likes_screen.dart';
+import '../../likes/data/likes_repository.dart';
+import '../../boost/presentation/boost_button.dart';
 
 /// 筛选参数
 class DiscoverFilter {
@@ -316,18 +320,33 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
         ),
         centerTitle: false,
         actions: [
+          // 签到按钮
+          IconButton(
+            icon: const Icon(Icons.calendar_today_rounded,
+                color: Color(0xFFFF4D88), size: 22),
+            onPressed: () => CheckInDialog.show(context),
+            tooltip: '每日签到',
+          ),
+          // 谁喜欢了我
+          IconButton(
+            icon: const Icon(Icons.favorite,
+                color: Color(0xFFFF4D88), size: 22),
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const LikesScreen())),
+            tooltip: '谁喜欢了我',
+          ),
+          // 筛选按钮
           Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(right: 8),
             child: Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.center,
               children: [
                 IconButton(
                   icon: const Icon(Icons.tune_rounded,
-                      color: Color(0xFF1A1A2E), size: 26),
+                      color: Color(0xFF1A1A2E), size: 24),
                   onPressed: () => _showFilterSheet(context, ref),
                 ),
-                // 筛选活跃指示点（非默认参数时显示）
                 if (_isFilterActive(discoverState.filter))
                   Positioned(
                     right: 8,
@@ -465,13 +484,16 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                       ),
                     ),
 
-                    // 底部三个动作按钮
+                    // 底部动作按钮 + Boost
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          // Boost 曝光加速
+                          const BoostButton(),
+
                           // NOPE 按钮 - 红色
                           _ActionButton(
                             icon: Icons.close_rounded,
