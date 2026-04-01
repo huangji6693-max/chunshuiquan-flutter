@@ -154,7 +154,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final myId = currentUser?.id ?? '';
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0A1A),
+      
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: Container(
@@ -296,7 +296,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             primaryColor: const Color(0xFFFF4D88),
             // 对方的消息：白色气泡
             secondaryColor: Colors.white,
-            backgroundColor: const Color(0xFF0F0A1A),
+            
             inputBackgroundColor: Colors.white,
             inputBorderRadius: BorderRadius.circular(28),
             messageBorderRadius: 20,

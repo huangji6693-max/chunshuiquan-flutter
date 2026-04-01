@@ -20,9 +20,9 @@ class MatchesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(matchesProvider);
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0A1A),
+      
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0F0A1A),
+        
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: const Text('匹配',

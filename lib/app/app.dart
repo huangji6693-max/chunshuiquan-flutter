@@ -110,8 +110,9 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
       title: '春水圈',
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
+      theme: AppTheme.theme,
+      darkTheme: AppTheme.theme,
+      themeMode: ThemeMode.dark,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       builder: (context, child) => NetworkAwareBanner(child: child!),

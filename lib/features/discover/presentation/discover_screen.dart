@@ -303,11 +303,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
     });
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0A1A),
+      
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
-        backgroundColor: const Color(0xFF0F0A1A),
+        
         surfaceTintColor: Colors.transparent,
         title: Row(
           mainAxisSize: MainAxisSize.min,
