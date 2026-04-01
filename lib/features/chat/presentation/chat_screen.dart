@@ -159,7 +159,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         preferredSize: const Size.fromHeight(70),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
+            border: Border(
+              bottom: BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.2),
+              ),
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.04),
@@ -292,12 +297,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           showUserAvatars: true,
           showUserNames: false,
           theme: DefaultChatTheme(
-            // 自己的消息：粉红渐变色（通过primaryColor实现）
+            // 自己的消息：品牌粉
             primaryColor: const Color(0xFFFF4D88),
-            // 对方的消息：白色气泡
-            secondaryColor: Colors.white,
-            
-            inputBackgroundColor: Colors.white,
+            // 对方的消息：暗色卡片
+            secondaryColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            inputBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
             inputBorderRadius: BorderRadius.circular(28),
             messageBorderRadius: 20,
             inputTextColor: Theme.of(context).colorScheme.onSurface,
@@ -305,27 +310,25 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             inputPadding: const EdgeInsets.symmetric(
                 horizontal: 16, vertical: 12),
             inputContainerDecoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 10,
-                  offset: const Offset(0, -2),
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              border: Border(
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
                 ),
-              ],
+              ),
             ),
             sentMessageBodyTextStyle: const TextStyle(
               color: Colors.white,
               fontSize: 15,
               height: 1.4,
             ),
-            receivedMessageBodyTextStyle: const TextStyle(
-              color: Color(0xFF2D2D2D),
+            receivedMessageBodyTextStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 15,
               height: 1.4,
             ),
             dateDividerTextStyle: TextStyle(
-              color: Colors.grey[400],
+              color: Theme.of(context).colorScheme.outline,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -334,13 +337,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               color: Color(0xFFFF4D88),
               size: 24,
             ),
-            sendingIcon: const Icon(
+            sendingIcon: Icon(
               Icons.access_time,
               size: 12,
-              color: Colors.white54,
+              color: Theme.of(context).colorScheme.outline,
             ),
             emptyChatPlaceholderTextStyle: TextStyle(
-              color: Colors.grey[400],
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 15,
             ),
             receivedMessageDocumentIconColor: const Color(0xFFFF4D88),
@@ -462,14 +465,12 @@ class _ChatInputState extends State<_ChatInput> {
       padding: EdgeInsets.fromLTRB(
           8, 8, 8, MediaQuery.of(context).padding.bottom + 8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
           ),
-        ],
+        ),
       ),
       child: Row(
         children: [
