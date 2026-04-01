@@ -61,10 +61,10 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
     final balanceAsync = ref.watch(coinBalanceProvider);
 
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: const [
           BoxShadow(color: Colors.black12, blurRadius: 20, offset: Offset(0, -4)),
         ],
       ),

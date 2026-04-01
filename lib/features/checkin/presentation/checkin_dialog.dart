@@ -65,7 +65,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
