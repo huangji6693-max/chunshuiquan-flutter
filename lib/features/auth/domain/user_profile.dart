@@ -18,6 +18,9 @@ class UserProfile {
   final String? drinking;   // 饮酒习惯
   final String? birthDate;  // 生日字符串，用于计算年龄
   final bool onboardingCompleted; // 是否完成onboarding
+  final int coins;             // 金币余额
+  final String? vipTier;       // VIP等级: none / gold / diamond
+  final String? vipExpiresAt;  // VIP过期时间
 
   const UserProfile({
     required this.id,
@@ -37,6 +40,9 @@ class UserProfile {
     this.drinking,
     this.birthDate,
     this.onboardingCompleted = false,
+    this.coins = 0,
+    this.vipTier,
+    this.vipExpiresAt,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
@@ -63,6 +69,9 @@ class UserProfile {
         drinking: json['drinking'] as String?,
         birthDate: json['birthDate'] as String?,
         onboardingCompleted: json['onboardingCompleted'] as bool? ?? false,
+        coins: json['coins'] as int? ?? 0,
+        vipTier: json['vipTier'] as String?,
+        vipExpiresAt: json['vipExpiresAt'] as String?,
       );
 
   String get firstAvatar => avatarUrls.isNotEmpty ? avatarUrls.first : '';

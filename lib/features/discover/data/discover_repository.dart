@@ -36,6 +36,20 @@ class DiscoverRepository {
     }
   }
 
+  /// 获取附近的人
+  Future<List<UserProfile>> getNearby({double radiusKm = 50, int size = 50}) async {
+    try {
+      final res = await _dio.get('/api/users/nearby', queryParameters: {
+        'radiusKm': radiusKm,
+        'size': size,
+      });
+      final list = res.data as List<dynamic>;
+      return list.map((e) => UserProfile.fromJson(e as Map<String, dynamic>)).toList();
+    } on DioException catch (e) {
+      throw AppException.network(e.message ?? '获取附近用户失败');
+    }
+  }
+
   Future<SwipeResult> sendSwipe(String userId, String direction) async {
     try {
       final res = await _dio.post('/api/swipe', data: {

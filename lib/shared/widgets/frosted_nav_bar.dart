@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 /// 毛玻璃底部导航栏
-/// 4个tab：发现 / 匹配 / 通知 / 我的
+/// 5个tab：发现 / 附近 / 匹配 / 通知 / 我的
 class FrostedNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -10,13 +10,14 @@ class FrostedNavBar extends StatelessWidget {
   // 图标：(选中, 未选中)
   static const _icons = [
     (Icons.explore, Icons.explore_outlined),
+    (Icons.location_on, Icons.location_on_outlined),
     (Icons.favorite, Icons.favorite_outline),
     (Icons.notifications, Icons.notifications_none),
     (Icons.person, Icons.person_outline),
   ];
 
   // Tab标签
-  static const _labels = ['发现', '匹配', '通知', '我的'];
+  static const _labels = ['发现', '附近', '匹配', '通知', '我的'];
 
   const FrostedNavBar({
     super.key,

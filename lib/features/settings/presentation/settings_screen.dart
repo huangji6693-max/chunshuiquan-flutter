@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../coins/presentation/coin_shop_screen.dart';
 import '../../coins/data/coin_repository.dart';
+import '../../vip/presentation/vip_screen.dart';
+import '../../gifts/presentation/gift_history_screen.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/errors/app_exception.dart';
 
@@ -112,6 +114,36 @@ class SettingsScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // VIP + 礼物快捷入口
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _QuickEntryCard(
+                    icon: Icons.workspace_premium,
+                    label: 'VIP会员',
+                    gradient: const [Color(0xFFFFD700), Color(0xFFFFA000)],
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const VipScreen())),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _QuickEntryCard(
+                    icon: Icons.card_giftcard,
+                    label: '礼物记录',
+                    gradient: const [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const GiftHistoryScreen())),
+                  ),
+                ),
+              ],
             ),
           ),
 
@@ -293,6 +325,58 @@ class SettingsScreen extends ConsumerWidget {
 }
 
 // ====== 组件 ======
+
+class _QuickEntryCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final List<Color> gradient;
+  final VoidCallback onTap;
+
+  const _QuickEntryCard({
+    required this.icon,
+    required this.label,
+    required this.gradient,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: gradient),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: Colors.white, size: 24),
+            ),
+            const SizedBox(height: 8),
+            Text(label,
+                style: const TextStyle(
+                    fontSize: 13, fontWeight: FontWeight.w600)),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _SectionHeader extends StatelessWidget {
   final String title;
