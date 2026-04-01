@@ -87,7 +87,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                       balanceAsync.when(
                         data: (coins) => Text(
                           '$coins',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 42,
                             fontWeight: FontWeight.w800,
@@ -112,7 +112,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(48),
               child: Container(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 child: TabBar(
                   controller: _tabController,
                   indicatorColor: const Color(0xFFFF4D88),
@@ -212,7 +212,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -256,7 +256,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? const Color(0xFFFF4D88) : Colors.grey.shade700,
@@ -390,7 +390,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surfaceContainerHigh,
                 borderRadius: BorderRadius.vertical(
                   top: i == 0 ? const Radius.circular(12) : Radius.zero,
                   bottom: i == transactions.length - 1
