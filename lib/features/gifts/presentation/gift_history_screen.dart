@@ -37,11 +37,8 @@ class _GiftHistoryScreenState extends ConsumerState<GiftHistoryScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8FA),
       appBar: AppBar(
         title: const Text('礼物记录'),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: const Color(0xFFFF4D88),

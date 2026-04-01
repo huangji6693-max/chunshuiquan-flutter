@@ -17,11 +17,8 @@ class LikesScreen extends ConsumerWidget {
     final likesAsync = ref.watch(likesProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8FA),
       appBar: AppBar(
         title: const Text('谁喜欢了我'),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
         actions: [
           likesAsync.whenOrNull(
                 data: (r) => Padding(
