@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../coins/presentation/coin_shop_screen.dart';
-import '../../coins/data/coin_repository.dart';
 import '../../vip/presentation/vip_screen.dart';
 import '../../gifts/presentation/gift_history_screen.dart';
 import '../../verification/presentation/verification_screen.dart';

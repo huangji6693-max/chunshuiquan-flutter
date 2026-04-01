@@ -8,11 +8,8 @@ import 'dart:io';
 import '../../call/presentation/voice_call_screen.dart';
 import '../../gifts/presentation/gift_panel.dart';
 import '../../gifts/presentation/gift_animation_overlay.dart';
-import '../widgets/voice_record_button.dart';
-import '../widgets/voice_message_bubble.dart';
 import '../providers/messages_provider.dart';
 import '../../../core/providers/current_user_provider.dart';
-import '../../../core/services/heartbeat_service.dart';
 import '../../../core/network/websocket_service.dart';
 import '../../profile/data/upload_repository.dart';
 import '../data/message_repository.dart';
@@ -286,7 +283,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       body: messagesAsync.when(
         loading: () => const Center(
             child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
-        error: (e, _) => Center(child: Text('加载失败: $e')),
+        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Color(0xFFFFCDD2)), const SizedBox(height: 12), Text('消息加载失败，下拉重试', style: TextStyle(color: Colors.grey))])),
         data: (messages) => Chat(
           messages: _toUiMessages(
               messages, myId, widget.partnerName, widget.partnerAvatarUrl),

@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -162,7 +161,17 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                   child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
             ),
             error: (e, _) => SliverFillRemaining(
-              child: Center(child: Text('加载失败: $e')),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.wifi_off, size: 48, color: Colors.grey.shade300),
+                    const SizedBox(height: 12),
+                    Text('网络不太好，稍后再试',
+                        style: TextStyle(color: Colors.grey.shade500)),
+                  ],
+                ),
+              ),
             ),
           ),
         ],

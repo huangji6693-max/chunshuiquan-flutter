@@ -457,7 +457,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
-        child: Text('加载失败', style: TextStyle(color: Colors.grey.shade500)),
+        child: Text('网络开小差了', style: TextStyle(color: Colors.grey.shade500)),
       ),
     );
   }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../shared/theme/app_theme.dart';
-import '../core/network/session_provider.dart';
 import '../core/network/dio_client.dart';
 import '../core/services/heartbeat_service.dart';
 import '../core/network/websocket_service.dart';

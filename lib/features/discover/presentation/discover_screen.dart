@@ -12,7 +12,6 @@ import '../../../shared/widgets/user_card.dart';
 import '../../../shared/widgets/match_dialog.dart';
 import '../../checkin/presentation/checkin_dialog.dart';
 import '../../likes/presentation/likes_screen.dart';
-import '../../likes/data/likes_repository.dart';
 import '../../boost/presentation/boost_button.dart';
 
 /// 筛选参数

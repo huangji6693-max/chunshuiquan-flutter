@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/gift_repository.dart';
 import '../domain/gift.dart';
-import '../../coins/data/coin_repository.dart';
 import '../../coins/presentation/coin_shop_screen.dart';
 
 /// 礼物列表 Provider
@@ -156,7 +155,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                 itemBuilder: (context, i) => _buildGiftItem(gifts[i]),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const Center(child: Text('加载失败')),
+              error: (_, __) => const Center(child: Text('加载失败，请重试')),
             ),
           ),
 

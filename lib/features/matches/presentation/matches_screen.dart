@@ -45,7 +45,7 @@ class MatchesScreen extends ConsumerWidget {
             children: [
               Icon(Icons.error_outline, size: 48, color: Colors.grey.shade300),
               const SizedBox(height: 12),
-              Text('加载失败', style: TextStyle(color: Colors.grey.shade500)),
+              Text('网络开小差了', style: TextStyle(color: Colors.grey.shade500)),
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () => ref.invalidate(matchesProvider),

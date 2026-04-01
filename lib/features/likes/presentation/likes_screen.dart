@@ -152,7 +152,7 @@ class LikesScreen extends ConsumerWidget {
         },
         loading: () => const Center(
             child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Colors.grey.shade300), const SizedBox(height: 12), Text('网络不太好，稍后再试', style: TextStyle(color: Colors.grey)), const SizedBox(height: 8), TextButton(onPressed: () => ref.invalidate(likesProvider), child: const Text('点击重试'))])),
       ),
     );
   }

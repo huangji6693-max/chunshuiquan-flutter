@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/providers/current_user_provider.dart';
 import '../../../core/network/websocket_service.dart';
 import '../data/message_repository.dart';
 

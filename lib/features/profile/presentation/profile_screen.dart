@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../auth/data/auth_repository.dart';
 import '../../auth/domain/user_profile.dart';
 import '../../profile/data/profile_repository.dart';
 import '../../profile/data/upload_repository.dart';
@@ -22,7 +21,7 @@ class ProfileScreen extends ConsumerWidget {
       body: profileState.when(
         loading: () => const Center(
             child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
-        error: (e, _) => Center(child: Text('加载失败: $e')),
+        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Color(0xFFFFCDD2)), const SizedBox(height: 12), Text('网络开小差了', style: TextStyle(color: Colors.grey))])),
         data: (user) => _ProfileContent(user: user),
       ),
     );

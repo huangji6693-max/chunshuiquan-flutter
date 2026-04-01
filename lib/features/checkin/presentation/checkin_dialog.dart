@@ -259,7 +259,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
           ),
           error: (_, __) => const SizedBox(
             height: 100,
-            child: Center(child: Text('加载失败')),
+            child: Center(child: Text('加载失败，请稍后再试')),
           ),
         ),
       ),

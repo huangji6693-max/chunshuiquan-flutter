@@ -207,7 +207,7 @@ class _GiftList extends ConsumerWidget {
       },
       loading: () => const Center(
           child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
-      error: (e, _) => Center(child: Text('加载失败: $e')),
+      error: (e, _) => Center(child: Text('网络开小差了', style: TextStyle(color: Colors.grey))),
     );
   }
 
