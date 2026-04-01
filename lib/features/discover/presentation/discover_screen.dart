@@ -13,6 +13,7 @@ import '../../../shared/widgets/match_dialog.dart';
 import '../../checkin/presentation/checkin_dialog.dart';
 import '../../likes/presentation/likes_screen.dart';
 import '../../boost/presentation/boost_button.dart';
+import 'package:go_router/go_router.dart';
 
 /// 筛选参数
 class DiscoverFilter {
@@ -207,6 +208,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
   @override
   void initState() {
     super.initState();
+    // 异步检查 onboarding 状态（不阻塞UI）
+    Future.microtask(() {
+      final user = ref.read(currentUserProvider).valueOrNull;
+      if (user != null && !user.onboardingCompleted && mounted) {
+        context.go('/onboarding');
+      }
+    });
     _superLikeAnimCtrl = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,

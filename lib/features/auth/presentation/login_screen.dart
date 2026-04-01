@@ -79,11 +79,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     if (!_formKey.currentState!.validate()) return;
     setState(() { _loading = true; _error = null; });
     try {
-      await ref.read(authRepositoryProvider).login(
+      final user = await ref.read(authRepositoryProvider).login(
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text,
       );
-      if (mounted) context.go('/discover');
+      if (mounted) {
+        context.go(user.onboardingCompleted ? '/discover' : '/onboarding');
+      }
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } finally {
