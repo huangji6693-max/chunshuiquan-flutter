@@ -134,7 +134,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     const pink = Color(0xFFFF4D88);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      
       body: SafeArea(
         child: Column(
           children: [
