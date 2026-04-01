@@ -18,6 +18,9 @@ import '../features/vip/presentation/vip_screen.dart';
 import '../features/nearby/presentation/nearby_screen.dart';
 import '../features/gifts/presentation/gift_history_screen.dart';
 import '../features/likes/presentation/likes_screen.dart';
+import '../features/moments/presentation/moments_screen.dart';
+import '../features/moments/presentation/create_moment_screen.dart';
+import '../features/verification/presentation/verification_screen.dart';
 import '../core/storage/token_manager.dart';
 import '../core/providers/current_user_provider.dart';
 import '../shared/widgets/main_scaffold.dart';
@@ -108,6 +111,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/vip', builder: (_, __) => const VipScreen()),
           GoRoute(path: '/gifts/history', builder: (_, __) => const GiftHistoryScreen()),
           GoRoute(path: '/likes', builder: (_, __) => const LikesScreen()),
+          GoRoute(path: '/moments', builder: (_, __) => const MomentsScreen()),
+          GoRoute(path: '/moments/create', builder: (_, __) => const CreateMomentScreen()),
+          GoRoute(path: '/verification', builder: (_, __) => const VerificationScreen()),
           GoRoute(
             path: '/call/:matchId',
             builder: (_, state) {

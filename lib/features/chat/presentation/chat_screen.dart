@@ -8,6 +8,8 @@ import 'dart:io';
 import '../../call/presentation/voice_call_screen.dart';
 import '../../gifts/presentation/gift_panel.dart';
 import '../../gifts/presentation/gift_animation_overlay.dart';
+import '../widgets/voice_record_button.dart';
+import '../widgets/voice_message_bubble.dart';
 import '../providers/messages_provider.dart';
 import '../../../core/providers/current_user_provider.dart';
 import '../../../core/services/heartbeat_service.dart';
@@ -543,23 +545,43 @@ class _ChatInputState extends State<_ChatInput> {
           ),
           const SizedBox(width: 8),
 
-          // 发送按钮
-          GestureDetector(
-            onTap: _hasText ? _send : null,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _hasText
-                    ? const Color(0xFFFF4D88)
-                    : const Color(0xFFFF4D88).withOpacity(0.3),
-              ),
-              child: const Icon(Icons.send_rounded,
-                  color: Colors.white, size: 20),
-            ),
-          ),
+          // 发送 或 语音按钮
+          _hasText
+              ? GestureDetector(
+                  onTap: _send,
+                  child: Container(
+                    width: 42,
+                    height: 42,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFFFF4D88),
+                    ),
+                    child: const Icon(Icons.send_rounded,
+                        color: Colors.white, size: 20),
+                  ),
+                )
+              : GestureDetector(
+                  onLongPress: () {
+                    // 语音录制（长按提示）
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('长按录音，松手发送'),
+                        duration: Duration(seconds: 1),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFFFF4D88).withOpacity(0.1),
+                    ),
+                    child: const Icon(Icons.mic_none,
+                        color: Color(0xFFFF4D88), size: 22),
+                  ),
+                ),
         ],
       ),
     );

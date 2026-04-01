@@ -11,13 +11,13 @@ class FrostedNavBar extends StatelessWidget {
   static const _icons = [
     (Icons.explore, Icons.explore_outlined),
     (Icons.location_on, Icons.location_on_outlined),
+    (Icons.dynamic_feed, Icons.dynamic_feed_outlined),
     (Icons.favorite, Icons.favorite_outline),
-    (Icons.notifications, Icons.notifications_none),
     (Icons.person, Icons.person_outline),
   ];
 
   // Tab标签
-  static const _labels = ['发现', '附近', '匹配', '通知', '我的'];
+  static const _labels = ['发现', '附近', '动态', '匹配', '我的'];
 
   const FrostedNavBar({
     super.key,

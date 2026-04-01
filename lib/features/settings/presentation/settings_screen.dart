@@ -9,6 +9,7 @@ import '../../coins/presentation/coin_shop_screen.dart';
 import '../../coins/data/coin_repository.dart';
 import '../../vip/presentation/vip_screen.dart';
 import '../../gifts/presentation/gift_history_screen.dart';
+import '../../verification/presentation/verification_screen.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/errors/app_exception.dart';
 
@@ -155,6 +156,13 @@ class SettingsScreen extends ConsumerWidget {
             icon: Icons.person_outline,
             title: '个人资料',
             onTap: () => context.go('/profile'),
+          ),
+          _SettingsTile(
+            icon: Icons.verified_user,
+            title: '实名认证',
+            subtitle: '获取蓝色徽章，提升信任度',
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const VerificationScreen())),
           ),
           _SettingsTile(
             icon: Icons.shield_outlined,

@@ -11,11 +11,12 @@ class MainScaffold extends StatelessWidget {
   int _currentIndex(BuildContext context) {
     final loc = GoRouterState.of(context).matchedLocation;
     if (loc.startsWith('/nearby')) return 1;
-    if (loc.startsWith('/matches') || loc.startsWith('/chat')) return 2;
-    if (loc.startsWith('/notifications')) return 3;
+    if (loc.startsWith('/moments')) return 2;
+    if (loc.startsWith('/matches') || loc.startsWith('/chat')) return 3;
     if (loc.startsWith('/profile') || loc.startsWith('/settings') ||
         loc.startsWith('/coins') || loc.startsWith('/vip') ||
-        loc.startsWith('/gifts')) return 4;
+        loc.startsWith('/gifts') || loc.startsWith('/verification') ||
+        loc.startsWith('/notifications') || loc.startsWith('/likes')) return 4;
     return 0;
   }
 
@@ -31,8 +32,8 @@ class MainScaffold extends StatelessWidget {
           switch (i) {
             case 0: context.go('/discover');
             case 1: context.go('/nearby');
-            case 2: context.go('/matches');
-            case 3: context.go('/notifications');
+            case 2: context.go('/moments');
+            case 3: context.go('/matches');
             case 4: context.go('/profile');
           }
         },
