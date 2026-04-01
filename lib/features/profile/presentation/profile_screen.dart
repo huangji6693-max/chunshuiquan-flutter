@@ -180,6 +180,21 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
     await _addPhoto();
   }
 
+  /// 拖拽重排照片
+  Future<void> _reorderPhotos(List<String> newUrls) async {
+    try {
+      await ref.read(profileRepositoryProvider).reorderAvatars(newUrls);
+      ref.invalidate(currentUserProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('照片顺序已更新')));
+      }
+    } on AppException catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = widget.user;
@@ -439,6 +454,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                     deleting: _deleting,
                     onAdd: _addPhoto,
                     onDelete: _deletePhoto,
+                    onReorder: _reorderPhotos,
                   ),
                 ),
 
@@ -784,14 +800,15 @@ class _DetailTag extends StatelessWidget {
   }
 }
 
-/// 照片管理网格
-class _PhotoGrid extends StatelessWidget {
+/// 照片管理网格（编辑模式支持拖拽重排）
+class _PhotoGrid extends StatefulWidget {
   final List<String> avatarUrls;
   final bool editing;
   final bool uploading;
   final bool deleting;
   final VoidCallback onAdd;
   final ValueChanged<int> onDelete;
+  final ValueChanged<List<String>> onReorder;
 
   const _PhotoGrid({
     required this.avatarUrls,
@@ -800,13 +817,251 @@ class _PhotoGrid extends StatelessWidget {
     required this.deleting,
     required this.onAdd,
     required this.onDelete,
+    required this.onReorder,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final showAddBtn = editing && avatarUrls.length < 6;
-    final itemCount = avatarUrls.length + (showAddBtn ? 1 : 0);
+  State<_PhotoGrid> createState() => _PhotoGridState();
+}
 
+class _PhotoGridState extends State<_PhotoGrid> {
+  late List<String> _urls;
+  int? _dragIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _urls = List.from(widget.avatarUrls);
+  }
+
+  @override
+  void didUpdateWidget(covariant _PhotoGrid oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.avatarUrls != widget.avatarUrls) {
+      _urls = List.from(widget.avatarUrls);
+    }
+  }
+
+  /// 构建单张照片卡片
+  Widget _buildPhotoCard(String url, int index, {bool isDragging = false}) {
+    return Opacity(
+      opacity: isDragging ? 0.4 : 1.0,
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: CachedNetworkImage(
+                imageUrl: url,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                placeholder: (_, __) => Container(
+                  color: Colors.grey.shade200,
+                  child: const Center(
+                    child: SizedBox(
+                      width: 20, height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                ),
+                errorWidget: (_, __, ___) => Container(
+                  color: Colors.grey.shade200,
+                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                ),
+              ),
+            ),
+          ),
+          if (index == 0)
+            Positioned(
+              bottom: 0, left: 0, right: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF4D88).withOpacity(0.85),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                ),
+                child: const Text('主照片',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600)),
+              ),
+            ),
+          if (widget.editing) ...[
+            // 删除按钮
+            Positioned(
+              top: 4, right: 4,
+              child: GestureDetector(
+                onTap: widget.deleting ? null : () => widget.onDelete(index),
+                child: Container(
+                  width: 24, height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close,
+                      size: 14, color: Colors.white),
+                ),
+              ),
+            ),
+            // 拖拽提示图标
+            Positioned(
+              bottom: index == 0 ? 26 : 4, left: 4,
+              child: Container(
+                width: 22, height: 22,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Icon(Icons.drag_indicator,
+                    size: 14, color: Colors.white),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final showAddBtn = widget.editing && _urls.length < 6;
+    final itemCount = _urls.length + (showAddBtn ? 1 : 0);
+
+    // 编辑模式：使用 Wrap + LongPressDraggable + DragTarget 实现拖拽网格
+    if (widget.editing) {
+      return Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: List.generate(itemCount, (index) {
+          // 添加照片按钮
+          if (index == _urls.length && showAddBtn) {
+            return SizedBox(
+              width: (MediaQuery.of(context).size.width - 40 - 18 * 2 - 8 * 2) / 3,
+              height: (MediaQuery.of(context).size.width - 40 - 18 * 2 - 8 * 2) / 3 / 0.75,
+              child: GestureDetector(
+                onTap: widget.uploading ? null : widget.onAdd,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFFFF4D88).withOpacity(0.4),
+                      width: 1.5,
+                      strokeAlign: BorderSide.strokeAlignInside,
+                    ),
+                  ),
+                  child: widget.uploading
+                      ? const Center(
+                          child: SizedBox(
+                            width: 24, height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xFFFF4D88),
+                            ),
+                          ),
+                        )
+                      : const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_a_photo_outlined,
+                                size: 28, color: Color(0xFFFF4D88)),
+                            SizedBox(height: 4),
+                            Text('添加照片',
+                                style: TextStyle(
+                                    fontSize: 11, color: Color(0xFFFF4D88))),
+                          ],
+                        ),
+                ),
+              ),
+            );
+          }
+
+          final url = _urls[index];
+          final cardWidth = (MediaQuery.of(context).size.width - 40 - 18 * 2 - 8 * 2) / 3;
+          final cardHeight = cardWidth / 0.75;
+
+          return DragTarget<int>(
+            onWillAcceptWithDetails: (details) => details.data != index,
+            onAcceptWithDetails: (details) {
+              final fromIndex = details.data;
+              setState(() {
+                final item = _urls.removeAt(fromIndex);
+                _urls.insert(index, item);
+                _dragIndex = null;
+              });
+              // 调用后端重排API
+              widget.onReorder(List.from(_urls));
+            },
+            builder: (context, candidateData, rejectedData) {
+              final isTarget = candidateData.isNotEmpty;
+              return LongPressDraggable<int>(
+                data: index,
+                delay: const Duration(milliseconds: 200),
+                onDragStarted: () => setState(() => _dragIndex = index),
+                onDragEnd: (_) => setState(() => _dragIndex = null),
+                onDraggableCanceled: (_, __) => setState(() => _dragIndex = null),
+                feedback: Material(
+                  color: Colors.transparent,
+                  elevation: 8,
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    width: cardWidth,
+                    height: cardHeight,
+                    child: _buildPhotoCard(url, index),
+                  ),
+                ),
+                childWhenDragging: SizedBox(
+                  width: cardWidth,
+                  height: cardHeight,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFFFF4D88).withOpacity(0.3),
+                        width: 1.5,
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                  ),
+                ),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: cardWidth,
+                  height: cardHeight,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: isTarget
+                        ? Border.all(color: const Color(0xFFFF4D88), width: 2)
+                        : null,
+                  ),
+                  child: _buildPhotoCard(url, index,
+                      isDragging: _dragIndex == index),
+                ),
+              );
+            },
+          );
+        }),
+      );
+    }
+
+    // 非编辑模式：普通网格
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -816,121 +1071,9 @@ class _PhotoGrid extends StatelessWidget {
         mainAxisSpacing: 8,
         childAspectRatio: 0.75,
       ),
-      itemCount: itemCount,
+      itemCount: _urls.length,
       itemBuilder: (context, index) {
-        if (index == avatarUrls.length && showAddBtn) {
-          return GestureDetector(
-            onTap: uploading ? null : onAdd,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: const Color(0xFFFF4D88).withOpacity(0.4),
-                  width: 1.5,
-                  strokeAlign: BorderSide.strokeAlignInside,
-                ),
-              ),
-              child: uploading
-                  ? const Center(
-                      child: SizedBox(
-                        width: 24, height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Color(0xFFFF4D88),
-                        ),
-                      ),
-                    )
-                  : const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add_a_photo_outlined,
-                            size: 28, color: Color(0xFFFF4D88)),
-                        SizedBox(height: 4),
-                        Text('添加照片',
-                            style: TextStyle(
-                                fontSize: 11, color: Color(0xFFFF4D88))),
-                      ],
-                    ),
-            ),
-          );
-        }
-
-        final url = avatarUrls[index];
-        return Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImage(
-                  imageUrl: url,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                  placeholder: (_, __) => Container(
-                    color: Colors.grey.shade200,
-                    child: const Center(
-                      child: SizedBox(
-                        width: 20, height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    ),
-                  ),
-                  errorWidget: (_, __, ___) => Container(
-                    color: Colors.grey.shade200,
-                    child: const Icon(Icons.broken_image, color: Colors.grey),
-                  ),
-                ),
-              ),
-            ),
-            if (index == 0)
-              Positioned(
-                bottom: 0, left: 0, right: 0,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF4D88).withOpacity(0.85),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12),
-                    ),
-                  ),
-                  child: const Text('主照片',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600)),
-                ),
-              ),
-            if (editing)
-              Positioned(
-                top: 4, right: 4,
-                child: GestureDetector(
-                  onTap: deleting ? null : () => onDelete(index),
-                  child: Container(
-                    width: 24, height: 24,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.close,
-                        size: 14, color: Colors.white),
-                  ),
-                ),
-              ),
-          ],
-        );
+        return _buildPhotoCard(_urls[index], index);
       },
     );
   }

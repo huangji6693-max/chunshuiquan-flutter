@@ -56,4 +56,15 @@ class ProfileRepository {
       throw AppException.network(e.message ?? '删除头像失败');
     }
   }
+
+  /// 重排头像顺序
+  Future<void> reorderAvatars(List<String> urls) async {
+    try {
+      await _dio.put('/api/users/avatar/reorder', data: {
+        'avatarUrls': urls,
+      });
+    } on DioException catch (e) {
+      throw AppException.network(e.message ?? '重排头像失败');
+    }
+  }
 }

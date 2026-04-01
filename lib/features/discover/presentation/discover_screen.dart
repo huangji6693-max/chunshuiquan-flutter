@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/discover_repository.dart';
 import '../domain/swipe_result.dart';
 import '../../../core/errors/app_exception.dart';
@@ -10,16 +11,45 @@ import '../../../core/providers/current_user_provider.dart';
 import '../../../shared/widgets/user_card.dart';
 import '../../../shared/widgets/match_dialog.dart';
 
+/// 筛选参数
+class DiscoverFilter {
+  final int minAge;
+  final int maxAge;
+  final double maxDistance;
+  final String gender; // '' = 所有人, 'male' = 男, 'female' = 女
+
+  const DiscoverFilter({
+    this.minAge = 18,
+    this.maxAge = 60,
+    this.maxDistance = 50,
+    this.gender = '',
+  });
+
+  DiscoverFilter copyWith({
+    int? minAge,
+    int? maxAge,
+    double? maxDistance,
+    String? gender,
+  }) => DiscoverFilter(
+    minAge: minAge ?? this.minAge,
+    maxAge: maxAge ?? this.maxAge,
+    maxDistance: maxDistance ?? this.maxDistance,
+    gender: gender ?? this.gender,
+  );
+}
+
 /// Discover 状态管理
 class _DiscoverState {
   final List<UserProfile> cards;
   final bool isLoading;
   final SwipeResult? pendingMatch;
+  final DiscoverFilter filter;
 
   const _DiscoverState({
     this.cards = const [],
     this.isLoading = false,
     this.pendingMatch,
+    this.filter = const DiscoverFilter(),
   });
 
   _DiscoverState copyWith({
@@ -27,11 +57,13 @@ class _DiscoverState {
     bool? isLoading,
     SwipeResult? pendingMatch,
     bool clearMatch = false,
+    DiscoverFilter? filter,
   }) =>
       _DiscoverState(
         cards: cards ?? this.cards,
         isLoading: isLoading ?? this.isLoading,
         pendingMatch: clearMatch ? null : (pendingMatch ?? this.pendingMatch),
+        filter: filter ?? this.filter,
       );
 }
 
@@ -41,13 +73,57 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
   int _swipedCount = 0;
 
   _DiscoverNotifier(this._ref) : super(const _DiscoverState()) {
+    _loadFilterAndFetch();
+  }
+
+  /// 从本地存储加载筛选参数，然后拉取数据
+  Future<void> _loadFilterAndFetch() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final filter = DiscoverFilter(
+        minAge: prefs.getInt('filter_minAge') ?? 18,
+        maxAge: prefs.getInt('filter_maxAge') ?? 60,
+        maxDistance: prefs.getDouble('filter_maxDistance') ?? 50,
+        gender: prefs.getString('filter_gender') ?? '',
+      );
+      state = state.copyWith(filter: filter);
+    } catch (_) {
+      // 读取失败使用默认值
+    }
     _load();
+  }
+
+  /// 保存筛选参数到本地存储
+  Future<void> _saveFilter(DiscoverFilter filter) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('filter_minAge', filter.minAge);
+      await prefs.setInt('filter_maxAge', filter.maxAge);
+      await prefs.setDouble('filter_maxDistance', filter.maxDistance);
+      await prefs.setString('filter_gender', filter.gender);
+    } catch (_) {
+      // 存储失败静默处理
+    }
+  }
+
+  /// 应用新的筛选条件
+  Future<void> applyFilter(DiscoverFilter filter) async {
+    await _saveFilter(filter);
+    _swipedCount = 0;
+    state = state.copyWith(filter: filter, cards: []);
+    await _load();
   }
 
   Future<void> _load() async {
     state = state.copyWith(isLoading: true);
     try {
-      final profiles = await _ref.read(discoverRepositoryProvider).fetchFeed();
+      final f = state.filter;
+      final profiles = await _ref.read(discoverRepositoryProvider).fetchFeed(
+        minAge: f.minAge,
+        maxAge: f.maxAge,
+        gender: f.gender.isNotEmpty ? f.gender : null,
+        maxDistance: f.maxDistance,
+      );
       state = state.copyWith(cards: profiles, isLoading: false);
     } catch (_) {
       state = state.copyWith(isLoading: false);
@@ -58,7 +134,13 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
     if (_fetchingMore) return;
     _fetchingMore = true;
     try {
-      final more = await _ref.read(discoverRepositoryProvider).fetchFeed();
+      final f = state.filter;
+      final more = await _ref.read(discoverRepositoryProvider).fetchFeed(
+        minAge: f.minAge,
+        maxAge: f.maxAge,
+        gender: f.gender.isNotEmpty ? f.gender : null,
+        maxDistance: f.maxDistance,
+      );
       if (more.isNotEmpty) {
         state = state.copyWith(cards: [...state.cards, ...more]);
       }
@@ -159,6 +241,30 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
     super.dispose();
   }
 
+  /// 判断筛选是否非默认
+  bool _isFilterActive(DiscoverFilter filter) {
+    return filter.minAge != 18 ||
+        filter.maxAge != 60 ||
+        filter.maxDistance != 50 ||
+        filter.gender.isNotEmpty;
+  }
+
+  /// 显示筛选底部弹窗
+  void _showFilterSheet(BuildContext context, WidgetRef ref) {
+    final currentFilter = ref.read(_discoverNotifierProvider).filter;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _FilterBottomSheet(
+        initialFilter: currentFilter,
+        onApply: (filter) {
+          ref.read(_discoverNotifierProvider.notifier).applyFilter(filter);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final discoverState = ref.watch(_discoverNotifierProvider);
@@ -219,21 +325,23 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                 IconButton(
                   icon: const Icon(Icons.tune_rounded,
                       color: Color(0xFF1A1A2E), size: 26),
-                  onPressed: () {},
+                  onPressed: () => _showFilterSheet(context, ref),
                 ),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFFF4D88),
-                      border: Border.all(color: Colors.white, width: 1.5),
+                // 筛选活跃指示点（非默认参数时显示）
+                if (_isFilterActive(discoverState.filter))
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFFFF4D88),
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -683,6 +791,244 @@ class _SuperLikeBtnState extends State<_SuperLikeBtn>
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// 筛选底部弹窗
+class _FilterBottomSheet extends StatefulWidget {
+  final DiscoverFilter initialFilter;
+  final ValueChanged<DiscoverFilter> onApply;
+
+  const _FilterBottomSheet({
+    required this.initialFilter,
+    required this.onApply,
+  });
+
+  @override
+  State<_FilterBottomSheet> createState() => _FilterBottomSheetState();
+}
+
+class _FilterBottomSheetState extends State<_FilterBottomSheet> {
+  late RangeValues _ageRange;
+  late double _maxDistance;
+  late String _gender;
+
+  static const _genderOptions = [
+    {'label': '所有人', 'value': ''},
+    {'label': '男', 'value': 'male'},
+    {'label': '女', 'value': 'female'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _ageRange = RangeValues(
+      widget.initialFilter.minAge.toDouble(),
+      widget.initialFilter.maxAge.toDouble(),
+    );
+    _maxDistance = widget.initialFilter.maxDistance;
+    _gender = widget.initialFilter.gender;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 拖拽指示条
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // 标题
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('筛选',
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF1A1A2E))),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _ageRange = const RangeValues(18, 60);
+                    _maxDistance = 50;
+                    _gender = '';
+                  });
+                },
+                child: const Text('重置',
+                    style: TextStyle(
+                        color: Color(0xFFFF4D88),
+                        fontWeight: FontWeight.w600)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // 年龄范围
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('年龄范围',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1A1A2E))),
+              Text('${_ageRange.start.round()} - ${_ageRange.end.round()}岁',
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFFF4D88))),
+            ],
+          ),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: const Color(0xFFFF4D88),
+              inactiveTrackColor: const Color(0xFFFF4D88).withOpacity(0.15),
+              thumbColor: const Color(0xFFFF4D88),
+              overlayColor: const Color(0xFFFF4D88).withOpacity(0.1),
+              rangeThumbShape: const RoundRangeSliderThumbShape(
+                  enabledThumbRadius: 10),
+            ),
+            child: RangeSlider(
+              values: _ageRange,
+              min: 18,
+              max: 60,
+              divisions: 42,
+              onChanged: (values) => setState(() => _ageRange = values),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // 距离范围
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('距离范围',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1A1A2E))),
+              Text('${_maxDistance.round()}km',
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFFF4D88))),
+            ],
+          ),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: const Color(0xFFFF4D88),
+              inactiveTrackColor: const Color(0xFFFF4D88).withOpacity(0.15),
+              thumbColor: const Color(0xFFFF4D88),
+              overlayColor: const Color(0xFFFF4D88).withOpacity(0.1),
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+            ),
+            child: Slider(
+              value: _maxDistance,
+              min: 1,
+              max: 100,
+              divisions: 99,
+              onChanged: (v) => setState(() => _maxDistance = v),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // 性别筛选
+          const Text('性别',
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1A1A2E))),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 10,
+            children: _genderOptions.map((option) {
+              final selected = _gender == option['value'];
+              return ChoiceChip(
+                label: Text(option['label']!),
+                selected: selected,
+                selectedColor: const Color(0xFFFF4D88),
+                backgroundColor: Colors.grey.shade100,
+                labelStyle: TextStyle(
+                  color: selected ? Colors.white : const Color(0xFF1A1A2E),
+                  fontWeight: FontWeight.w600,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                side: BorderSide.none,
+                onSelected: (_) => setState(() => _gender = option['value']!),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 28),
+
+          // 应用按钮
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                ),
+                borderRadius: BorderRadius.circular(26),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF4D88).withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ElevatedButton(
+                onPressed: () {
+                  widget.onApply(DiscoverFilter(
+                    minAge: _ageRange.start.round(),
+                    maxAge: _ageRange.end.round(),
+                    maxDistance: _maxDistance,
+                    gender: _gender,
+                  ));
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(26)),
+                ),
+                child: const Text('应用筛选',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 1)),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

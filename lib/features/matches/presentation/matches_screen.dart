@@ -61,7 +61,16 @@ class MatchesScreen extends ConsumerWidget {
           }
 
           final newMatches = matches.where((m) => m.isNew == true).toList();
-          final conversations = matches.where((m) => m.isNew != true).toList();
+          final conversations = matches.where((m) => m.isNew != true).toList()
+            // 按 lastMessageAt 排序，有消息的在前，最新的在前
+            ..sort((a, b) {
+              final aTime = a.lastMessageAt;
+              final bTime = b.lastMessageAt;
+              if (aTime == null && bTime == null) return 0;
+              if (aTime == null) return 1;
+              if (bTime == null) return -1;
+              return bTime.compareTo(aTime);
+            });
 
           return RefreshIndicator(
             color: const Color(0xFFFF4D88),
@@ -306,8 +315,13 @@ class _ConversationTile extends ConsumerWidget {
     final onlineState = ref.watch(onlineStatusProvider(match.otherId));
     final isOnline = onlineState.valueOrNull ?? false;
 
-    // 格式化时间
-    final timeStr = _formatTime(match.createdAt);
+    // 格式化时间：优先显示 lastMessageAt，否则显示 createdAt
+    final displayTime = match.lastMessageAt ?? match.createdAt;
+    final timeStr = _formatTime(displayTime);
+
+    // 消息预览文本
+    final previewText = match.lastMessage ?? '点击开始聊天';
+    final hasUnread = match.unreadCount > 0;
 
     return InkWell(
       onTap: () => context.go('/chat/${match.matchId}', extra: {
@@ -364,48 +378,81 @@ class _ConversationTile extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(match.otherName,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w700,
+                      style: TextStyle(
+                          fontWeight: hasUnread ? FontWeight.w800 : FontWeight.w700,
                           fontSize: 16,
-                          color: Color(0xFF1A1A2E))),
+                          color: const Color(0xFF1A1A2E))),
                   const SizedBox(height: 4),
                   Text(
-                    '点击开始聊天', // TODO: 后端加 lastMessage 字段后替换
+                    previewText,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        color: Colors.grey.shade500,
+                        color: hasUnread
+                            ? const Color(0xFF1A1A2E)
+                            : Colors.grey.shade500,
                         fontSize: 13,
+                        fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal,
                         height: 1.3),
                   ),
                 ],
               ),
             ),
 
-            // 时间 + 通话按钮
+            const SizedBox(width: 8),
+
+            // 时间 + 未读气泡 + 通话按钮
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(timeStr,
                     style: TextStyle(
-                        color: Colors.grey.shade400,
-                        fontSize: 12)),
+                        color: hasUnread
+                            ? const Color(0xFFFF4D88)
+                            : Colors.grey.shade400,
+                        fontSize: 12,
+                        fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal)),
                 const SizedBox(height: 6),
-                GestureDetector(
-                  onTap: () => context.push('/call/${match.matchId}', extra: {
-                    'partnerName': match.otherName,
-                    'partnerAvatarUrl': match.otherAvatarUrl,
-                  }),
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFFF4D88).withOpacity(0.1),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 未读数红色气泡
+                    if (hasUnread)
+                      Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 7, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF4D88),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          match.unreadCount > 99
+                              ? '99+'
+                              : '${match.unreadCount}',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    GestureDetector(
+                      onTap: () => context.push('/call/${match.matchId}', extra: {
+                        'partnerName': match.otherName,
+                        'partnerAvatarUrl': match.otherAvatarUrl,
+                      }),
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFFFF4D88).withOpacity(0.1),
+                        ),
+                        child: const Icon(Icons.call,
+                            color: Color(0xFFFF4D88), size: 16),
+                      ),
                     ),
-                    child: const Icon(Icons.call,
-                        color: Color(0xFFFF4D88), size: 16),
-                  ),
+                  ],
                 ),
               ],
             ),
@@ -415,13 +462,18 @@ class _ConversationTile extends ConsumerWidget {
     );
   }
 
-  /// 格式化时间显示
+  /// 格式化时间显示（相对时间）
   String _formatTime(DateTime dt) {
     final now = DateTime.now();
     final diff = now.difference(dt);
     if (diff.inMinutes < 1) return '刚刚';
     if (diff.inHours < 1) return '${diff.inMinutes}分钟前';
-    if (diff.inDays < 1) return '${diff.inHours}小时前';
+    if (diff.inHours < 24) return '${diff.inHours}小时前';
+    // 判断是否是昨天
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    if (dt.year == yesterday.year && dt.month == yesterday.month && dt.day == yesterday.day) {
+      return '昨天';
+    }
     if (diff.inDays < 7) return '${diff.inDays}天前';
     return DateFormat('MM/dd').format(dt);
   }

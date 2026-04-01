@@ -14,9 +14,21 @@ class DiscoverRepository {
   final Dio _dio;
   DiscoverRepository(this._dio);
 
-  Future<List<UserProfile>> fetchFeed() async {
+  /// 获取推荐列表，支持筛选参数
+  Future<List<UserProfile>> fetchFeed({
+    int? minAge,
+    int? maxAge,
+    String? gender,
+    double? maxDistance,
+  }) async {
     try {
-      final res = await _dio.get('/api/users/feed');
+      final queryParams = <String, dynamic>{};
+      if (minAge != null) queryParams['minAge'] = minAge;
+      if (maxAge != null) queryParams['maxAge'] = maxAge;
+      if (gender != null && gender.isNotEmpty) queryParams['gender'] = gender;
+      if (maxDistance != null) queryParams['maxDistance'] = maxDistance;
+
+      final res = await _dio.get('/api/users/feed', queryParameters: queryParams);
       final list = res.data as List<dynamic>;
       return list.map((e) => UserProfile.fromJson(e as Map<String, dynamic>)).toList();
     } on DioException catch (e) {

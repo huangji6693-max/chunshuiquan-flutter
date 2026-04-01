@@ -15,6 +15,9 @@ class MatchItem {
   final String? otherBio;
   final DateTime createdAt;
   final bool? isNew;
+  final String? lastMessage;
+  final DateTime? lastMessageAt;
+  final int unreadCount;
 
   MatchItem({
     required this.matchId,
@@ -24,6 +27,9 @@ class MatchItem {
     this.otherBio,
     required this.createdAt,
     this.isNew,
+    this.lastMessage,
+    this.lastMessageAt,
+    this.unreadCount = 0,
   });
 
   factory MatchItem.fromJson(Map<String, dynamic> json) {
@@ -37,6 +43,11 @@ class MatchItem {
       otherBio: other['bio'] as String?,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime.now(),
       isNew: json['isNew'] as bool?,
+      lastMessage: json['lastMessage'] as String?,
+      lastMessageAt: json['lastMessageAt'] != null
+          ? DateTime.tryParse(json['lastMessageAt'] as String)
+          : null,
+      unreadCount: json['unreadCount'] as int? ?? 0,
     );
   }
 }
