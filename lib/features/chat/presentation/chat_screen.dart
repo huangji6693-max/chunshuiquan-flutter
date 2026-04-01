@@ -6,6 +6,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../call/presentation/voice_call_screen.dart';
+import '../../gifts/presentation/gift_panel.dart';
+import '../../gifts/presentation/gift_animation_overlay.dart';
 import '../providers/messages_provider.dart';
 import '../../../core/providers/current_user_provider.dart';
 import '../../../core/services/heartbeat_service.dart';
@@ -111,6 +113,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     } finally {
       if (mounted) setState(() => _uploadingImage = false);
     }
+  }
+
+  /// 弹出礼物面板
+  void _showGiftPanel(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => GiftPanel(
+        matchId: widget.matchId,
+        onGiftSent: () {},
+      ),
+    ).then((gift) {
+      // gift 是选中的 Gift 对象，送出成功后返回
+      if (gift != null && mounted) {
+        GiftAnimationOverlay.show(context, gift.icon, gift.name);
+      }
+    });
   }
 
   @override
@@ -367,10 +387,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   : null,
             ),
           ),
-          // 自定义输入框底部：图片按钮 + 输入框 + 发送
+          // 自定义输入框底部：礼物 + 图片 + 输入框 + 发送
           customBottomWidget: _ChatInput(
             onSend: (text) => _handleSend(types.PartialText(text: text)),
             onImageTap: _handleImageSend,
+            onGiftTap: () => _showGiftPanel(context),
             uploading: _uploadingImage,
           ),
         ),
@@ -384,11 +405,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 class _ChatInput extends StatefulWidget {
   final void Function(String) onSend;
   final VoidCallback onImageTap;
+  final VoidCallback onGiftTap;
   final bool uploading;
 
   const _ChatInput({
     required this.onSend,
     required this.onImageTap,
+    required this.onGiftTap,
     required this.uploading,
   });
 
@@ -439,6 +462,27 @@ class _ChatInputState extends State<_ChatInput> {
       ),
       child: Row(
         children: [
+          // 礼物按钮
+          GestureDetector(
+            onTap: widget.onGiftTap,
+            child: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFFFF4D88).withOpacity(0.15),
+                    const Color(0xFFFF8A5C).withOpacity(0.15),
+                  ],
+                ),
+              ),
+              child: const Icon(Icons.card_giftcard_rounded,
+                  color: Color(0xFFFF4D88), size: 22),
+            ),
+          ),
+          const SizedBox(width: 6),
+
           // 图片按钮
           GestureDetector(
             onTap: widget.uploading ? null : widget.onImageTap,

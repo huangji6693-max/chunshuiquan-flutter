@@ -11,6 +11,7 @@ import '../features/chat/presentation/chat_screen.dart';
 import '../features/call/presentation/voice_call_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
+import '../features/coins/presentation/coin_shop_screen.dart';
 import '../core/storage/token_manager.dart';
 import '../core/providers/current_user_provider.dart';
 import '../shared/widgets/main_scaffold.dart';
@@ -87,6 +88,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
           GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
+          GoRoute(path: '/coins', builder: (_, __) => const CoinShopScreen()),
           GoRoute(
             path: '/call/:matchId',
             builder: (_, state) {
