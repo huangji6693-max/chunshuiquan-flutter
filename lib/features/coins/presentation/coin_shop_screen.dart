@@ -43,7 +43,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
     final balanceAsync = ref.watch(coinBalanceProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8FA),
+      
       body: CustomScrollView(
         slivers: [
           // 顶部渐变AppBar + 余额

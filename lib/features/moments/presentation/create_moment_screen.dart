@@ -33,9 +33,9 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        
         surfaceTintColor: Colors.white,
         title: const Text('发布动态'),
         actions: [
