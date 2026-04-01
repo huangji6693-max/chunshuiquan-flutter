@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// 滑动 Overlay 标签
+/// 已在 DiscoverScreen 中通过 _SwipeLabel 内联实现
+/// 此文件保留兼容性
 class SwipeOverlay extends StatelessWidget {
   final bool isLike;
   final double opacity;
@@ -12,16 +15,16 @@ class SwipeOverlay extends StatelessWidget {
       opacity: opacity.clamp(0.0, 1.0),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           gradient: LinearGradient(
             colors: isLike
-                ? [Colors.green.withOpacity(0.15), Colors.transparent]
-                : [Colors.red.withOpacity(0.15), Colors.transparent],
+                ? [const Color(0xFF4CAF50).withOpacity(0.15), Colors.transparent]
+                : [const Color(0xFFFF5A5A).withOpacity(0.15), Colors.transparent],
             begin: isLike ? Alignment.centerLeft : Alignment.centerRight,
             end: isLike ? Alignment.centerRight : Alignment.centerLeft,
           ),
           border: Border.all(
-            color: isLike ? const Color(0xFF4CAF50) : const Color(0xFFF44336),
+            color: isLike ? const Color(0xFF4CAF50) : const Color(0xFFFF5A5A),
             width: 3,
           ),
         ),
@@ -30,25 +33,25 @@ class SwipeOverlay extends StatelessWidget {
         child: Transform.rotate(
           angle: isLike ? -0.35 : 0.35,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
               border: Border.all(
                 color: isLike
                     ? const Color(0xFF4CAF50)
-                    : const Color(0xFFF44336),
-                width: 3,
+                    : const Color(0xFFFF5A5A),
+                width: 4,
               ),
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               isLike ? 'LIKE' : 'NOPE',
               style: TextStyle(
                 color: isLike
                     ? const Color(0xFF4CAF50)
-                    : const Color(0xFFF44336),
-                fontSize: 34,
+                    : const Color(0xFFFF5A5A),
+                fontSize: 36,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 3,
+                letterSpacing: 4,
               ),
             ),
           ),

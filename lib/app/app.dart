@@ -4,6 +4,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import '../shared/theme/app_theme.dart';
 import '../core/network/session_provider.dart';
 import '../core/network/dio_client.dart';
+import '../core/services/heartbeat_service.dart';
+import '../core/network/websocket_service.dart';
 import 'router.dart';
 
 class ChunShuiQuanApp extends ConsumerStatefulWidget {
@@ -18,6 +20,20 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
   void initState() {
     super.initState();
     _setupFCM();
+    _setupServices();
+  }
+
+  /// 初始化心跳和 WebSocket 服务
+  void _setupServices() {
+    // 启动心跳服务（维护在线状态）
+    try {
+      ref.read(heartbeatServiceProvider).start();
+    } catch (_) {}
+
+    // 连接 WebSocket
+    try {
+      ref.read(webSocketServiceProvider).connect();
+    } catch (_) {}
   }
 
   Future<void> _setupFCM() async {
@@ -45,10 +61,9 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
       final router = ref.read(routerProvider);
       final data = message.data;
       if (data['type'] == 'new_match') {
-        // 显示 SnackBar 提示
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('💕 你有新的匹配！'),
+            content: const Text('你有新的匹配！'),
             action: SnackBarAction(
               label: '查看',
               onPressed: () => router.go('/matches'),

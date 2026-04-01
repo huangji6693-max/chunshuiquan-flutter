@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import '../data/discover_repository.dart';
@@ -9,7 +10,7 @@ import '../../../core/providers/current_user_provider.dart';
 import '../../../shared/widgets/user_card.dart';
 import '../../../shared/widgets/match_dialog.dart';
 
-// DiscoverState 包含卡片列表 + 待弹出的 match
+/// Discover 状态管理
 class _DiscoverState {
   final List<UserProfile> cards;
   final bool isLoading;
@@ -100,6 +101,7 @@ final _discoverNotifierProvider =
   (ref) => _DiscoverNotifier(ref),
 );
 
+/// 发现页 - Tinder级别UI
 class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
 
@@ -111,7 +113,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
     with TickerProviderStateMixin {
   final CardSwiperController _swiperCtrl = CardSwiperController();
 
-  // Super Like 星星overlay动画控制器
+  // Super Like 星星overlay动画
   late AnimationController _superLikeAnimCtrl;
   late Animation<double> _superLikeScale;
   late Animation<double> _superLikeOpacity;
@@ -145,7 +147,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
     });
   }
 
-  /// 触发Super Like星星overlay动画
   void _playSuperLikeAnimation() {
     setState(() => _showSuperLikeOverlay = true);
     _superLikeAnimCtrl.forward(from: 0);
@@ -193,7 +194,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
         title: ShaderMask(
           blendMode: BlendMode.srcIn,
           shaderCallback: (bounds) => const LinearGradient(
-            colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+            colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ).createShader(bounds),
@@ -239,12 +240,28 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
         ],
       ),
       body: discoverState.isLoading && discoverState.cards.isEmpty
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFFFF4D88)))
           : discoverState.cards.isEmpty
-              ? const Center(
-                  child: Text('暂时没有更多人了\n明天再来看看 👀',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.grey)))
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.explore_off,
+                          size: 72, color: Colors.grey.shade300),
+                      const SizedBox(height: 16),
+                      const Text('暂时没有更多人了',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey)),
+                      const SizedBox(height: 8),
+                      Text('明天再来看看吧',
+                          style: TextStyle(
+                              fontSize: 14, color: Colors.grey.shade400)),
+                    ],
+                  ),
+                )
               : Column(
                   children: [
                     Expanded(
@@ -255,21 +272,56 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                             controller: _swiperCtrl,
                             cardsCount: discoverState.cards.length,
                             onSwipe: (prev, curr, dir) {
+                              HapticFeedback.lightImpact();
                               final direction = switch (dir) {
                                 CardSwiperDirection.right => 'like',
                                 CardSwiperDirection.top => 'superlike',
                                 _ => 'nope',
                               };
-                              // 向上滑动触发Super Like动画
                               if (direction == 'superlike') {
                                 _playSuperLikeAnimation();
                               }
                               notifier.onSwiped(prev, direction);
                               return true;
                             },
-                            cardBuilder: (ctx, idx, _, __) =>
-                                UserCard(user: discoverState.cards[idx]),
+                            cardBuilder: (ctx, idx, percentX, percentY) {
+                              return Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  UserCard(user: discoverState.cards[idx]),
+                                  // 右滑 LIKE overlay
+                                  if (percentX > 0)
+                                    _SwipeLabel(
+                                      text: 'LIKE',
+                                      color: const Color(0xFF4CAF50),
+                                      opacity: (percentX / 100).clamp(0.0, 1.0),
+                                      angle: -0.35,
+                                      alignment: Alignment.topLeft,
+                                    ),
+                                  // 左滑 NOPE overlay
+                                  if (percentX < 0)
+                                    _SwipeLabel(
+                                      text: 'NOPE',
+                                      color: const Color(0xFFFF5A5A),
+                                      opacity: (-percentX / 100).clamp(0.0, 1.0),
+                                      angle: 0.35,
+                                      alignment: Alignment.topRight,
+                                    ),
+                                  // 上滑 SUPER LIKE overlay
+                                  if (percentY < 0)
+                                    _SwipeLabel(
+                                      text: 'SUPER',
+                                      color: const Color(0xFF5B9AFF),
+                                      opacity: (-percentY / 100).clamp(0.0, 1.0),
+                                      angle: 0,
+                                      alignment: Alignment.center,
+                                      icon: Icons.star_rounded,
+                                    ),
+                                ],
+                              );
+                            },
                           ),
+
                           // Super Like 蓝色星星 overlay 动画
                           if (_showSuperLikeOverlay)
                             Positioned.fill(
@@ -304,34 +356,48 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                         ],
                       ),
                     ),
+
+                    // 底部三个动作按钮
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _ActionBtn(
+                          // NOPE 按钮 - 红色
+                          _ActionButton(
                             icon: Icons.close_rounded,
                             color: const Color(0xFFFF5A5A),
-                            semanticLabel: '不喜欢',
+                            label: 'NOPE',
                             size: 68,
-                            onTap: () => _swiperCtrl.swipe(CardSwiperDirection.left),
+                            onTap: () {
+                              HapticFeedback.mediumImpact();
+                              _swiperCtrl.swipe(CardSwiperDirection.left);
+                            },
                           ),
+
+                          // SUPER LIKE 按钮 - 蓝色，带脉冲动画
                           Transform.translate(
-                            offset: const Offset(0, -8),
+                            offset: const Offset(0, -10),
                             child: _SuperLikeBtn(
                               onTap: () {
+                                HapticFeedback.heavyImpact();
                                 _playSuperLikeAnimation();
                                 _swiperCtrl.swipe(CardSwiperDirection.top);
                               },
                             ),
                           ),
-                          _ActionBtn(
+
+                          // LIKE 按钮 - 绿色
+                          _ActionButton(
                             icon: Icons.favorite_rounded,
-                            color: const Color(0xFFFF4D88),
-                            semanticLabel: '喜欢',
+                            color: const Color(0xFF4CAF50),
+                            label: 'LIKE',
                             size: 68,
-                            onTap: () => _swiperCtrl.swipe(CardSwiperDirection.right),
+                            onTap: () {
+                              HapticFeedback.mediumImpact();
+                              _swiperCtrl.swipe(CardSwiperDirection.right);
+                            },
                           ),
                         ],
                       ),
@@ -342,55 +408,193 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
   }
 }
 
-class _ActionBtn extends StatelessWidget {
-  final IconData icon;
+/// 滑动标签 overlay
+class _SwipeLabel extends StatelessWidget {
+  final String text;
   final Color color;
-  final String semanticLabel;
-  final double size;
-  final VoidCallback onTap;
+  final double opacity;
+  final double angle;
+  final Alignment alignment;
+  final IconData? icon;
 
-  const _ActionBtn({
-    required this.icon,
+  const _SwipeLabel({
+    required this.text,
     required this.color,
-    required this.semanticLabel,
-    required this.size,
-    required this.onTap,
+    required this.opacity,
+    required this.angle,
+    required this.alignment,
+    this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      label: semanticLabel,
-      button: true,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.30),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-              BoxShadow(
-                color: Colors.black.withOpacity(0.06),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: Opacity(
+          opacity: opacity.clamp(0.0, 1.0),
+          child: Container(
+            alignment: alignment == Alignment.center
+                ? Alignment.center
+                : alignment == Alignment.topLeft
+                    ? const Alignment(-0.7, -0.7)
+                    : const Alignment(0.7, -0.7),
+            margin: const EdgeInsets.all(20),
+            child: Transform.rotate(
+              angle: angle,
+              child: icon != null
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(icon, size: 60, color: color),
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: color, width: 4),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(text,
+                              style: TextStyle(
+                                color: color,
+                                fontSize: 32,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 3,
+                              )),
+                        ),
+                      ],
+                    )
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: color, width: 4),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(text,
+                          style: TextStyle(
+                            color: color,
+                            fontSize: 38,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 4,
+                          )),
+                    ),
+            ),
           ),
-          child: Icon(icon, color: color, size: size * 0.44),
         ),
       ),
     );
   }
 }
 
-/// Super Like 专用按钮，带蓝色渐变边框和脉冲动画
+/// 动作按钮 - 带阴影和按压效果
+class _ActionButton extends StatefulWidget {
+  final IconData icon;
+  final Color color;
+  final String label;
+  final double size;
+  final VoidCallback onTap;
+
+  const _ActionButton({
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.size,
+    required this.onTap,
+  });
+
+  @override
+  State<_ActionButton> createState() => _ActionButtonState();
+}
+
+class _ActionButtonState extends State<_ActionButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      duration: const Duration(milliseconds: 120),
+      vsync: this,
+    );
+    _scale = Tween<double>(begin: 1.0, end: 0.85).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: widget.label,
+      button: true,
+      child: GestureDetector(
+        onTapDown: (_) => _ctrl.forward(),
+        onTapUp: (_) {
+          _ctrl.reverse();
+          widget.onTap();
+        },
+        onTapCancel: () => _ctrl.reverse(),
+        child: AnimatedBuilder(
+          animation: _scale,
+          builder: (context, child) => Transform.scale(
+            scale: _scale.value,
+            child: child,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: widget.size,
+                height: widget.size,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: widget.color.withOpacity(0.35),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.06),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                  border: Border.all(
+                    color: widget.color.withOpacity(0.15),
+                    width: 2,
+                  ),
+                ),
+                child: Icon(widget.icon,
+                    color: widget.color,
+                    size: widget.size * 0.44),
+              ),
+              const SizedBox(height: 6),
+              Text(widget.label,
+                  style: TextStyle(
+                    color: widget.color,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                  )),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Super Like 专用按钮 - 蓝色渐变 + 脉冲动画
 class _SuperLikeBtn extends StatefulWidget {
   final VoidCallback onTap;
   const _SuperLikeBtn({required this.onTap});
@@ -404,14 +608,13 @@ class _SuperLikeBtnState extends State<_SuperLikeBtn>
   late AnimationController _pulseCtrl;
   late Animation<double> _pulseAnim;
 
-  static const double _size = 56;
+  static const double _size = 58;
   static const Color _blue = Color(0xFF5B9AFF);
   static const Color _blueLight = Color(0xFF82B4FF);
 
   @override
   void initState() {
     super.initState();
-    // 持续脉冲动画，吸引用户注意
     _pulseCtrl = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
@@ -430,7 +633,7 @@ class _SuperLikeBtnState extends State<_SuperLikeBtn>
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: '超级喜欢',
+      label: 'SUPER LIKE',
       button: true,
       child: AnimatedBuilder(
         animation: _pulseAnim,
@@ -440,32 +643,44 @@ class _SuperLikeBtnState extends State<_SuperLikeBtn>
         ),
         child: GestureDetector(
           onTap: widget.onTap,
-          child: Container(
-            width: _size,
-            height: _size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              // 蓝色渐变背景
-              gradient: const LinearGradient(
-                colors: [_blue, _blueLight],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: _size,
+                height: _size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [_blue, _blueLight],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _blue.withOpacity(0.45),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                    BoxShadow(
+                      color: _blue.withOpacity(0.20),
+                      blurRadius: 40,
+                      spreadRadius: 4,
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.star_rounded,
+                    color: Colors.white, size: 28),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: _blue.withOpacity(0.45),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-                BoxShadow(
-                  color: _blue.withOpacity(0.20),
-                  blurRadius: 40,
-                  spreadRadius: 4,
-                ),
-              ],
-            ),
-            child: const Icon(Icons.star_rounded,
-                color: Colors.white, size: 28),
+              const SizedBox(height: 6),
+              const Text('SUPER',
+                  style: TextStyle(
+                    color: _blue,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                  )),
+            ],
           ),
         ),
       ),

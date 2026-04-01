@@ -1,9 +1,11 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../data/auth_repository.dart';
 import '../../../core/errors/app_exception.dart';
 
+/// 注册页 - 步骤式注册，精致卡片选择器
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
@@ -12,7 +14,7 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
@@ -27,6 +29,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   late final Animation<double> _fadeAnim;
   late final Animation<Offset> _slideAnim;
 
+  // 波浪动画
+  late final AnimationController _waveCtrl;
+
+  // 按钮缩放
+  late final AnimationController _btnCtrl;
+  late final Animation<double> _btnScale;
+
   @override
   void initState() {
     super.initState();
@@ -38,28 +47,39 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _animCtrl, curve: Curves.easeOutCubic));
     _animCtrl.forward();
+
+    _waveCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
+
+    _btnCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _btnScale = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _btnCtrl, curve: Curves.easeInOut),
+    );
   }
 
   @override
   void dispose() {
     _animCtrl.dispose();
+    _waveCtrl.dispose();
+    _btnCtrl.dispose();
     _nameCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
     super.dispose();
   }
 
+  /// 底部弹出日期选择器
   Future<void> _pickDate() async {
-    final picked = await showDatePicker(
+    final picked = await showModalBottomSheet<DateTime>(
       context: context,
-      initialDate: DateTime(2000),
-      firstDate: DateTime(1950),
-      lastDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(primary: Color(0xFFFF4D88)),
-        ),
-        child: child!,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _DatePickerSheet(
+        initialDate: _birthDate ?? DateTime(2000),
       ),
     );
     if (picked != null) setState(() => _birthDate = picked);
@@ -89,334 +109,548 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     }
   }
 
-  InputDecoration _inputDeco(String label, IconData icon) => InputDecoration(
+  /// 半透明输入框样式
+  InputDecoration _frostInputDeco(String label, IconData icon) => InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, size: 20, color: Colors.grey),
+        prefixIcon: Icon(icon, size: 20, color: Colors.white70),
         filled: true,
-        fillColor: const Color(0xFFF8F8F8),
-        labelStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+        fillColor: Colors.white.withOpacity(0.12),
+        labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide.none),
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: Colors.white.withOpacity(0.3))),
         enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide.none),
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: Colors.white.withOpacity(0.25))),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Color(0xFFFF4D88), width: 1.5),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.white, width: 1.5),
         ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.yellow.withOpacity(0.6)),
+        ),
+        errorStyle: const TextStyle(color: Colors.yellowAccent, fontSize: 12),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      body: Stack(
+        children: [
+          // 渐变背景
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: FadeTransition(
-            opacity: _fadeAnim,
-            child: SlideTransition(
-              position: _slideAnim,
-              child: Column(
-                children: [
-                  // 顶部返回按钮
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back_ios,
-                              color: Colors.white),
-                          onPressed: () => context.pop(),
-                        ),
-                      ],
-                    ),
-                  ),
 
-                  // 品牌 logo 区（紧凑，固定不滚动）
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Column(
-                      children: [
-                        const Text('🌊', style: TextStyle(fontSize: 36)),
-                        const SizedBox(height: 6),
-                        ShaderMask(
-                          blendMode: BlendMode.srcIn,
-                          shaderCallback: (bounds) => LinearGradient(
-                            colors: [
-                              Colors.white,
-                              Colors.white.withOpacity(0.85)
-                            ],
-                          ).createShader(bounds),
-                          child: const Text(
-                            '春水圈',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              letterSpacing: 3,
+          // 波浪动画
+          Positioned.fill(
+            child: AnimatedBuilder(
+              animation: _waveCtrl,
+              builder: (context, _) => CustomPaint(
+                painter: _WavePainter(animation: _waveCtrl.value),
+              ),
+            ),
+          ),
+
+          // 主内容
+          SafeArea(
+            child: FadeTransition(
+              opacity: _fadeAnim,
+              child: SlideTransition(
+                position: _slideAnim,
+                child: Column(
+                  children: [
+                    // 顶部栏
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back_ios,
+                                color: Colors.white),
+                            onPressed: () => context.pop(),
+                          ),
+                          const Spacer(),
+                          const Text('🌊',
+                              style: TextStyle(fontSize: 28)),
+                          const SizedBox(width: 8),
+                          const Text('春水圈',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                letterSpacing: 2,
+                              )),
+                          const Spacer(),
+                          const SizedBox(width: 48), // 平衡返回按钮
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // 副标题
+                    Text(
+                      '创建你的专属档案',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(0.75),
+                        letterSpacing: 2,
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
+                        child: Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(28),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '创建你的专属档案',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.white.withOpacity(0.75),
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('几步就好',
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.white)),
+                                const SizedBox(height: 6),
+                                Text('填写基本信息开始交友',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white.withOpacity(0.7))),
+                                const SizedBox(height: 24),
 
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
-                      child: Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(28),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
-                              blurRadius: 30,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('几步就好',
-                                  style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w800,
-                                      color: Color(0xFF1A1A2E))),
-                              const SizedBox(height: 20),
-
-                              TextFormField(
-                                key: const Key('name'),
-                                controller: _nameCtrl,
-                                decoration: _inputDeco('昵称', Icons.person_outline),
-                                textInputAction: TextInputAction.next,
-                                validator: (v) => v == null || v.trim().isEmpty
-                                    ? '请输入昵称'
-                                    : null,
-                              ),
-                              const SizedBox(height: 14),
-
-                              TextFormField(
-                                key: const Key('email'),
-                                controller: _emailCtrl,
-                                decoration: _inputDeco('邮箱', Icons.email_outlined),
-                                keyboardType: TextInputType.emailAddress,
-                                textInputAction: TextInputAction.next,
-                                validator: (v) =>
-                                    v == null || !v.contains('@')
-                                        ? '请输入有效邮箱'
-                                        : null,
-                              ),
-                              const SizedBox(height: 14),
-
-                              TextFormField(
-                                key: const Key('password'),
-                                controller: _passCtrl,
-                                decoration:
-                                    _inputDeco('密码', Icons.lock_outline)
-                                        .copyWith(
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _obscure
-                                          ? Icons.visibility_off
-                                          : Icons.visibility,
-                                      color: Colors.grey,
-                                      size: 20,
-                                    ),
-                                    onPressed: () => setState(
-                                        () => _obscure = !_obscure),
-                                  ),
+                                // 昵称
+                                TextFormField(
+                                  key: const Key('name'),
+                                  controller: _nameCtrl,
+                                  decoration: _frostInputDeco('昵称', Icons.person_outline),
+                                  textInputAction: TextInputAction.next,
+                                  style: const TextStyle(color: Colors.white, fontSize: 15),
+                                  validator: (v) => v == null || v.trim().isEmpty
+                                      ? '请输入昵称'
+                                      : null,
                                 ),
-                                obscureText: _obscure,
-                                textInputAction: TextInputAction.next,
-                                validator: (v) => v == null || v.length < 6
-                                    ? '密码至少6位'
-                                    : null,
-                              ),
-                              const SizedBox(height: 14),
+                                const SizedBox(height: 14),
 
-                              // 生日
-                              GestureDetector(
-                                key: const Key('birth_date'),
-                                onTap: _pickDate,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 14),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFF8F8F8),
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.cake_outlined,
-                                          color: Colors.grey, size: 20),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        _birthDate == null
-                                            ? '选择生日'
-                                            : '${_birthDate!.year}年${_birthDate!.month}月${_birthDate!.day}日',
-                                        style: TextStyle(
-                                          color: _birthDate == null
-                                              ? Colors.grey
-                                              : Colors.black87,
-                                          fontSize: 14,
-                                        ),
+                                // 邮箱
+                                TextFormField(
+                                  key: const Key('email'),
+                                  controller: _emailCtrl,
+                                  decoration: _frostInputDeco('邮箱', Icons.email_outlined),
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.next,
+                                  style: const TextStyle(color: Colors.white, fontSize: 15),
+                                  validator: (v) =>
+                                      v == null || !v.contains('@')
+                                          ? '请输入有效邮箱'
+                                          : null,
+                                ),
+                                const SizedBox(height: 14),
+
+                                // 密码
+                                TextFormField(
+                                  key: const Key('password'),
+                                  controller: _passCtrl,
+                                  decoration:
+                                      _frostInputDeco('密码', Icons.lock_outline)
+                                          .copyWith(
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _obscure
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: Colors.white60,
+                                        size: 20,
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 14),
-
-                              // 性别
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _GenderBtn(
-                                      label: '♂ 男生',
-                                      selected: _gender == 'male',
-                                      onTap: () =>
-                                          setState(() => _gender = 'male'),
+                                      onPressed: () => setState(
+                                          () => _obscure = !_obscure),
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: _GenderBtn(
-                                      label: '♀ 女生',
-                                      selected: _gender == 'female',
-                                      onTap: () =>
-                                          setState(() => _gender = 'female'),
+                                  obscureText: _obscure,
+                                  textInputAction: TextInputAction.next,
+                                  style: const TextStyle(color: Colors.white, fontSize: 15),
+                                  validator: (v) => v == null || v.length < 6
+                                      ? '密码至少6位'
+                                      : null,
+                                ),
+                                const SizedBox(height: 18),
+
+                                // 生日选择器 - 底部弹出
+                                GestureDetector(
+                                  key: const Key('birth_date'),
+                                  onTap: _pickDate,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.12),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.25),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.cake_outlined,
+                                            color: Colors.white70, size: 20),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          _birthDate == null
+                                              ? '选择生日'
+                                              : '${_birthDate!.year}年${_birthDate!.month}月${_birthDate!.day}日',
+                                          style: TextStyle(
+                                            color: _birthDate == null
+                                                ? Colors.white60
+                                                : Colors.white,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Icon(Icons.arrow_drop_down,
+                                            color: Colors.white.withOpacity(0.5)),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 18),
+
+                                // 性别选择 - 精致卡片选择器
+                                Text('性别',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white.withOpacity(0.7),
+                                        fontWeight: FontWeight.w500)),
+                                const SizedBox(height: 10),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _GenderCard(
+                                        icon: Icons.male,
+                                        label: '男生',
+                                        emoji: '👨',
+                                        selected: _gender == 'male',
+                                        onTap: () =>
+                                            setState(() => _gender = 'male'),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 14),
+                                    Expanded(
+                                      child: _GenderCard(
+                                        icon: Icons.female,
+                                        label: '女生',
+                                        emoji: '👩',
+                                        selected: _gender == 'female',
+                                        onTap: () =>
+                                            setState(() => _gender = 'female'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                if (_error != null) ...[
+                                  const SizedBox(height: 14),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.error_outline,
+                                            color: Colors.white, size: 16),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(_error!,
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13)),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
-                              ),
 
-                              if (_error != null) ...[
-                                const SizedBox(height: 12),
-                                Text(_error!,
-                                    style: const TextStyle(
-                                        color: Color(0xFFFF4D88),
-                                        fontSize: 13)),
-                              ],
+                                const SizedBox(height: 24),
 
-                              const SizedBox(height: 20),
-
-                              // 注册按钮（渐变）
-                              SizedBox(
-                                width: double.infinity,
-                                height: 52,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFFFF4D88),
-                                        Color(0xFFFF7043)
-                                      ],
+                                // 注册按钮 - 白色按钮带缩放
+                                GestureDetector(
+                                  onTapDown: (_) => _btnCtrl.forward(),
+                                  onTapUp: (_) {
+                                    _btnCtrl.reverse();
+                                    if (!_loading) _register();
+                                  },
+                                  onTapCancel: () => _btnCtrl.reverse(),
+                                  child: AnimatedBuilder(
+                                    animation: _btnScale,
+                                    builder: (context, child) => Transform.scale(
+                                      scale: _btnScale.value,
+                                      child: child,
                                     ),
-                                    borderRadius: BorderRadius.circular(26),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0xFFFF4D88)
-                                            .withOpacity(0.4),
-                                        blurRadius: 12,
-                                        offset: const Offset(0, 4),
+                                    child: Container(
+                                      key: const Key('register_btn'),
+                                      width: double.infinity,
+                                      height: 54,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(27),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.15),
+                                            blurRadius: 15,
+                                            offset: const Offset(0, 6),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  child: ElevatedButton(
-                                    key: const Key('register_btn'),
-                                    onPressed: _loading ? null : _register,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(26),
+                                      child: Center(
+                                        child: _loading
+                                            ? const SizedBox(
+                                                height: 22,
+                                                width: 22,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2.5,
+                                                  color: Color(0xFFFF4D88),
+                                                ),
+                                              )
+                                            : const Text('开始我的旅程',
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Color(0xFFFF4D88),
+                                                  letterSpacing: 2,
+                                                )),
                                       ),
                                     ),
-                                    child: _loading
-                                        ? const SizedBox(
-                                            height: 20,
-                                            width: 20,
-                                            child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: Colors.white),
-                                          )
-                                        : const Text('开始我的旅程 🌊',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white)),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 性别选择卡片 - 精致设计
+class _GenderCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String emoji;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _GenderCard({
+    required this.icon,
+    required this.label,
+    required this.emoji,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: selected
+              ? Colors.white.withOpacity(0.3)
+              : Colors.white.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: selected ? Colors.white : Colors.white.withOpacity(0.2),
+            width: selected ? 2 : 1,
+          ),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.15),
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                  )
+                ]
+              : [],
+        ),
+        child: Column(
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 32)),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: selected ? Colors.white : Colors.white70,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                fontSize: 15,
+              ),
+            ),
+            if (selected) ...[
+              const SizedBox(height: 6),
+              Container(
+                width: 6, height: 6,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );
   }
 }
 
-class _GenderBtn extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  const _GenderBtn(
-      {required this.label, required this.selected, required this.onTap});
+/// 底部弹出日期选择器
+class _DatePickerSheet extends StatefulWidget {
+  final DateTime initialDate;
+  const _DatePickerSheet({required this.initialDate});
+
+  @override
+  State<_DatePickerSheet> createState() => _DatePickerSheetState();
+}
+
+class _DatePickerSheetState extends State<_DatePickerSheet> {
+  late DateTime _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = widget.initialDate;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: selected ? const Color(0xFFFF4D88) : const Color(0xFFF8F8F8),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: selected ? Colors.white : Colors.grey,
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 拖拽指示条
+          const SizedBox(height: 12),
+          Container(
+            width: 40, height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
             ),
           ),
-        ),
+          // 标题栏
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('取消',
+                      style: TextStyle(color: Colors.grey, fontSize: 16)),
+                ),
+                const Text('选择生日',
+                    style: TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.w700)),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, _selected),
+                  child: const Text('确定',
+                      style: TextStyle(
+                          color: Color(0xFFFF4D88),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600)),
+                ),
+              ],
+            ),
+          ),
+          // 日期选择器
+          SizedBox(
+            height: 220,
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: const ColorScheme.light(
+                    primary: Color(0xFFFF4D88)),
+              ),
+              child: CalendarDatePicker(
+                initialDate: _selected,
+                firstDate: DateTime(1950),
+                lastDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
+                onDateChanged: (date) => setState(() => _selected = date),
+              ),
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
+        ],
       ),
     );
   }
+}
+
+/// 波浪 Painter（与登录页一致）
+class _WavePainter extends CustomPainter {
+  final double animation;
+  _WavePainter({required this.animation});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    _drawWave(canvas, size,
+        amplitude: 18, wavelength: size.width * 0.8,
+        phase: animation * 2 * pi, yOffset: size.height * 0.84,
+        color: Colors.white.withOpacity(0.05));
+    _drawWave(canvas, size,
+        amplitude: 14, wavelength: size.width * 0.6,
+        phase: animation * 2 * pi + 1.5, yOffset: size.height * 0.88,
+        color: Colors.white.withOpacity(0.04));
+  }
+
+  void _drawWave(Canvas canvas, Size size, {
+    required double amplitude, required double wavelength,
+    required double phase, required double yOffset, required Color color,
+  }) {
+    final paint = Paint()..color = color..style = PaintingStyle.fill;
+    final path = Path()..moveTo(0, yOffset);
+    for (double x = 0; x <= size.width; x += 1) {
+      path.lineTo(x, yOffset + amplitude * sin((2 * pi * x / wavelength) + phase));
+    }
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _WavePainter old) => old.animation != animation;
 }

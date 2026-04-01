@@ -9,6 +9,8 @@ import '../../profile/data/upload_repository.dart';
 import '../../../core/providers/current_user_provider.dart';
 import '../../../core/errors/app_exception.dart';
 
+/// 资料页 - 升级版UI
+/// SliverAppBar视差 + 照片滑动 + 新字段编辑
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
@@ -39,21 +41,48 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   bool _editing = false;
   late TextEditingController _bioCtrl;
   late TextEditingController _jobCtrl;
+  late TextEditingController _cityCtrl;
   bool _saving = false;
   bool _uploading = false;
   bool _deleting = false;
+
+  // 新字段
+  int? _height;
+  String? _education;
+  String? _zodiac;
+  String? _smoking;
+  String? _drinking;
+
+  // 照片轮播
+  int _headerPhotoIndex = 0;
+
+  // 常量选项
+  static const _educationOptions = ['高中', '大专', '本科', '硕士', '博士', '其他'];
+  static const _zodiacOptions = [
+    '白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座',
+    '天秤座', '天蝎座', '射手座', '摩羯座', '水瓶座', '双鱼座'
+  ];
+  static const _smokingOptions = ['从不', '偶尔', '经常'];
+  static const _drinkingOptions = ['从不', '社交场合', '经常'];
 
   @override
   void initState() {
     super.initState();
     _bioCtrl = TextEditingController(text: widget.user.bio ?? '');
     _jobCtrl = TextEditingController(text: widget.user.jobTitle ?? '');
+    _cityCtrl = TextEditingController(text: widget.user.city ?? '');
+    _height = widget.user.height;
+    _education = widget.user.education;
+    _zodiac = widget.user.zodiac;
+    _smoking = widget.user.smoking;
+    _drinking = widget.user.drinking;
   }
 
   @override
   void dispose() {
     _bioCtrl.dispose();
     _jobCtrl.dispose();
+    _cityCtrl.dispose();
     super.dispose();
   }
 
@@ -64,12 +93,18 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
         bio: _bioCtrl.text.trim(),
         jobTitle: _jobCtrl.text.trim(),
         lookingFor: widget.user.lookingFor,
+        height: _height,
+        education: _education,
+        zodiac: _zodiac,
+        city: _cityCtrl.text.trim().isNotEmpty ? _cityCtrl.text.trim() : null,
+        smoking: _smoking,
+        drinking: _drinking,
       );
       ref.invalidate(currentUserProvider);
       setState(() => _editing = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('✅ 资料已更新')));
+            const SnackBar(content: Text('资料已更新')));
       }
     } on AppException catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(
@@ -79,7 +114,6 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
     }
   }
 
-  /// 添加照片：选图 -> 上传Cloudinary -> 保存到后端
   Future<void> _addPhoto() async {
     if (widget.user.avatarUrls.length >= 6) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -92,7 +126,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
       ref.invalidate(currentUserProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('✅ 照片已添加')));
+            const SnackBar(content: Text('照片已添加')));
       }
     } on AppException catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(
@@ -102,9 +136,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
     }
   }
 
-  /// 删除指定索引的照片
   Future<void> _deletePhoto(int index) async {
-    // 至少保留一张照片
     if (widget.user.avatarUrls.length <= 1) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('至少需要保留一张照片')));
@@ -113,6 +145,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('删除照片'),
         content: const Text('确定要删除这张照片吗？'),
         actions: [
@@ -133,7 +166,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
       ref.invalidate(currentUserProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('✅ 照片已删除')));
+            const SnackBar(content: Text('照片已删除')));
       }
     } on AppException catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(
@@ -143,7 +176,6 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
     }
   }
 
-  /// 兼容旧的上传头像方法（用于AppBar区域点击头像）
   Future<void> _uploadAvatar() async {
     await _addPhoto();
   }
@@ -151,106 +183,164 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   @override
   Widget build(BuildContext context) {
     final user = widget.user;
+    final photos = user.avatarUrls;
+
     return CustomScrollView(
       slivers: [
-        // 顶部大图 AppBar
+        // 顶部大图 AppBar + 视差 + 照片轮播
         SliverAppBar(
-          expandedHeight: 280,
+          expandedHeight: 360,
           pinned: true,
           backgroundColor: const Color(0xFFFF4D88),
           actions: [
             IconButton(
-              icon: Icon(_editing ? Icons.close : Icons.edit,
-                  color: Colors.white),
+              icon: Container(
+                width: 36, height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black.withOpacity(0.3),
+                ),
+                child: Icon(_editing ? Icons.close : Icons.edit,
+                    color: Colors.white, size: 18),
+              ),
               onPressed: () => setState(() => _editing = !_editing),
             ),
             IconButton(
-              icon: const Icon(Icons.settings_outlined, color: Colors.white),
+              icon: Container(
+                width: 36, height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black.withOpacity(0.3),
+                ),
+                child: const Icon(Icons.settings_outlined,
+                    color: Colors.white, size: 18),
+              ),
               onPressed: () => context.push('/settings'),
             ),
+            const SizedBox(width: 4),
           ],
           flexibleSpace: FlexibleSpaceBar(
             background: Stack(
               fit: StackFit.expand,
               children: [
-                // 背景渐变
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                // 照片轮播（视差效果）
+                if (photos.isNotEmpty)
+                  PageView.builder(
+                    itemCount: photos.length,
+                    onPageChanged: (i) => setState(() => _headerPhotoIndex = i),
+                    itemBuilder: (_, i) => CachedNetworkImage(
+                      imageUrl: photos[i],
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                      ),
+                      errorWidget: (_, __, ___) => Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        user.name.isNotEmpty ? user.name[0] : '?',
+                        style: const TextStyle(
+                            fontSize: 80,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+
+                // 底部渐变
+                Positioned(
+                  bottom: 0, left: 0, right: 0,
+                  child: Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.5),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                // 头像
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 40),
-                      GestureDetector(
-                        onTap: _editing ? _uploadAvatar : null,
-                        child: Stack(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                    color: Colors.white, width: 3),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 16,
-                                  )
-                                ],
-                              ),
-                              child: CircleAvatar(
-                                radius: 56,
-                                backgroundImage: user.firstAvatar.isNotEmpty
-                                    ? CachedNetworkImageProvider(
-                                        user.firstAvatar)
-                                    : null,
-                                backgroundColor: Colors.white24,
-                                child: user.firstAvatar.isEmpty
-                                    ? Text(
-                                        user.name.isNotEmpty
-                                            ? user.name[0]
-                                            : '?',
-                                        style: const TextStyle(
-                                            fontSize: 40,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700))
-                                    : null,
-                              ),
+
+                // 照片指示器小点
+                if (photos.length > 1)
+                  Positioned(
+                    bottom: 16,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(photos.length, (i) {
+                        return Container(
+                          width: i == _headerPhotoIndex ? 20 : 8,
+                          height: 8,
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: i == _headerPhotoIndex
+                                ? Colors.white
+                                : Colors.white.withOpacity(0.4),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+
+                // 编辑模式下的上传按钮
+                if (_editing)
+                  Positioned(
+                    bottom: 40,
+                    right: 16,
+                    child: GestureDetector(
+                      onTap: _uploadAvatar,
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFFFF4D88),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFFF4D88).withOpacity(0.4),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
                             ),
-                            if (_editing)
-                              Positioned(
-                                bottom: 2,
-                                right: 2,
-                                child: Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: _uploading
-                                      ? const SizedBox(
-                                          width: 14, height: 14,
-                                          child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: Color(0xFFFF4D88)))
-                                      : const Icon(Icons.camera_alt,
-                                          size: 14,
-                                          color: Color(0xFFFF4D88)),
-                                ),
-                              ),
                           ],
                         ),
+                        child: _uploading
+                            ? const SizedBox(
+                                width: 20, height: 20,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: Colors.white))
+                            : const Icon(Icons.camera_alt,
+                                size: 20, color: Colors.white),
                       ),
-                    ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -262,22 +352,84 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 姓名
-                Center(
-                  child: Text(user.name,
-                      style: const TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF1A1A2E))),
+                // 基本信息卡片：名字、年龄、城市、职业
+                _SectionCard(
+                  title: '基本信息',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(user.name,
+                              style: const TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF1A1A2E))),
+                          if (user.age != null) ...[
+                            const SizedBox(width: 8),
+                            Text('${user.age}岁',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey.shade600)),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(user.email,
+                          style: const TextStyle(
+                              color: Colors.grey, fontSize: 13)),
+                      const SizedBox(height: 10),
+                      // 城市和职业
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 8,
+                        children: [
+                          if (_editing) ...[
+                            SizedBox(
+                              width: 140,
+                              child: TextField(
+                                controller: _cityCtrl,
+                                decoration: _tagInputDeco('城市', Icons.location_on_outlined),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 140,
+                              child: TextField(
+                                controller: _jobCtrl,
+                                decoration: _tagInputDeco('职业', Icons.work_outline),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ] else ...[
+                            if (user.city != null && user.city!.isNotEmpty)
+                              _DetailTag(
+                                  icon: Icons.location_on_outlined,
+                                  text: user.city!),
+                            if (user.jobTitle != null && user.jobTitle!.isNotEmpty)
+                              _DetailTag(
+                                  icon: Icons.work_outline,
+                                  text: user.jobTitle!),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                Center(
-                  child: Text(user.email,
-                      style: const TextStyle(
-                          color: Colors.grey, fontSize: 14)),
-                ),
-                const SizedBox(height: 24),
 
-                // 照片管理网格
+                const SizedBox(height: 12),
+
+                // 详细信息卡片：身高、学历、星座、吸烟、饮酒
+                _SectionCard(
+                  title: '详细信息',
+                  child: _editing
+                      ? _buildEditableDetails()
+                      : _buildDetailTags(user),
+                ),
+
+                const SizedBox(height: 12),
+
+                // 照片管理
                 _SectionCard(
                   title: '我的照片（${user.avatarUrls.length}/6）',
                   child: _PhotoGrid(
@@ -292,9 +444,9 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
 
                 const SizedBox(height: 12),
 
-                // Bio 编辑
+                // 关于我
                 _SectionCard(
-                  title: '个人简介',
+                  title: '关于我',
                   child: _editing
                       ? TextField(
                           controller: _bioCtrl,
@@ -308,37 +460,16 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                       : Text(
                           user.bio?.isNotEmpty == true
                               ? user.bio!
-                              : '还没有简介，点右上角编辑 ✏️',
+                              : '还没有简介，点右上角编辑',
                           style: TextStyle(
                               color: user.bio?.isNotEmpty == true
                                   ? Colors.black87
                                   : Colors.grey,
-                              height: 1.6)),
+                              height: 1.6,
+                              fontSize: 15)),
                 ),
 
-                const SizedBox(height: 12),
-
-                // 职业
-                _SectionCard(
-                  title: '职业',
-                  child: _editing
-                      ? TextField(
-                          controller: _jobCtrl,
-                          decoration: const InputDecoration(
-                              hintText: '你的职业...',
-                              border: InputBorder.none),
-                        )
-                      : Text(
-                          user.jobTitle?.isNotEmpty == true
-                              ? user.jobTitle!
-                              : '未填写',
-                          style: TextStyle(
-                              color: user.jobTitle?.isNotEmpty == true
-                                  ? Colors.black87
-                                  : Colors.grey)),
-                ),
-
-                // 标签
+                // 兴趣标签
                 if (user.tags.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   _SectionCard(
@@ -347,12 +478,19 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                       spacing: 8, runSpacing: 8,
                       children: user.tags.map((tag) => Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
+                            horizontal: 14, vertical: 7),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+                            colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
                           ),
                           borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFFF4D88).withOpacity(0.2),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: Text(tag,
                             style: const TextStyle(
@@ -366,16 +504,23 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
 
                 // 保存按钮
                 if (_editing) ...[
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
-                    height: 52,
+                    height: 54,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+                          colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
                         ),
-                        borderRadius: BorderRadius.circular(26),
+                        borderRadius: BorderRadius.circular(27),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFFF4D88).withOpacity(0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: ElevatedButton(
                         onPressed: _saving ? null : _saveProfile,
@@ -383,18 +528,19 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(26)),
+                              borderRadius: BorderRadius.circular(27)),
                         ),
                         child: _saving
                             ? const SizedBox(
-                                height: 20, width: 20,
+                                height: 22, width: 22,
                                 child: CircularProgressIndicator(
                                     strokeWidth: 2, color: Colors.white))
-                            : const Text('保存',
+                            : const Text('保存资料',
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.white)),
+                                    color: Colors.white,
+                                    letterSpacing: 1)),
                       ),
                     ),
                   ),
@@ -408,11 +554,237 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
       ],
     );
   }
+
+  /// 展示模式下的详细信息标签
+  Widget _buildDetailTags(UserProfile user) {
+    final tags = <Widget>[];
+    if (user.height != null) {
+      tags.add(_DetailTag(icon: Icons.straighten, text: '${user.height}cm'));
+    }
+    if (user.education != null && user.education!.isNotEmpty) {
+      tags.add(_DetailTag(icon: Icons.school_outlined, text: user.education!));
+    }
+    if (user.zodiac != null && user.zodiac!.isNotEmpty) {
+      tags.add(_DetailTag(icon: Icons.auto_awesome, text: user.zodiac!));
+    }
+    if (user.smoking != null && user.smoking!.isNotEmpty) {
+      tags.add(_DetailTag(icon: Icons.smoking_rooms, text: '吸烟: ${user.smoking!}'));
+    }
+    if (user.drinking != null && user.drinking!.isNotEmpty) {
+      tags.add(_DetailTag(icon: Icons.local_bar, text: '饮酒: ${user.drinking!}'));
+    }
+    if (tags.isEmpty) {
+      return Text('点击编辑添加详细信息',
+          style: TextStyle(color: Colors.grey.shade400, fontSize: 14));
+    }
+    return Wrap(spacing: 8, runSpacing: 8, children: tags);
+  }
+
+  /// 编辑模式下的详细信息
+  Widget _buildEditableDetails() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 身高
+        _EditRow(
+          label: '身高',
+          icon: Icons.straighten,
+          child: SizedBox(
+            width: 120,
+            child: TextField(
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: '如 175',
+                suffixText: 'cm',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 10),
+                isDense: true,
+              ),
+              controller: TextEditingController(
+                  text: _height?.toString() ?? ''),
+              onChanged: (v) => _height = int.tryParse(v),
+              style: const TextStyle(fontSize: 14),
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+
+        // 学历
+        _EditRow(
+          label: '学历',
+          icon: Icons.school_outlined,
+          child: _DropdownSelector(
+            value: _education,
+            options: _educationOptions,
+            hint: '选择学历',
+            onChanged: (v) => setState(() => _education = v),
+          ),
+        ),
+        const SizedBox(height: 14),
+
+        // 星座
+        _EditRow(
+          label: '星座',
+          icon: Icons.auto_awesome,
+          child: _DropdownSelector(
+            value: _zodiac,
+            options: _zodiacOptions,
+            hint: '选择星座',
+            onChanged: (v) => setState(() => _zodiac = v),
+          ),
+        ),
+        const SizedBox(height: 14),
+
+        // 吸烟
+        _EditRow(
+          label: '吸烟',
+          icon: Icons.smoking_rooms,
+          child: _DropdownSelector(
+            value: _smoking,
+            options: _smokingOptions,
+            hint: '选择',
+            onChanged: (v) => setState(() => _smoking = v),
+          ),
+        ),
+        const SizedBox(height: 14),
+
+        // 饮酒
+        _EditRow(
+          label: '饮酒',
+          icon: Icons.local_bar,
+          child: _DropdownSelector(
+            value: _drinking,
+            options: _drinkingOptions,
+            hint: '选择',
+            onChanged: (v) => setState(() => _drinking = v),
+          ),
+        ),
+      ],
+    );
+  }
+
+  InputDecoration _tagInputDeco(String hint, IconData icon) {
+    return InputDecoration(
+      hintText: hint,
+      prefixIcon: Icon(icon, size: 18, color: const Color(0xFFFF4D88)),
+      filled: true,
+      fillColor: const Color(0xFFF8F8F8),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide.none,
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      isDense: true,
+    );
+  }
 }
 
-/// 照片管理网格组件
-/// 显示最多6张照片，支持编辑模式下的删除和添加
-/// TODO: 后端实现重排API后，增加长按拖拽重排功能
+/// 编辑行组件
+class _EditRow extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Widget child;
+  const _EditRow({required this.label, required this.icon, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: const Color(0xFFFF4D88)),
+        const SizedBox(width: 8),
+        SizedBox(
+          width: 48,
+          child: Text(label,
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1A1A2E))),
+        ),
+        const SizedBox(width: 8),
+        Expanded(child: child),
+      ],
+    );
+  }
+}
+
+/// 下拉选择器
+class _DropdownSelector extends StatelessWidget {
+  final String? value;
+  final List<String> options;
+  final String hint;
+  final ValueChanged<String?> onChanged;
+
+  const _DropdownSelector({
+    required this.value,
+    required this.options,
+    required this.hint,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(10),
+        color: const Color(0xFFF8F8F8),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          isExpanded: true,
+          value: value != null && options.contains(value) ? value : null,
+          hint: Text(hint,
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 14)),
+          items: options.map((o) => DropdownMenuItem(
+            value: o,
+            child: Text(o, style: const TextStyle(fontSize: 14)),
+          )).toList(),
+          onChanged: onChanged,
+          icon: Icon(Icons.arrow_drop_down, color: Colors.grey.shade400),
+          isDense: true,
+        ),
+      ),
+    );
+  }
+}
+
+/// 详细信息标签
+class _DetailTag extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  const _DetailTag({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: const Color(0xFFFF4D88)),
+          const SizedBox(width: 6),
+          Text(text,
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1A1A2E))),
+        ],
+      ),
+    );
+  }
+}
+
+/// 照片管理网格
 class _PhotoGrid extends StatelessWidget {
   final List<String> avatarUrls;
   final bool editing;
@@ -432,7 +804,6 @@ class _PhotoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 总共显示的格子数：已有照片 + 添加按钮（编辑模式且未满6张时）
     final showAddBtn = editing && avatarUrls.length < 6;
     final itemCount = avatarUrls.length + (showAddBtn ? 1 : 0);
 
@@ -447,7 +818,6 @@ class _PhotoGrid extends StatelessWidget {
       ),
       itemCount: itemCount,
       itemBuilder: (context, index) {
-        // 添加照片按钮
         if (index == avatarUrls.length && showAddBtn) {
           return GestureDetector(
             onTap: uploading ? null : onAdd,
@@ -486,11 +856,9 @@ class _PhotoGrid extends StatelessWidget {
           );
         }
 
-        // 照片卡片
         final url = avatarUrls[index];
         return Stack(
           children: [
-            // 照片
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
@@ -525,12 +893,9 @@ class _PhotoGrid extends StatelessWidget {
                 ),
               ),
             ),
-            // 第一张照片的主照片标签
             if (index == 0)
               Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
+                bottom: 0, left: 0, right: 0,
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   decoration: BoxDecoration(
@@ -548,16 +913,13 @@ class _PhotoGrid extends StatelessWidget {
                           fontWeight: FontWeight.w600)),
                 ),
               ),
-            // 编辑模式下的删除按钮
             if (editing)
               Positioned(
-                top: 4,
-                right: 4,
+                top: 4, right: 4,
                 child: GestureDetector(
                   onTap: deleting ? null : () => onDelete(index),
                   child: Container(
-                    width: 24,
-                    height: 24,
+                    width: 24, height: 24,
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.6),
                       shape: BoxShape.circle,
@@ -574,6 +936,7 @@ class _PhotoGrid extends StatelessWidget {
   }
 }
 
+/// 区块卡片
 class _SectionCard extends StatelessWidget {
   final String title;
   final Widget child;
@@ -583,15 +946,15 @@ class _SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -600,11 +963,11 @@ class _SectionCard extends StatelessWidget {
         children: [
           Text(title,
               style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey,
                   letterSpacing: 1)),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           child,
         ],
       ),

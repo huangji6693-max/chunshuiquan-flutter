@@ -11,16 +11,29 @@ class ProfileRepository {
   final Dio _dio;
   ProfileRepository(this._dio);
 
+  /// 更新用户资料（含扩展字段）
   Future<void> updateProfile({
     required String bio,
     required String jobTitle,
     required String lookingFor,
+    int? height,
+    String? education,
+    String? zodiac,
+    String? city,
+    String? smoking,
+    String? drinking,
   }) async {
     try {
       await _dio.put('/api/users/profile', data: {
         'bio': bio,
         'jobTitle': jobTitle,
         'lookingFor': lookingFor,
+        if (height != null) 'height': height,
+        if (education != null) 'education': education,
+        if (zodiac != null) 'zodiac': zodiac,
+        if (city != null) 'city': city,
+        if (smoking != null) 'smoking': smoking,
+        if (drinking != null) 'drinking': drinking,
       });
     } on DioException catch (e) {
       throw AppException.network(e.message ?? '更新失败');
@@ -43,9 +56,4 @@ class ProfileRepository {
       throw AppException.network(e.message ?? '删除头像失败');
     }
   }
-
-  // TODO: 后端暂无重排照片API，待后端实现后补充
-  // Future<void> reorderAvatars(List<String> urls) async {
-  //   await _dio.put('/api/users/avatar/reorder', data: {'urls': urls});
-  // }
 }

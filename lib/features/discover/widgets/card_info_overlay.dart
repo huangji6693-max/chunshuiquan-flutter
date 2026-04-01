@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../auth/domain/user_profile.dart';
 
+/// 卡片信息遮罩层（已集成到 UserCard 中，此文件保留兼容性）
 class CardInfoOverlay extends StatelessWidget {
   final UserProfile user;
   const CardInfoOverlay({super.key, required this.user});
@@ -12,10 +13,14 @@ class CardInfoOverlay extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.transparent, Colors.black.withOpacity(0.88)],
-          stops: const [0.4, 1.0],
+          colors: [
+            Colors.transparent,
+            Colors.black.withOpacity(0.3),
+            Colors.black.withOpacity(0.85),
+          ],
+          stops: const [0.2, 0.5, 1.0],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.fromLTRB(20, 60, 20, 24),
       child: Column(
@@ -23,45 +28,56 @@ class CardInfoOverlay extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
             children: [
               Text(user.name,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.2,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.3,
                     height: 1.1,
                   )),
-              const SizedBox(width: 8),
-              const Text('24', // TODO: 从 birthDate 计算年龄
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w400,
-                    height: 1.1,
-                  )),
+              const SizedBox(width: 10),
+              if (user.age != null)
+                Text('${user.age}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w400,
+                      height: 1.1,
+                    )),
             ],
           ),
-          if (user.jobTitle != null && user.jobTitle!.isNotEmpty) ...[
-            const SizedBox(height: 4),
+          if (user.city != null && user.city!.isNotEmpty ||
+              user.jobTitle != null && user.jobTitle!.isNotEmpty) ...[
+            const SizedBox(height: 6),
             Row(
               children: [
-                const Icon(Icons.work_outline, color: Colors.white70, size: 14),
-                const SizedBox(width: 4),
-                Text(user.jobTitle!,
-                    style: const TextStyle(
-                        color: Color(0xB3FFFFFF), fontSize: 15)),
+                if (user.city != null && user.city!.isNotEmpty) ...[
+                  const Icon(Icons.location_on_outlined,
+                      color: Colors.white70, size: 14),
+                  const SizedBox(width: 3),
+                  Text(user.city!,
+                      style: const TextStyle(
+                          color: Color(0xB3FFFFFF), fontSize: 15)),
+                  const SizedBox(width: 10),
+                ],
+                if (user.jobTitle != null && user.jobTitle!.isNotEmpty) ...[
+                  const Icon(Icons.work_outline,
+                      color: Colors.white70, size: 14),
+                  const SizedBox(width: 3),
+                  Expanded(
+                    child: Text(user.jobTitle!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Color(0xB3FFFFFF), fontSize: 15)),
+                  ),
+                ],
               ],
             ),
-          ],
-          if (user.bio != null && user.bio!.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(user.bio!,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                    color: Color(0xB3FFFFFF), fontSize: 14, height: 1.4)),
           ],
           if (user.tags.isNotEmpty) ...[
             const SizedBox(height: 10),
