@@ -165,10 +165,39 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.wifi_off, size: 48, color: Colors.grey.shade300),
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF4D88).withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.location_off_rounded,
+                          size: 40, color: Color(0xFFFF4D88)),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      e.toString().contains('经纬度')
+                          ? '需要开启定位权限'
+                          : '加载失败，点击重试',
+                      style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      e.toString().contains('经纬度')
+                          ? '在个人资料中更新你的位置信息'
+                          : '检查网络连接后再试',
+                      style: TextStyle(
+                          color: Colors.grey.shade400, fontSize: 13),
+                    ),
                     const SizedBox(height: 12),
-                    Text('网络不太好，稍后再试',
-                        style: TextStyle(color: Colors.grey.shade500)),
+                    TextButton(
+                      onPressed: () => ref.invalidate(nearbyUsersProvider(_radius)),
+                      child: const Text('重试'),
+                    ),
                   ],
                 ),
               ),
