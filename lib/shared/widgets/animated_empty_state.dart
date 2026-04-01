@@ -111,7 +111,7 @@ class _AnimatedEmptyStateState extends State<AnimatedEmptyState>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey.shade500,
+                  color: Colors.grey.shade400,
                   height: 1.4,
                 ),
               ),

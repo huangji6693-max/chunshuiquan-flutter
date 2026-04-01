@@ -117,7 +117,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                         const SizedBox(height: 16),
                         Text('这片星空暂时只有你',
                             style: TextStyle(
-                                color: Colors.grey.shade500,
+                                color: Colors.grey.shade400,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500)),
                         const SizedBox(height: 6),
@@ -242,18 +242,18 @@ class _NearbyCard extends StatelessWidget {
                 imageUrl: avatar,
                 fit: BoxFit.cover,
                 placeholder: (_, __) => Container(
-                  color: Colors.grey.shade100,
+                  color: Colors.grey.shade800,
                   child: const Center(
                       child: CircularProgressIndicator(strokeWidth: 2)),
                 ),
                 errorWidget: (_, __, ___) => Container(
-                  color: Colors.grey.shade100,
+                  color: Colors.grey.shade800,
                   child: const Icon(Icons.person, size: 48, color: Colors.grey),
                 ),
               )
             else
               Container(
-                color: Colors.grey.shade100,
+                color: Colors.grey.shade800,
                 child: const Icon(Icons.person, size: 48, color: Colors.grey),
               ),
 
@@ -395,10 +395,10 @@ class _NearbyListTile extends StatelessWidget {
                     imageUrl: avatar,
                     fit: BoxFit.cover,
                     errorWidget: (_, __, ___) =>
-                        Container(color: Colors.grey.shade100),
+                        Container(color: Colors.grey.shade800),
                   )
                 : Container(
-                    color: Colors.grey.shade100,
+                    color: Colors.grey.shade800,
                     child: const Icon(Icons.person, color: Colors.grey),
                   ),
           ),
@@ -441,7 +441,7 @@ class _NearbyListTile extends StatelessWidget {
                     const SizedBox(width: 2),
                     Text(user.city!,
                         style: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade500)),
+                            fontSize: 12, color: Colors.grey.shade400)),
                   ],
                 ),
               ),

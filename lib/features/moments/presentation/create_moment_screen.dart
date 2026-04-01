@@ -144,9 +144,9 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
                   width: double.infinity,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
+                    color: Colors.grey.shade900,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: Colors.grey.shade700),
                   ),
                   child: _uploading
                       ? const Center(

@@ -357,7 +357,7 @@ class _PhotoPage extends StatelessWidget {
               onTap: onAdd,
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF0F5),
+                  color: const Color(0xFFFF4D88).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: const Color(0xFFFF4D88).withOpacity(0.3),
@@ -569,7 +569,7 @@ class _PreferencePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               decoration: BoxDecoration(
                 color: lookingFor == opt.$1
-                    ? const Color(0xFFFFF0F5)
+                    ? const Color(0xFFFF4D88).withOpacity(0.1)
                     : Colors.white,
                 border: Border.all(
                   color: lookingFor == opt.$1 ? pink : Colors.grey[300]!,

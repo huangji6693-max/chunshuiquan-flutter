@@ -872,7 +872,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                 width: double.infinity,
                 height: double.infinity,
                 placeholder: (_, __) => Container(
-                  color: Colors.grey.shade200,
+                  color: Colors.grey.shade700,
                   child: const Center(
                     child: SizedBox(
                       width: 20, height: 20,
@@ -881,7 +881,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                   ),
                 ),
                 errorWidget: (_, __, ___) => Container(
-                  color: Colors.grey.shade200,
+                  color: Colors.grey.shade700,
                   child: const Icon(Icons.broken_image, color: Colors.grey),
                 ),
               ),
@@ -963,7 +963,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                 onTap: widget.uploading ? null : widget.onAdd,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: Colors.grey.shade800,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: const Color(0xFFFF4D88).withOpacity(0.4),
@@ -1036,7 +1036,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                   height: cardHeight,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
+                      color: Colors.grey.shade700,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: const Color(0xFFFF4D88).withOpacity(0.3),

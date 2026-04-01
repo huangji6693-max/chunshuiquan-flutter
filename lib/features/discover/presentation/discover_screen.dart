@@ -1016,7 +1016,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                 label: Text(option['label']!),
                 selected: selected,
                 selectedColor: const Color(0xFFFF4D88),
-                backgroundColor: Colors.grey.shade100,
+                backgroundColor: Colors.grey.shade800,
                 labelStyle: TextStyle(
                   color: selected ? Colors.white : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,

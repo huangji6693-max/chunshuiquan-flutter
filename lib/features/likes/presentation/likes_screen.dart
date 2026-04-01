@@ -69,7 +69,7 @@ class LikesScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text('你的故事还在等一个开始',
                       style: TextStyle(
-                          color: Colors.grey.shade500,
+                          color: Colors.grey.shade400,
                           fontSize: 16,
                           fontWeight: FontWeight.w500)),
                   const SizedBox(height: 6),
@@ -194,7 +194,7 @@ class _LikeCard extends StatelessWidget {
                     fit: BoxFit.cover,
                   )
           else
-            Container(color: Colors.grey.shade200),
+            Container(color: Colors.grey.shade700),
 
           // Super Like 标签
           if (item.direction == 'UP')

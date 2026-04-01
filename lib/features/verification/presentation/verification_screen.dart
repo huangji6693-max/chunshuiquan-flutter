@@ -200,7 +200,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               fillColor: Colors.white,
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade200)),
+                  borderSide: BorderSide(color: Colors.grey.shade700)),
             ),
           ),
 
@@ -211,7 +211,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
           const SizedBox(height: 4),
           Text('上传身份证正面照片',
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
           const SizedBox(height: 8),
           _PhotoUploadBox(
             url: _idPhotoUrl,
@@ -228,7 +228,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
           const SizedBox(height: 4),
           Text('手持身份证拍一张自拍照',
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
           const SizedBox(height: 8),
           _PhotoUploadBox(
             url: _selfieUrl,
@@ -266,7 +266,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
           const SizedBox(height: 16),
           Center(
             child: Text('信息仅用于身份验证，不会公开展示',
-                style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
           ),
         ],
       ),
@@ -355,10 +355,10 @@ class _PhotoUploadBox extends StatelessWidget {
         width: double.infinity,
         height: 140,
         decoration: BoxDecoration(
-          color: url != null ? null : Colors.grey.shade50,
+          color: url != null ? null : Colors.grey.shade900,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: url != null ? const Color(0xFFFF4D88) : Colors.grey.shade200,
+            color: url != null ? const Color(0xFFFF4D88) : Colors.grey.shade700,
             width: url != null ? 2 : 1,
           ),
           image: url != null
@@ -377,7 +377,7 @@ class _PhotoUploadBox extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(label,
                         style: TextStyle(
-                            color: Colors.grey.shade500, fontSize: 13)),
+                            color: Colors.grey.shade400, fontSize: 13)),
                   ],
                 ],
               )

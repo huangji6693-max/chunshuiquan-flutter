@@ -67,7 +67,7 @@ class MomentsScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     Text('这里还很安静，等你来打破',
                         style: TextStyle(
-                            color: Colors.grey.shade500, fontSize: 16)),
+                            color: Colors.grey.shade400, fontSize: 16)),
                     const SizedBox(height: 8),
                     TextButton(
                       onPressed: () => Navigator.push(context,
@@ -148,7 +148,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                   backgroundImage: m.authorAvatar != null
                       ? CachedNetworkImageProvider(m.authorAvatar!)
                       : null,
-                  backgroundColor: Colors.grey.shade100,
+                  backgroundColor: Colors.grey.shade800,
                   child: m.authorAvatar == null
                       ? Text(m.authorName[0],
                           style: const TextStyle(
@@ -182,14 +182,14 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                         children: [
                           Text(_formatTime(m.createdAt),
                               style: TextStyle(
-                                  fontSize: 12, color: Colors.grey.shade500)),
+                                  fontSize: 12, color: Colors.grey.shade400)),
                           if (m.location != null && m.location!.isNotEmpty) ...[
                             const SizedBox(width: 6),
                             Icon(Icons.location_on,
                                 size: 12, color: Colors.grey.shade400),
                             Text(m.location!,
                                 style: TextStyle(
-                                    fontSize: 12, color: Colors.grey.shade500)),
+                                    fontSize: 12, color: Colors.grey.shade400)),
                           ],
                         ],
                       ),
@@ -436,7 +436,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
                 : (_comments == null || _comments!.isEmpty)
                     ? Center(
                         child: Text('还没有评论',
-                            style: TextStyle(color: Colors.grey.shade500)))
+                            style: TextStyle(color: Colors.grey.shade400)))
                     : ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         itemCount: _comments!.length,
@@ -489,14 +489,14 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
             decoration: BoxDecoration(
               
               border: Border(
-                  top: BorderSide(color: Colors.grey.shade200, width: 0.5)),
+                  top: BorderSide(color: Colors.grey.shade700, width: 0.5)),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      color: Colors.grey.shade800,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: TextField(

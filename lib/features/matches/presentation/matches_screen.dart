@@ -40,7 +40,7 @@ class MatchesScreen extends ConsumerWidget {
             children: [
               Icon(Icons.error_outline, size: 48, color: Colors.grey.shade300),
               const SizedBox(height: 12),
-              Text('网络开小差了', style: TextStyle(color: Colors.grey.shade500)),
+              Text('网络开小差了', style: TextStyle(color: Colors.grey.shade400)),
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () => ref.invalidate(matchesProvider),
@@ -104,7 +104,7 @@ class MatchesScreen extends ConsumerWidget {
                   ),
                   const SliverToBoxAdapter(child: SizedBox(height: 8)),
                   SliverToBoxAdapter(
-                    child: Divider(height: 1, color: Colors.grey.shade100),
+                    child: Divider(height: 1, color: Colors.grey.shade800),
                   ),
                 ] else ...[
                   // 空匹配占位
@@ -136,7 +136,7 @@ class MatchesScreen extends ConsumerWidget {
                     ),
                   ),
                   SliverToBoxAdapter(
-                    child: Divider(height: 1, color: Colors.grey.shade100),
+                    child: Divider(height: 1, color: Colors.grey.shade800),
                   ),
                 ],
 
@@ -385,7 +385,7 @@ class _ConversationTile extends ConsumerWidget {
                     style: TextStyle(
                         color: hasUnread
                             ? Colors.white
-                            : Colors.grey.shade500,
+                            : Colors.grey.shade400,
                         fontSize: 13,
                         fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal,
                         height: 1.3),

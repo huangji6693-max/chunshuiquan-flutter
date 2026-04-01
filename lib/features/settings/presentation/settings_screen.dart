@@ -398,7 +398,7 @@ class _SectionHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Colors.grey.shade500,
+            color: Colors.grey.shade400,
             letterSpacing: 0.5,
           )),
     );
@@ -451,7 +451,7 @@ class _SettingsTile extends StatelessWidget {
             )),
         subtitle: subtitle != null
             ? Text(subtitle!,
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade500))
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade400))
             : null,
         trailing: trailing ??
             (onTap != null

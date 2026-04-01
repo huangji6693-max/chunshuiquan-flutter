@@ -121,7 +121,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                       Text('周${_dayLabels[i]}',
                           style: TextStyle(
                               fontSize: 11,
-                              color: Colors.grey.shade500,
+                              color: Colors.grey.shade400,
                               fontWeight: FontWeight.w500)),
                       const SizedBox(height: 6),
 
@@ -140,7 +140,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                                   ],
                                 )
                               : null,
-                          color: checked ? null : Colors.grey.shade100,
+                          color: checked ? null : Colors.grey.shade800,
                           border: isToday && !checked
                               ? Border.all(
                                   color: const Color(0xFFFF4D88), width: 2)

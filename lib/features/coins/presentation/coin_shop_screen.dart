@@ -259,7 +259,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? const Color(0xFFFF4D88) : Colors.grey.shade200,
+            color: isSelected ? const Color(0xFFFF4D88) : Colors.grey.shade700,
             width: isSelected ? 2.5 : 1,
           ),
           boxShadow: isSelected
@@ -373,7 +373,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                 Icon(Icons.receipt_long, size: 64, color: Colors.grey.shade300),
                 const SizedBox(height: 12),
                 Text('暂无交易记录',
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 16)),
+                    style: TextStyle(color: Colors.grey.shade400, fontSize: 16)),
               ],
             ),
           );
@@ -434,7 +434,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                         Text(
                           _formatDate(tx.createdAt),
                           style: TextStyle(
-                              fontSize: 12, color: Colors.grey.shade500),
+                              fontSize: 12, color: Colors.grey.shade400),
                         ),
                       ],
                     ),
@@ -457,7 +457,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
-        child: Text('网络开小差了', style: TextStyle(color: Colors.grey.shade500)),
+        child: Text('网络开小差了', style: TextStyle(color: Colors.grey.shade400)),
       ),
     );
   }

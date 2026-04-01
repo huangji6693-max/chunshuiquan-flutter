@@ -103,7 +103,7 @@ class _GiftList extends ConsumerWidget {
                 Text(
                   isReceived ? '还没有收到过礼物' : '还没有送出过礼物',
                   style: TextStyle(
-                      color: Colors.grey.shade500,
+                      color: Colors.grey.shade400,
                       fontSize: 16,
                       fontWeight: FontWeight.w500),
                 ),
@@ -143,7 +143,7 @@ class _GiftList extends ConsumerWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF0F5),
+                      color: const Color(0xFFFF4D88).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
@@ -171,7 +171,7 @@ class _GiftList extends ConsumerWidget {
                         Text(
                           _formatTime(record.createdAt),
                           style: TextStyle(
-                              fontSize: 12, color: Colors.grey.shade500),
+                              fontSize: 12, color: Colors.grey.shade400),
                         ),
                       ],
                     ),

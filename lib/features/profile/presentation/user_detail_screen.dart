@@ -75,14 +75,14 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                             imageUrl: user.avatarUrls[i],
                             fit: BoxFit.cover,
                             placeholder: (_, __) =>
-                                Container(color: Colors.grey.shade200),
+                                Container(color: Colors.grey.shade700),
                             errorWidget: (_, __, ___) =>
-                                Container(color: Colors.grey.shade200),
+                                Container(color: Colors.grey.shade700),
                           ),
                         )
                       else
                         Container(
-                          color: Colors.grey.shade200,
+                          color: Colors.grey.shade700,
                           child: const Icon(Icons.person,
                               size: 80, color: Colors.grey),
                         ),
@@ -444,10 +444,10 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
+                      color: Colors.grey.shade900,
                       borderRadius: BorderRadius.circular(12),
                       border:
-                          Border.all(color: Colors.grey.shade200, width: 1),
+                          Border.all(color: Colors.grey.shade700, width: 1),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -473,7 +473,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: Colors.grey.shade500),
+          Icon(icon, size: 18, color: Colors.grey.shade400),
           const SizedBox(width: 10),
           Text(label,
               style: TextStyle(color: Colors.grey.shade600, fontSize: 14)),

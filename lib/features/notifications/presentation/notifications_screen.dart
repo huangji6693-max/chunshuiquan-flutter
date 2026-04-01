@@ -162,7 +162,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
             itemCount: filtered.length,
             separatorBuilder: (_, __) => Divider(
               height: 1,
-              color: Colors.grey.shade100,
+              color: Colors.grey.shade800,
               indent: 76,
             ),
             itemBuilder: (_, i) => _NotificationTile(item: filtered[i]),

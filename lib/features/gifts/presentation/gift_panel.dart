@@ -170,7 +170,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                     _selected != null && !_sending ? _handleSend : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFF4D88),
-                  disabledBackgroundColor: Colors.grey.shade200,
+                  disabledBackgroundColor: Colors.grey.shade700,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                   elevation: _selected != null ? 3 : 0,
@@ -228,13 +228,13 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
           margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           decoration: BoxDecoration(
             color: isSelected
-                ? const Color(0xFFFFF0F5)
-                : Colors.grey.shade50,
+                ? const Color(0xFFFF4D88).withOpacity(0.1)
+                : Colors.grey.shade900,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isSelected
                   ? const Color(0xFFFF4D88)
-                  : Colors.grey.shade200,
+                  : Colors.grey.shade700,
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected
