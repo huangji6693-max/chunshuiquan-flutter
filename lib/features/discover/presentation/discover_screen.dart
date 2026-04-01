@@ -303,10 +303,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
     });
 
     return Scaffold(
+      backgroundColor: const Color(0xFF0F0A1A),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF0F0A1A),
         surfaceTintColor: Colors.transparent,
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -367,7 +368,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
               children: [
                 IconButton(
                   icon: const Icon(Icons.tune_rounded,
-                      color: Color(0xFF1A1A2E), size: 24),
+                      color: Colors.white70, size: 24),
                   onPressed: () => _showFilterSheet(context, ref),
                 ),
                 if (_isFilterActive(discoverState.filter))
@@ -913,7 +914,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                   style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF1A1A2E))),
+                      color: Colors.white70)),
               TextButton(
                 onPressed: () {
                   setState(() {
@@ -939,7 +940,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF1A1A2E))),
+                      color: Colors.white70)),
               Text('${_ageRange.start.round()} - ${_ageRange.end.round()}岁',
                   style: const TextStyle(
                       fontSize: 14,
@@ -974,7 +975,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF1A1A2E))),
+                      color: Colors.white70)),
               Text('${_maxDistance.round()}km',
                   style: const TextStyle(
                       fontSize: 14,
@@ -1005,7 +1006,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A2E))),
+                  color: Colors.white70)),
           const SizedBox(height: 10),
           Wrap(
             spacing: 10,

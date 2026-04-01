@@ -20,22 +20,17 @@ class MatchesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(matchesProvider);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF0F0A1A),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: const Color(0xFF0F0A1A),
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        title: ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
-          ).createShader(bounds),
-          child: const Text('匹配',
-              style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 1)),
-        ),
+        title: const Text('匹配',
+            style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 1)),
       ),
       body: state.when(
         loading: () => const MatchesSkeleton(),
@@ -216,7 +211,7 @@ class _EmptyState extends StatelessWidget {
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF1A1A2E))),
+                  color: Colors.white)),
           const SizedBox(height: 8),
           Text('去滑卡认识新朋友吧',
               style: TextStyle(fontSize: 15, color: Colors.grey.shade400)),
@@ -295,7 +290,7 @@ class _NewMatchAvatar extends StatelessWidget {
               style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A2E)),
+                  color: Colors.white),
             ),
           ),
         ],
@@ -381,7 +376,7 @@ class _ConversationTile extends ConsumerWidget {
                       style: TextStyle(
                           fontWeight: hasUnread ? FontWeight.w800 : FontWeight.w700,
                           fontSize: 16,
-                          color: const Color(0xFF1A1A2E))),
+                          color: Colors.white)),
                   const SizedBox(height: 4),
                   Text(
                     previewText,
@@ -389,7 +384,7 @@ class _ConversationTile extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         color: hasUnread
-                            ? const Color(0xFF1A1A2E)
+                            ? Colors.white
                             : Colors.grey.shade500,
                         fontSize: 13,
                         fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal,

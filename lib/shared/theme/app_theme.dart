@@ -37,14 +37,14 @@ class AppTheme {
       primary: primary,
       secondary: purple,
     ),
-    scaffoldBackgroundColor: bgSurface,
+    scaffoldBackgroundColor: bgDark,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFF0F0A1A),
       elevation: 0,
-      scrolledUnderElevation: 0.5,
-      iconTheme: IconThemeData(color: Color(0xFF1A1A2E)),
+      scrolledUnderElevation: 0,
+      iconTheme: IconThemeData(color: Colors.white),
       titleTextStyle: TextStyle(
-        color: Color(0xFF1A1A2E),
+        color: Colors.white,
         fontSize: 20,
         fontWeight: FontWeight.w800,
       ),
@@ -62,7 +62,7 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: Colors.white,
+      fillColor: const Color(0xFF1A1230),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide.none,

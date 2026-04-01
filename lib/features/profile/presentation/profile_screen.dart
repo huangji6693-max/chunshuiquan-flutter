@@ -17,7 +17,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(currentUserProvider);
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8F8),
+      backgroundColor: const Color(0xFF0F0A1A),
       body: profileState.when(
         loading: () => const Center(
             child: CircularProgressIndicator(color: Color(0xFFFF4D88))),

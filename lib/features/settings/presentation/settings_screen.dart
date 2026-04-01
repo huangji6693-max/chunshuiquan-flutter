@@ -20,11 +20,11 @@ class SettingsScreen extends ConsumerWidget {
     final balanceAsync = ref.watch(coinBalanceProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8FA),
+      backgroundColor: const Color(0xFF0F0A1A),
       appBar: AppBar(
-        title: const Text('设置'),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        title: const Text('设置', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF0F0A1A),
+        surfaceTintColor: Colors.transparent,
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -81,7 +81,7 @@ class SettingsScreen extends ConsumerWidget {
                               balanceAsync.when(
                                 data: (c) => Text('$c',
                                     style: const TextStyle(
-                                        color: Colors.white,
+                                        color: const Color(0xFF1A1230),
                                         fontSize: 24,
                                         fontWeight: FontWeight.w800)),
                                 loading: () => const Text('...',
@@ -102,7 +102,7 @@ class SettingsScreen extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: const Color(0xFF1A1230),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Text('充值',
@@ -353,7 +353,7 @@ class _QuickEntryCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFF1A1230),
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
@@ -429,7 +429,7 @@ class _SettingsTile extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 1),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF1A1230),
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(

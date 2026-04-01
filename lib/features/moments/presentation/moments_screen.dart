@@ -18,11 +18,11 @@ class MomentsScreen extends ConsumerWidget {
     final momentsAsync = ref.watch(momentsTimelineProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8FA),
+      backgroundColor: const Color(0xFF0F0A1A),
       appBar: AppBar(
-        title: const Text('动态'),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        title: const Text('动态', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF0F0A1A),
+        surfaceTintColor: Colors.transparent,
         actions: [
           IconButton(
             icon: Container(
@@ -125,7 +125,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF1A1230),
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
@@ -408,7 +408,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF1A1230),
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -487,7 +487,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
             padding: EdgeInsets.fromLTRB(
                 16, 8, 8, MediaQuery.of(context).padding.bottom + 8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color(0xFF1A1230),
               border: Border(
                   top: BorderSide(color: Colors.grey.shade200, width: 0.5)),
             ),

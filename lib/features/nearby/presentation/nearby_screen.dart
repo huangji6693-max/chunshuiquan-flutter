@@ -30,15 +30,15 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
     final usersAsync = ref.watch(nearbyUsersProvider(_radius));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8FA),
+      backgroundColor: const Color(0xFF0F0A1A),
       body: CustomScrollView(
         slivers: [
           // ====== 顶部 ======
           SliverAppBar(
             floating: true,
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            title: const Text('附近的人'),
+            backgroundColor: const Color(0xFF0F0A1A),
+            surfaceTintColor: Colors.transparent,
+            title: const Text('附近的人', style: TextStyle(color: Colors.white)),
             actions: [
               // 切换视图
               IconButton(
@@ -222,7 +222,7 @@ class _NearbyCard extends StatelessWidget {
       onTap: () => _openProfile(context),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFF1A1230),
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
@@ -283,7 +283,7 @@ class _NearbyCard extends StatelessWidget {
                           child: Text(
                             '${user.name}, ${user.age}',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: const Color(0xFF1A1230),
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                             ),
@@ -373,7 +373,7 @@ class _NearbyListTile extends StatelessWidget {
       child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF1A1230),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
