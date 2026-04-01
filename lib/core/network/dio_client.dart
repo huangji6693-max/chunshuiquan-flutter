@@ -26,5 +26,25 @@ final dioProvider = Provider<Dio>((ref) {
     onSessionExpired: onSessionExpired,
   ));
 
+  // 网络抖动自动重试（仅GET请求，最多1次）
+  dio.interceptors.add(InterceptorsWrapper(
+    onError: (error, handler) async {
+      final isTimeout = error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.type == DioExceptionType.connectionError;
+      final isGet = error.requestOptions.method == 'GET';
+      final isRetry = error.requestOptions.extra['_retried'] == true;
+
+      if (isTimeout && isGet && !isRetry) {
+        error.requestOptions.extra['_retried'] = true;
+        try {
+          final res = await dio.fetch(error.requestOptions);
+          return handler.resolve(res);
+        } catch (_) {}
+      }
+      handler.next(error);
+    },
+  ));
+
   return dio;
 });
