@@ -75,14 +75,17 @@ class _MainScaffoldState extends State<MainScaffold> {
       body: isSubPage
           // 子页面直接渲染 GoRouter 的 child
           ? widget.child
-          // 主 tab 用 IndexedStack 保活
-          : IndexedStack(
-              index: _currentIndex,
-              children: List.generate(5, (i) {
-                if (_visited.contains(i)) return _tabs[i];
-                // 未访问过的 tab 用空占位，节省内存
-                return const SizedBox.shrink();
-              }),
+          // 主 tab 用 IndexedStack 保活 + 淡入过渡
+          : AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              child: IndexedStack(
+                key: ValueKey(_currentIndex),
+                index: _currentIndex,
+                children: List.generate(5, (i) {
+                  if (_visited.contains(i)) return _tabs[i];
+                  return const SizedBox.shrink();
+                }),
+              ),
             ),
       bottomNavigationBar: FrostedNavBar(
         currentIndex: isSubPage ? locIndex : _currentIndex,

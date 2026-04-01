@@ -233,14 +233,14 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                 // 评论
                 _InteractionBtn(
                   icon: Icons.chat_bubble_outline,
-                  color: Colors.grey,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   label: m.commentCount > 0 ? '${m.commentCount}' : '评论',
                   onTap: () => _showComments(context),
                 ),
                 // 分享
                 _InteractionBtn(
                   icon: Icons.share_outlined,
-                  color: Colors.grey,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   label: '分享',
                   onTap: () {},
                 ),

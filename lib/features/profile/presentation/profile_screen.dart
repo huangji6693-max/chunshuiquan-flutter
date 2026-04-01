@@ -205,7 +205,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
         SliverAppBar(
           expandedHeight: 360,
           pinned: true,
-          backgroundColor: const Color(0xFFFF4D88),
+          backgroundColor: Theme.of(context).colorScheme.primary,
           actions: [
             IconButton(
               icon: Container(

@@ -319,6 +319,7 @@ class _ConversationTile extends ConsumerWidget {
     final hasUnread = match.unreadCount > 0;
 
     return InkWell(
+      borderRadius: BorderRadius.circular(12),
       onTap: () => context.go('/chat/${match.matchId}', extra: {
         'partnerName': match.otherName,
         'partnerAvatarUrl': match.otherAvatarUrl,
