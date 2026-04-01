@@ -229,7 +229,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                 child: const Icon(Icons.settings_outlined,
                     color: Colors.white, size: 18),
               ),
-              onPressed: () => context.push('/settings'),
+              onPressed: () => context.go('/settings'),
             ),
             const SizedBox(width: 4),
           ],

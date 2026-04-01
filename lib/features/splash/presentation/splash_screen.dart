@@ -103,68 +103,119 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             ],
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Logo
-              _AnimBuilder(
+        child: Stack(
+          children: [
+            // 背景装饰圆
+            Positioned(
+              top: -80,
+              right: -60,
+              child: _AnimBuilder(
                 listenable: _logoController,
                 builder: (_, __) => Opacity(
-                  opacity: _logoOpacity.value,
-                  child: Transform.scale(
-                    scale: _logoScale.value,
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(28),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 30,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: Text('💧',
-                            style: TextStyle(fontSize: 48)),
-                      ),
+                  opacity: _logoOpacity.value * 0.15,
+                  child: Container(
+                    width: 280,
+                    height: 280,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // App名
-              SlideTransition(
-                position: _textSlide,
-                child: FadeTransition(
-                  opacity: _textOpacity,
-                  child: const Column(
-                    children: [
-                      Text('春水圈',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 32,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 4,
-                          )),
-                      SizedBox(height: 8),
-                      Text('遇见心动的Ta',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                            letterSpacing: 2,
-                          )),
-                    ],
+            ),
+            Positioned(
+              bottom: -100,
+              left: -80,
+              child: _AnimBuilder(
+                listenable: _logoController,
+                builder: (_, __) => Opacity(
+                  opacity: _logoOpacity.value * 0.1,
+                  child: Container(
+                    width: 320,
+                    height: 320,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+            // 主内容
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Logo — 白色心形图标
+                  _AnimBuilder(
+                    listenable: _logoController,
+                    builder: (_, __) => Opacity(
+                      opacity: _logoOpacity.value,
+                      child: Transform.scale(
+                        scale: _logoScale.value,
+                        child: Container(
+                          width: 110,
+                          height: 110,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 40,
+                                offset: const Offset(0, 12),
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.favorite_rounded,
+                                color: Color(0xFFFF4D88), size: 52),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+
+                  // 品牌名
+                  SlideTransition(
+                    position: _textSlide,
+                    child: FadeTransition(
+                      opacity: _textOpacity,
+                      child: Column(
+                        children: [
+                          const Text('春水圈',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 36,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 6,
+                              )),
+                          const SizedBox(height: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text('遇见心动的 Ta',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 3,
+                                )),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
