@@ -64,14 +64,14 @@ class MomentsScreen extends ConsumerWidget {
                           size: 40, color: Color(0xFFFF4D88)),
                     ),
                     const SizedBox(height: 16),
-                    Text('还没有人发动态',
+                    Text('这里还很安静，等你来打破',
                         style: TextStyle(
                             color: Colors.grey.shade500, fontSize: 16)),
                     const SizedBox(height: 8),
                     TextButton(
                       onPressed: () => Navigator.push(context,
                           MaterialPageRoute(builder: (_) => const CreateMomentScreen())),
-                      child: const Text('发布第一条动态'),
+                      child: const Text('写下第一个故事'),
                     ),
                   ],
                 ),

@@ -370,14 +370,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  '跟 ${widget.partnerName ?? "Ta"} 说声 Hi 吧',
+                  '说点什么打破沉默吧 ☺️',
                   style: TextStyle(
                       color: Colors.grey[500],
                       fontSize: 16,
                       fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 4),
-                Text('开始你们的对话',
+                Text('也许一句Hi就是故事的开头',
                     style: TextStyle(color: Colors.grey[400], fontSize: 13)),
               ],
             ),

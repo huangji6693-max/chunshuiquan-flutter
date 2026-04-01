@@ -114,7 +114,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                                       fontSize: 13),
                                 ),
                               )
-                            : Text('解锁全部特权，让缘分不再擦肩而过',
+                            : Text('让每一次心动都不留遗憾',
                                 style: TextStyle(
                                     color: Colors.white.withOpacity(0.6),
                                     fontSize: 14)),
@@ -569,7 +569,7 @@ class _VipSuccessDialog extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text('开始享受特权',
+                child: const Text('开启心动之旅 💕',
                     style:
                         TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
               ),

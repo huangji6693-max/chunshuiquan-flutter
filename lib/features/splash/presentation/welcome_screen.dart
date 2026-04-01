@@ -16,20 +16,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   static const _pages = [
     _WelcomePage(
       emoji: '💖',
-      title: '发现身边的缘分',
-      subtitle: '滑动卡片，遇见心动的人\n每一次右滑都可能是一段美好故事的开始',
+      title: '心动，就在下一次滑动',
+      subtitle: '向右滑动，开启一段新故事\n每一次心动都值得被认真对待',
       gradientColors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
     ),
     _WelcomePage(
       emoji: '💬',
-      title: '即时聊天互动',
-      subtitle: '配对成功后即刻开启对话\n语音通话、送礼物，让心意不再含蓄',
+      title: '让心意不再沉默',
+      subtitle: '匹配成功的那一刻，你们的故事就开始了\n文字、语音、礼物，用你喜欢的方式靠近',
       gradientColors: [Color(0xFFFF6B8A), Color(0xFFFF8A5C)],
     ),
     _WelcomePage(
       emoji: '🛡️',
-      title: '安全值得信赖',
-      subtitle: '实名认证 · 照片审核 · 举报机制\n让每一次相遇都安心',
+      title: '每一次相遇都安心',
+      subtitle: '实名认证 · AI照片审核 · 7×24小时守护\n你只管心动，安全交给我们',
       gradientColors: [Color(0xFFFF8A5C), Color(0xFFFFB74D)],
     ),
   ];

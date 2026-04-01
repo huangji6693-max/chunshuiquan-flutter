@@ -22,7 +22,6 @@ import '../features/moments/presentation/moments_screen.dart';
 import '../features/moments/presentation/create_moment_screen.dart';
 import '../features/verification/presentation/verification_screen.dart';
 import '../core/storage/token_manager.dart';
-import '../core/providers/current_user_provider.dart';
 import '../shared/widgets/main_scaffold.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -35,7 +34,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('页面不存在', style: TextStyle(fontSize: 18)),
+            const Icon(Icons.error_outline, size: 48, color: Color(0xFFFF4D88)),
+            const SizedBox(height: 12),
+            const Text('页面走丢了', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
             TextButton(
               onPressed: () => context.go('/discover'),
               child: const Text('回到首页'),
@@ -58,34 +60,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       // 未登录 → 跳转登录页
       if (!isLoggedIn && !isAuthRoute && !isOnboarding) return '/auth/login';
 
-      // 已登录 → 检查onboarding状态
-      if (isLoggedIn && !isOnboarding && !isAuthRoute) {
-        try {
-          final container = ProviderScope.containerOf(context);
-          final userAsync = container.read(currentUserProvider);
-          final user = userAsync.valueOrNull;
-          if (user != null && !user.onboardingCompleted) {
-            return '/onboarding';
-          }
-        } catch (_) {}
-      }
-
       // 已登录访问登录页 → 跳转发现页
       if (isLoggedIn && isAuthRoute) return '/discover';
 
+      // 注意：onboarding 检查移到 DiscoverScreen 内部处理
+      // 不在 redirect 中做任何网络请求，避免卡死
       return null;
     },
     routes: [
-      // Splash → 自动跳转
       GoRoute(path: '/', builder: (_, __) => const SplashScreen()),
       GoRoute(path: '/welcome', builder: (_, __) => const WelcomeScreen()),
-
-      // Auth
       GoRoute(path: '/auth/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/auth/register', builder: (_, __) => const RegisterScreen()),
       GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingScreen()),
-
-      // Main app (带底部导航)
       ShellRoute(
         builder: (context, state, child) => MainScaffold(child: child),
         routes: [

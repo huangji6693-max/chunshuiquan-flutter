@@ -67,13 +67,13 @@ class LikesScreen extends ConsumerWidget {
                         size: 40, color: Color(0xFFFF4D88)),
                   ),
                   const SizedBox(height: 16),
-                  Text('还没有人喜欢你',
+                  Text('你的故事还在等一个开始',
                       style: TextStyle(
                           color: Colors.grey.shade500,
                           fontSize: 16,
                           fontWeight: FontWeight.w500)),
                   const SizedBox(height: 6),
-                  Text('完善资料和照片可以提高曝光哦',
+                  Text('完善资料和照片，让更多人看到你的光芒',
                       style: TextStyle(
                           color: Colors.grey.shade400, fontSize: 13)),
                 ],

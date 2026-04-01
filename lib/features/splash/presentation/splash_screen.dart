@@ -67,12 +67,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   Future<void> _navigate() async {
-    final token = await ref.read(tokenManagerProvider).getAccessToken();
-    if (!mounted) return;
-    if (token != null && token.isNotEmpty) {
-      context.go('/discover');
-    } else {
-      context.go('/welcome');
+    try {
+      final token = await ref.read(tokenManagerProvider).getAccessToken();
+      if (!mounted) return;
+      if (token != null && token.isNotEmpty) {
+        context.go('/discover');
+      } else {
+        context.go('/welcome');
+      }
+    } catch (e) {
+      debugPrint('[春水圈] Splash导航失败: $e');
+      if (mounted) context.go('/welcome');
     }
   }
 
@@ -148,7 +153,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             letterSpacing: 4,
                           )),
                       SizedBox(height: 8),
-                      Text('遇见对的人',
+                      Text('遇见心动的Ta',
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 16,

@@ -133,7 +133,7 @@ class MatchesScreen extends ConsumerWidget {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                       child: Center(
-                        child: Text('还没有新匹配，继续滑动吧 💫',
+                        child: Text('缘分正在路上，继续发现吧 💫',
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14)),
@@ -320,7 +320,7 @@ class _ConversationTile extends ConsumerWidget {
     final timeStr = _formatTime(displayTime);
 
     // 消息预览文本
-    final previewText = match.lastMessage ?? '点击开始聊天';
+    final previewText = match.lastMessage ?? '还没聊过，打个招呼？';
     final hasUnread = match.unreadCount > 0;
 
     return InkWell(

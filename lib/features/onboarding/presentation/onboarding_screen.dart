@@ -314,7 +314,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 ),
                               )
                             : Text(
-                                _page < 2 ? '下一步' : '开始使用',
+                                _page < 2 ? '继续' : '开启春水圈',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,

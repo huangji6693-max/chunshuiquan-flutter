@@ -230,7 +230,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '• 金币可用于赠送礼物给心仪的人\n• 充值后金币不可退款\n• 如有问题请联系客服',
+                  '• 金币是你传递心意的小小信使\n• 充值后金币不可退款\n• 如有问题请联系客服',
                   style: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade600,

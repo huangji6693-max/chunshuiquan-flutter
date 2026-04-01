@@ -115,13 +115,13 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                               size: 40, color: Color(0xFFFF4D88)),
                         ),
                         const SizedBox(height: 16),
-                        Text('附近暂无用户',
+                        Text('这片星空暂时只有你',
                             style: TextStyle(
                                 color: Colors.grey.shade500,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500)),
                         const SizedBox(height: 6),
-                        Text('试试扩大搜索范围',
+                        Text('试试把范围拉大一点',
                             style: TextStyle(
                                 color: Colors.grey.shade400, fontSize: 13)),
                       ],

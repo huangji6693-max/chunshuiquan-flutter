@@ -476,7 +476,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                       : Text(
                           user.bio?.isNotEmpty == true
                               ? user.bio!
-                              : '还没有简介，点右上角编辑',
+                              : '写点什么，让别人认识真实的你',
                           style: TextStyle(
                               color: user.bio?.isNotEmpty == true
                                   ? Colors.black87

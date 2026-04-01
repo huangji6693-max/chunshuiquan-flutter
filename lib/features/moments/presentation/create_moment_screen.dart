@@ -83,7 +83,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
               maxLength: 500,
               onChanged: (_) => setState(() {}),
               decoration: const InputDecoration(
-                hintText: '分享你的心情...',
+                hintText: '此刻的你，在想什么...',
                 hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
                 border: InputBorder.none,
                 counterStyle: TextStyle(color: Colors.grey),

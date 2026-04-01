@@ -234,7 +234,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                         fontWeight: FontWeight.w800,
                                         color: Colors.white)),
                                 const SizedBox(height: 6),
-                                Text('填写基本信息开始交友',
+                                Text('三步开启你的心动之旅',
                                     style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.white.withOpacity(0.7))),
@@ -434,7 +434,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                                   color: Color(0xFFFF4D88),
                                                 ),
                                               )
-                                            : const Text('开始我的旅程',
+                                            : const Text('遇见心动 →',
                                                 style: TextStyle(
                                                   fontSize: 17,
                                                   fontWeight: FontWeight.w700,

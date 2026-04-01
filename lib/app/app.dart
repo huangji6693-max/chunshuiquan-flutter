@@ -19,72 +19,90 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
   @override
   void initState() {
     super.initState();
-    _setupFCM();
-    _setupServices();
+    // 延迟初始化，避免阻塞 UI 渲染
+    Future.microtask(() {
+      _setupServices();
+      _setupFCM();
+    });
   }
 
-  /// 初始化心跳和 WebSocket 服务
   void _setupServices() {
-    // 启动心跳服务（维护在线状态）
     try {
       ref.read(heartbeatServiceProvider).start();
-    } catch (_) {}
-
-    // 连接 WebSocket
+    } catch (e) {
+      debugPrint('[春水圈] heartbeat启动失败: $e');
+    }
     try {
       ref.read(webSocketServiceProvider).connect();
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[春水圈] WebSocket连接失败: $e');
+    }
   }
 
   Future<void> _setupFCM() async {
-    final messaging = FirebaseMessaging.instance;
-
-    // 获取 FCM Token 并上报后端
     try {
+      final messaging = FirebaseMessaging.instance;
       final token = await messaging.getToken();
       if (token != null) {
-        await ref.read(dioProvider).put('/api/users/fcm-token',
-            data: {'token': token});
+        try {
+          await ref.read(dioProvider).put('/api/users/fcm-token',
+              data: {'token': token});
+        } catch (_) {}
       }
-    } catch (_) {}
 
-    // Token 刷新时重新上报
-    messaging.onTokenRefresh.listen((token) async {
-      try {
-        await ref.read(dioProvider).put('/api/users/fcm-token',
-            data: {'token': token});
-      } catch (_) {}
-    });
+      messaging.onTokenRefresh.listen((token) async {
+        try {
+          await ref.read(dioProvider).put('/api/users/fcm-token',
+              data: {'token': token});
+        } catch (_) {}
+      });
 
-    // 前台收到推送
-    FirebaseMessaging.onMessage.listen((message) {
-      final router = ref.read(routerProvider);
-      final data = message.data;
-      if (data['type'] == 'new_match') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('你有新的匹配！'),
-            action: SnackBarAction(
-              label: '查看',
-              onPressed: () => router.go('/matches'),
+      FirebaseMessaging.onMessage.listen((message) {
+        if (!mounted) return;
+        final data = message.data;
+        if (data['type'] == 'new_match') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('有人和你心意相通 💕'),
+              action: SnackBarAction(
+                label: '去看看',
+                onPressed: () => ref.read(routerProvider).go('/matches'),
+              ),
+              backgroundColor: const Color(0xFFFF4D88),
             ),
-            backgroundColor: const Color(0xFFFF4D88),
-          ),
-        );
-      }
-    });
+          );
+        } else if (data['type'] == 'new_message') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${data['senderName'] ?? 'Ta'}给你发了消息'),
+              backgroundColor: const Color(0xFFFF4D88),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else if (data['type'] == 'gift_received') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('收到一份心意 🎁 来自${data['senderName'] ?? 'Ta'}'),
+              backgroundColor: const Color(0xFFFF4D88),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      });
 
-    // 点击通知打开 App
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      final router = ref.read(routerProvider);
-      final data = message.data;
-      final matchId = data['matchId'];
-      if (data['type'] == 'new_message' && matchId != null) {
-        router.go('/chat/$matchId');
-      } else if (data['type'] == 'new_match') {
-        router.go('/matches');
-      }
-    });
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        final router = ref.read(routerProvider);
+        final data = message.data;
+        final matchId = data['matchId'];
+        if (data['type'] == 'new_message' && matchId != null) {
+          router.go('/chat/$matchId');
+        } else if (data['type'] == 'new_match') {
+          router.go('/matches');
+        }
+      });
+    } catch (e) {
+      debugPrint('[春水圈] FCM设置失败: $e');
+    }
   }
 
   @override

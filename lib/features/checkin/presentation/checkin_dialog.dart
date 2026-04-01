@@ -212,7 +212,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: const Text('太棒了！',
+                    child: const Text('又是元气满满的一天！',
                         style: TextStyle(
                             fontSize: 17, fontWeight: FontWeight.w700)),
                   ),
