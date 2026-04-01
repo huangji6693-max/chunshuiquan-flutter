@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../discover/data/discover_repository.dart';
 import '../../discover/domain/user_profile.dart';
+import '../../../shared/widgets/skeleton_loading.dart';
 import '../../profile/presentation/user_detail_screen.dart';
 
 /// 附近用户列表 Provider
@@ -157,8 +158,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
               }
             },
             loading: () => const SliverFillRemaining(
-              child: Center(
-                  child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
+              child: NearbySkeleton(),
             ),
             error: (e, _) => SliverFillRemaining(
               child: Center(

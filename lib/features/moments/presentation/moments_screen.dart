@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../data/moment_repository.dart';
 import 'create_moment_screen.dart';
+import '../../../shared/widgets/skeleton_loading.dart';
 
 final momentsTimelineProvider = FutureProvider<List<MomentItem>>((ref) {
   return ref.watch(momentRepositoryProvider).getTimeline();
@@ -87,8 +88,7 @@ class MomentsScreen extends ConsumerWidget {
               ),
             );
           },
-          loading: () => const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
+          loading: () => const MomentsSkeleton(),
           error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Colors.grey.shade300), const SizedBox(height: 12), Text('网络不太好，稍后再试', style: TextStyle(color: Colors.grey)), const SizedBox(height: 8), TextButton(onPressed: () => ref.invalidate(momentsTimelineProvider), child: const Text('点击重试'))])),
         ),
       ),

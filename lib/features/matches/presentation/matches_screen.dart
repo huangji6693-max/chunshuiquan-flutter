@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../data/match_repository.dart';
 import '../../../core/services/heartbeat_service.dart';
+import '../../../shared/widgets/skeleton_loading.dart';
 
 final matchesProvider = FutureProvider<List<MatchItem>>((ref) {
   return ref.watch(matchRepositoryProvider).fetchMatches();
@@ -37,8 +38,7 @@ class MatchesScreen extends ConsumerWidget {
         ),
       ),
       body: state.when(
-        loading: () => const Center(
-            child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
+        loading: () => const MatchesSkeleton(),
         error: (e, _) => Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
