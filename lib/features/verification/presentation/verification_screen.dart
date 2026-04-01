@@ -41,7 +41,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('实名认证'),
-        backgroundColor: Colors.white,
+        // backgroundColor从theme获取
         surfaceTintColor: Colors.white,
       ),
       body: statusAsync.when(

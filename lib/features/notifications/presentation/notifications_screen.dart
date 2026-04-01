@@ -104,9 +104,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
     const pink = Color(0xFFFF4D88);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor从theme获取
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        // backgroundColor从theme获取
         surfaceTintColor: Colors.white,
         elevation: 0,
         title: ShaderMask(

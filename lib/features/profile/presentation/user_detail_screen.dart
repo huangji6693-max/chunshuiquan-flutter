@@ -39,7 +39,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor从theme获取
       body: Stack(
         children: [
           CustomScrollView(
