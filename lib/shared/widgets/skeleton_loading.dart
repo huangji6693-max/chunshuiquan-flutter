@@ -13,15 +13,15 @@ class DiscoverSkeleton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade200,
-        highlightColor: Colors.grey.shade50,
+        baseColor: Colors.grey.shade800,
+        highlightColor: Colors.grey.shade700,
         child: Column(
           children: [
             // 大卡片
             Container(
               height: MediaQuery.of(context).size.height * 0.55,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.grey.shade800,
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
@@ -32,8 +32,8 @@ class DiscoverSkeleton extends StatelessWidget {
               children: List.generate(3, (_) => Container(
                 width: 64,
                 height: 64,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade800,
                   shape: BoxShape.circle,
                 ),
               )),
@@ -52,8 +52,8 @@ class MatchesSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade200,
-      highlightColor: Colors.grey.shade50,
+      baseColor: Colors.grey.shade800,
+      highlightColor: Colors.grey.shade700,
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -67,8 +67,8 @@ class MatchesSkeleton extends StatelessWidget {
                   children: [
                     Container(
                       width: 60, height: 60,
-                      decoration: const BoxDecoration(
-                        color: Colors.white, shape: BoxShape.circle,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade800, shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -87,7 +87,7 @@ class MatchesSkeleton extends StatelessWidget {
                 Container(
                   width: 56, height: 56,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.grey.shade800,
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
@@ -118,15 +118,15 @@ class MomentsSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade200,
-      highlightColor: Colors.grey.shade50,
+      baseColor: Colors.grey.shade800,
+      highlightColor: Colors.grey.shade700,
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: List.generate(3, (_) => Container(
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.grey.shade800,
             borderRadius: BorderRadius.circular(18),
           ),
           child: Column(
@@ -137,8 +137,8 @@ class MomentsSkeleton extends StatelessWidget {
                 children: [
                   Container(
                     width: 40, height: 40,
-                    decoration: const BoxDecoration(
-                      color: Colors.grey, shape: BoxShape.circle,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade700, shape: BoxShape.circle,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -160,7 +160,7 @@ class MomentsSkeleton extends StatelessWidget {
               Container(
                 height: 180,
                 decoration: BoxDecoration(
-                  color: Colors.grey,
+                  color: Colors.grey.shade700,
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
@@ -179,8 +179,8 @@ class NearbySkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade200,
-      highlightColor: Colors.grey.shade50,
+      baseColor: Colors.grey.shade800,
+      highlightColor: Colors.grey.shade700,
       child: GridView.count(
         padding: const EdgeInsets.all(12),
         crossAxisCount: 2,
@@ -189,7 +189,7 @@ class NearbySkeleton extends StatelessWidget {
         childAspectRatio: 0.72,
         children: List.generate(6, (_) => Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.grey.shade800,
             borderRadius: BorderRadius.circular(18),
           ),
         )),
@@ -214,13 +214,13 @@ class SkeletonLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade200,
-      highlightColor: Colors.grey.shade50,
+      baseColor: Colors.grey.shade800,
+      highlightColor: Colors.grey.shade700,
       child: Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.grey.shade800,
           borderRadius: BorderRadius.circular(radius),
         ),
       ),

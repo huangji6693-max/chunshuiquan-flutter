@@ -150,8 +150,8 @@ class _UserCardState extends State<UserCard> {
         width: double.infinity,
         height: double.infinity,
         placeholder: (_, __) => Shimmer.fromColors(
-          baseColor: const Color(0xFFEEEEEE),
-          highlightColor: const Color(0xFFF8F8F8),
+          baseColor: Colors.grey.shade800,
+          highlightColor: Colors.grey.shade700,
           child: Container(
             color: Colors.white,
           ),
