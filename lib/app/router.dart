@@ -6,11 +6,13 @@ import '../features/auth/presentation/register_screen.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/discover/presentation/discover_screen.dart';
 import '../features/matches/presentation/matches_screen.dart';
+import '../features/notifications/presentation/notifications_screen.dart';
 import '../features/chat/presentation/chat_screen.dart';
 import '../features/call/presentation/voice_call_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../core/storage/token_manager.dart';
+import '../core/providers/current_user_provider.dart';
 import '../shared/widgets/main_scaffold.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -38,8 +40,27 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthRoute = state.matchedLocation.startsWith('/auth');
       final isOnboarding = state.matchedLocation == '/onboarding';
 
+      // 未登录 → 跳转登录页
       if (!isLoggedIn && !isAuthRoute && !isOnboarding) return '/auth/login';
+
+      // 已登录 → 检查onboarding状态
+      if (isLoggedIn && !isOnboarding && !isAuthRoute) {
+        try {
+          final container = ProviderScope.containerOf(context);
+          final userAsync = container.read(currentUserProvider);
+          final user = userAsync.valueOrNull;
+          // 如果用户信息已加载且未完成onboarding → 跳转onboarding
+          if (user != null && !user.onboardingCompleted) {
+            return '/onboarding';
+          }
+        } catch (_) {
+          // 获取用户信息失败不阻断路由
+        }
+      }
+
+      // 已登录访问登录页 → 跳转发现页
       if (isLoggedIn && isAuthRoute) return '/discover';
+
       return null;
     },
     routes: [
@@ -51,6 +72,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: '/discover', builder: (_, __) => const DiscoverScreen()),
           GoRoute(path: '/matches', builder: (_, __) => const MatchesScreen()),
+          GoRoute(path: '/notifications', builder: (_, __) => const NotificationsScreen()),
           GoRoute(
             path: '/chat/:matchId',
             builder: (_, state) {

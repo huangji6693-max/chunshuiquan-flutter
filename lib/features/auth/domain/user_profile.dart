@@ -17,6 +17,7 @@ class UserProfile {
   final String? smoking;    // 吸烟习惯
   final String? drinking;   // 饮酒习惯
   final String? birthDate;  // 生日字符串，用于计算年龄
+  final bool onboardingCompleted; // 是否完成onboarding
 
   const UserProfile({
     required this.id,
@@ -35,6 +36,7 @@ class UserProfile {
     this.smoking,
     this.drinking,
     this.birthDate,
+    this.onboardingCompleted = false,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
@@ -60,6 +62,7 @@ class UserProfile {
         smoking: json['smoking'] as String?,
         drinking: json['drinking'] as String?,
         birthDate: json['birthDate'] as String?,
+        onboardingCompleted: json['onboardingCompleted'] as bool? ?? false,
       );
 
   String get firstAvatar => avatarUrls.isNotEmpty ? avatarUrls.first : '';

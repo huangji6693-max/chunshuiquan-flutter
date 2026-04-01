@@ -57,6 +57,15 @@ class ProfileRepository {
     }
   }
 
+  /// 完成onboarding流程
+  Future<void> completeOnboarding() async {
+    try {
+      await _dio.put('/api/users/onboarding-complete');
+    } on DioException catch (e) {
+      throw AppException.network(e.message ?? '完成引导失败');
+    }
+  }
+
   /// 重排头像顺序
   Future<void> reorderAvatars(List<String> urls) async {
     try {
