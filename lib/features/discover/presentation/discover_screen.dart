@@ -422,6 +422,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                             key: const Key('swipe_card'),
                             controller: _swiperCtrl,
                             cardsCount: discoverState.cards.length,
+                            numberOfCardsDisplayed: discoverState.cards.length >= 3 ? 3 : discoverState.cards.length,
+                            backCardOffset: const Offset(0, -30),
+                            scale: 0.95,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             onSwipe: (prev, curr, dir) {
                               HapticFeedback.lightImpact();
                               final direction = switch (dir) {

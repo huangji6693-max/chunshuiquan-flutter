@@ -334,7 +334,7 @@ class _UserCardState extends State<UserCard> {
                         const Color(0xFFFF8A5C).withOpacity(0.5),
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                         color: Colors.white.withOpacity(0.3),
                         width: 0.8),
@@ -363,7 +363,7 @@ class _UserCardState extends State<UserCard> {
                           horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.18),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                             color: Colors.white.withOpacity(0.3),
                             width: 0.8),
