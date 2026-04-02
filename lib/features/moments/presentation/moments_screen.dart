@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../data/moment_repository.dart';
 import 'create_moment_screen.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 final momentsTimelineProvider = FutureProvider<List<MomentItem>>((ref) {
   return ref.watch(momentRepositoryProvider).getTimeline();
@@ -79,12 +80,23 @@ class MomentsScreen extends ConsumerWidget {
               );
             }
 
-            return ListView.builder(
-              padding: const EdgeInsets.only(top: 8, bottom: 100),
-              itemCount: moments.length,
-              itemBuilder: (_, i) => _MomentCard(
-                moment: moments[i],
-                onLikeToggled: () => ref.invalidate(momentsTimelineProvider),
+            return AnimationLimiter(
+              child: ListView.builder(
+                padding: const EdgeInsets.only(top: 8, bottom: 100),
+                itemCount: moments.length,
+                itemBuilder: (_, i) => AnimationConfiguration.staggeredList(
+                  position: i,
+                  duration: const Duration(milliseconds: 375),
+                  child: SlideAnimation(
+                    verticalOffset: 30,
+                    child: FadeInAnimation(
+                      child: _MomentCard(
+                        moment: moments[i],
+                        onLikeToggled: () => ref.invalidate(momentsTimelineProvider),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             );
           },

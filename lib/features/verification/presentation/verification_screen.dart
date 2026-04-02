@@ -42,7 +42,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
       appBar: AppBar(
         title: const Text('实名认证'),
         // backgroundColor从theme获取
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
       ),
       body: statusAsync.when(
         data: (status) {
@@ -197,7 +197,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
             decoration: InputDecoration(
               hintText: '请输入身份证上的姓名',
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Theme.of(context).colorScheme.surfaceContainerHigh,
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(color: Colors.grey.shade700)),

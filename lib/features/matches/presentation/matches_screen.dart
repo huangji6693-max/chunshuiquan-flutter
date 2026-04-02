@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../data/match_repository.dart';
 import '../../../core/services/heartbeat_service.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 final matchesProvider = FutureProvider<List<MatchItem>>((ref) {
   return ref.watch(matchRepositoryProvider).fetchMatches();
@@ -153,11 +154,20 @@ class MatchesScreen extends ConsumerWidget {
                   ),
                 ),
 
-                // 消息列表
+                // 消息列表 + staggered 动画
                 if (conversations.isNotEmpty)
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
-                      (_, i) => _ConversationTile(match: conversations[i]),
+                      (_, i) => AnimationConfiguration.staggeredList(
+                        position: i,
+                        duration: const Duration(milliseconds: 375),
+                        child: SlideAnimation(
+                          verticalOffset: 30,
+                          child: FadeInAnimation(
+                            child: _ConversationTile(match: conversations[i]),
+                          ),
+                        ),
+                      ),
                       childCount: conversations.length,
                     ),
                   )
@@ -328,10 +338,12 @@ class _ConversationTile extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
           children: [
-            // 头像 + 在线绿点
+            // 头像 + 在线绿点 + Hero过渡
             Stack(
               children: [
-                CircleAvatar(
+                Hero(
+                  tag: 'avatar_${match.matchId}',
+                  child: CircleAvatar(
                   radius: 30,
                   backgroundImage: match.otherAvatarUrl != null
                       ? CachedNetworkImageProvider(match.otherAvatarUrl!)
@@ -348,6 +360,7 @@ class _ConversationTile extends ConsumerWidget {
                               color: Color(0xFFFF4D88)),
                         )
                       : null,
+                ),
                 ),
                 // 在线绿点
                 if (isOnline)

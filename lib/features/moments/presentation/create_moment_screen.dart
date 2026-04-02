@@ -36,7 +36,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
       
       appBar: AppBar(
         
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         title: const Text('发布动态'),
         actions: [
           Padding(

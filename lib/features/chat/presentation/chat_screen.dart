@@ -185,8 +185,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     onPressed: () => Navigator.of(context).pop(),
                   ),
 
-                  // 对方头像
-                  CircleAvatar(
+                  // 对方头像 + Hero过渡
+                  Hero(
+                    tag: 'avatar_${widget.matchId}',
+                    child: CircleAvatar(
                     radius: 22,
                     backgroundImage: widget.partnerAvatarUrl != null &&
                             widget.partnerAvatarUrl!.isNotEmpty
@@ -198,6 +200,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         ? const Icon(Icons.person,
                             size: 22, color: Colors.grey)
                         : null,
+                  ),
                   ),
                   const SizedBox(width: 12),
 

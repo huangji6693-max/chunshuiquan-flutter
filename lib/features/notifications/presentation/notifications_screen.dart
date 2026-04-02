@@ -107,7 +107,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
       // backgroundColor从theme获取
       appBar: AppBar(
         // backgroundColor从theme获取
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: ShaderMask(
           shaderCallback: (bounds) => const LinearGradient(
