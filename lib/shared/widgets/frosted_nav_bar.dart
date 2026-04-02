@@ -32,18 +32,18 @@ class FrostedNavBar extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface.withOpacity(0.95),
+            color: Theme.of(context).colorScheme.surfaceContainer.withOpacity(0.92),
             border: Border(
               top: BorderSide(
-                color: const Color(0xFFFF4D88).withOpacity(0.1),
+                color: Colors.white.withOpacity(0.06),
                 width: 0.5,
               ),
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFFF4D88).withOpacity(0.08),
-                blurRadius: 20,
-                offset: const Offset(0, -4),
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 12,
+                offset: const Offset(0, -2),
               ),
             ],
           ),
