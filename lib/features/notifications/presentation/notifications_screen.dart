@@ -231,7 +231,7 @@ class _NotificationTile extends StatelessWidget {
         : Icons.chat_bubble_rounded;
 
     return Container(
-      color: item.isRead ? Colors.white : Theme.of(context).colorScheme.surfaceContainerLow,
+      color: item.isRead ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.surfaceContainerLow,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
