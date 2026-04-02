@@ -19,6 +19,7 @@ class MatchItem {
   final int? otherHeight;
   final String? otherEducation;
   final String? otherZodiac;
+  final String? otherVipTier;
   final DateTime createdAt;
   final bool? isNew;
   final String? lastMessage;
@@ -37,6 +38,7 @@ class MatchItem {
     this.otherHeight,
     this.otherEducation,
     this.otherZodiac,
+    this.otherVipTier,
     required this.createdAt,
     this.isNew,
     this.lastMessage,
@@ -60,6 +62,7 @@ class MatchItem {
       otherHeight: other['height'] as int?,
       otherEducation: other['education'] as String?,
       otherZodiac: other['zodiac'] as String?,
+      otherVipTier: other['vipTier'] as String?,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime.now(),
       isNew: json['isNew'] as bool?,
       lastMessage: json['lastMessage'] as String?,

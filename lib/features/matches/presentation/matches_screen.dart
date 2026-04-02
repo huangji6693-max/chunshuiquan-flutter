@@ -388,11 +388,27 @@ class _ConversationTile extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(match.otherName,
-                      style: TextStyle(
-                          fontWeight: hasUnread ? FontWeight.w800 : FontWeight.w700,
-                          fontSize: 16,
-                          color: Colors.white)),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(match.otherName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: hasUnread ? FontWeight.w800 : FontWeight.w700,
+                                fontSize: 16,
+                                color: Colors.white)),
+                      ),
+                      if (match.otherVipTier != null && match.otherVipTier != 'none') ...[
+                        const SizedBox(width: 4),
+                        Icon(Icons.verified,
+                            size: 16,
+                            color: match.otherVipTier == 'diamond'
+                                ? const Color(0xFFE040FB)
+                                : const Color(0xFFFFD700)),
+                      ],
+                    ],
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     previewText,
