@@ -51,7 +51,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
                       ? const LinearGradient(
                           colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)])
                       : null,
-                  color: _canPublish ? null : Colors.grey.shade300,
+                  color: _canPublish ? null : Colors.grey.shade700,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: _publishing
