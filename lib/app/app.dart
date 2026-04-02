@@ -6,6 +6,7 @@ import '../shared/widgets/network_aware.dart';
 import '../core/network/dio_client.dart';
 import '../core/services/heartbeat_service.dart';
 import '../core/network/websocket_service.dart';
+import '../features/notifications/presentation/notifications_screen.dart';
 import 'router.dart';
 
 class ChunShuiQuanApp extends ConsumerStatefulWidget {
@@ -60,7 +61,18 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
       FirebaseMessaging.onMessage.listen((message) {
         if (!mounted) return;
         final data = message.data;
+        final notifier = ref.read(notificationsProvider.notifier);
+        final senderName = data['senderName'] ?? 'Ta';
+
         if (data['type'] == 'new_match') {
+          notifier.addNotification(NotificationItem(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            type: NotificationType.match,
+            title: '和你心意相通 💕',
+            senderName: senderName,
+            avatarUrl: data['avatarUrl'],
+            createdAt: DateTime.now(),
+          ));
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('有人和你心意相通 💕'),
@@ -72,21 +84,53 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
             ),
           );
         } else if (data['type'] == 'new_message') {
+          notifier.addNotification(NotificationItem(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            type: NotificationType.message,
+            title: '给你发了消息',
+            senderName: senderName,
+            avatarUrl: data['avatarUrl'],
+            createdAt: DateTime.now(),
+          ));
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${data['senderName'] ?? 'Ta'}给你发了消息'),
+              content: Text('$senderName给你发了消息'),
               backgroundColor: const Color(0xFFFF4D88),
               behavior: SnackBarBehavior.floating,
             ),
           );
         } else if (data['type'] == 'gift_received') {
+          notifier.addNotification(NotificationItem(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            type: NotificationType.match,
+            title: '送了你一份礼物 🎁',
+            senderName: senderName,
+            avatarUrl: data['avatarUrl'],
+            createdAt: DateTime.now(),
+          ));
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('收到一份心意 🎁 来自${data['senderName'] ?? 'Ta'}'),
+              content: Text('收到一份心意 🎁 来自$senderName'),
               backgroundColor: const Color(0xFFFF4D88),
               behavior: SnackBarBehavior.floating,
             ),
           );
+        } else if (data['type'] == 'call_invite') {
+          final matchId = data['matchId'];
+          final callerName = data['callerName'] ?? 'Ta';
+          if (matchId != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('$callerName 邀请你语音通话 📞'),
+                action: SnackBarAction(
+                  label: '接听',
+                  onPressed: () => ref.read(routerProvider).go('/call/$matchId'),
+                ),
+                backgroundColor: const Color(0xFFFF4D88),
+                duration: const Duration(seconds: 15),
+              ),
+            );
+          }
         }
       });
 

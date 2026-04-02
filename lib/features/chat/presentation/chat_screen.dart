@@ -13,6 +13,7 @@ import '../../../core/providers/current_user_provider.dart';
 import '../../../core/network/websocket_service.dart';
 import '../../profile/data/upload_repository.dart';
 import '../data/message_repository.dart';
+import '../../../core/network/dio_client.dart';
 import '../../../shared/widgets/page_transitions.dart';
 
 /// 聊天页 - 升级版UI
@@ -261,14 +262,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       child: const Icon(Icons.call_outlined,
                           color: Color(0xFFFF4D88), size: 20),
                     ),
-                    onPressed: () => Navigator.push(
-                      context,
-                      fadeSlideRoute(VoiceCallScreen(
-                        matchId: widget.matchId,
-                        partnerName: widget.partnerName ?? '对方',
-                        partnerAvatarUrl: widget.partnerAvatarUrl,
-                      )),
-                    ),
+                    onPressed: () {
+                      // 发送通话邀请推送给对方
+                      try {
+                        ref.read(dioProvider).post('/api/agora/invite',
+                            queryParameters: {'matchId': widget.matchId});
+                      } catch (_) {}
+                      Navigator.push(
+                        context,
+                        fadeSlideRoute(VoiceCallScreen(
+                          matchId: widget.matchId,
+                          partnerName: widget.partnerName ?? '对方',
+                          partnerAvatarUrl: widget.partnerAvatarUrl,
+                        )),
+                      );
+                    },
                   ),
 
                   // 视频通话按钮（预留）
