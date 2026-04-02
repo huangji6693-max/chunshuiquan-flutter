@@ -213,7 +213,7 @@ class SettingsScreen extends ConsumerWidget {
           _SettingsTile(
             icon: Icons.privacy_tip_outlined,
             title: '隐私政策',
-            trailing: const Icon(Icons.open_in_new, size: 16, color: Colors.grey),
+            trailing: Icon(Icons.open_in_new, size: 16, color: Theme.of(context).colorScheme.outline),
             onTap: () => launchUrl(
               Uri.parse('https://huangji6693-max.github.io/chunshuiquan-privacy'),
               mode: LaunchMode.externalApplication,
@@ -222,7 +222,7 @@ class SettingsScreen extends ConsumerWidget {
           _SettingsTile(
             icon: Icons.description_outlined,
             title: '用户协议',
-            trailing: const Icon(Icons.open_in_new, size: 16, color: Colors.grey),
+            trailing: Icon(Icons.open_in_new, size: 16, color: Theme.of(context).colorScheme.outline),
             onTap: () => launchUrl(
               Uri.parse('https://huangji6693-max.github.io/chunshuiquan-privacy/terms'),
               mode: LaunchMode.externalApplication,
