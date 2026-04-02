@@ -154,7 +154,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
                             )
                           : null,
-                      color: i <= _page ? null : Colors.grey[200],
+                      color: i <= _page ? null : Colors.grey.shade700,
                     ),
                   ),
                 )),
