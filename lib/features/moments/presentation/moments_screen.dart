@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../data/moment_repository.dart';
 import 'create_moment_screen.dart';
@@ -60,7 +61,12 @@ class MomentsScreen extends ConsumerWidget {
     return Scaffold(
       
       appBar: AppBar(
-        title: const Text('动态', style: TextStyle(color: Colors.white)),
+        title: Text('动态', style: GoogleFonts.notoSansSc(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.5,
+          color: Theme.of(context).colorScheme.onSurface,
+        )),
         
         surfaceTintColor: Colors.transparent,
         actions: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
@@ -26,12 +27,12 @@ class MatchesScreen extends ConsumerWidget {
         
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        title: Text('匹配',
-            style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w900,
-                color: Theme.of(context).colorScheme.onSurface,
-                letterSpacing: 1.5)),
+        title: Text('匹配', style: GoogleFonts.notoSansSc(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.5,
+          color: Theme.of(context).colorScheme.onSurface,
+        )),
       ),
       body: state.when(
         loading: () => const MatchesSkeleton(),

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 import '../../../core/network/dio_client.dart';
@@ -40,7 +41,12 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('实名认证'),
+        title: Text('实名认证', style: GoogleFonts.notoSansSc(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.5,
+          color: Theme.of(context).colorScheme.onSurface,
+        )),
         // backgroundColor从theme获取
         surfaceTintColor: Colors.transparent,
       ),

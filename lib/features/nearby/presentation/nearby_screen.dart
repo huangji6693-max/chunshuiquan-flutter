@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../../discover/data/discover_repository.dart';
@@ -54,7 +55,12 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
             floating: true,
             
             surfaceTintColor: Colors.transparent,
-            title: Text('附近的人', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+            title: Text('附近的人', style: GoogleFonts.notoSansSc(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: Theme.of(context).colorScheme.onSurface,
+            )),
             actions: [
               // 切换视图
               IconButton(

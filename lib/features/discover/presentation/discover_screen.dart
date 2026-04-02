@@ -345,41 +345,14 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
         elevation: 0,
         
         surfaceTintColor: Colors.transparent,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(Icons.favorite_rounded,
-                  color: Colors.white, size: 20),
-            ),
-            const SizedBox(width: 10),
-            ShaderMask(
-              blendMode: BlendMode.srcIn,
-              shaderCallback: (bounds) => const LinearGradient(
-                colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D), Color(0xFFFF8A5C)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ).createShader(bounds),
-              child: Text(
-                '春水圈',
-                style: GoogleFonts.notoSansSc(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 4,
-                  height: 1.1,
-                ),
-              ),
-            ),
-          ],
+        title: Text(
+          '春水圈',
+          style: GoogleFonts.notoSansSc(
+            fontSize: 24,
+            fontWeight: FontWeight.w900,
+            color: const Color(0xFFFF4D88),
+            letterSpacing: 1.5,
+          ),
         ),
         centerTitle: false,
         actions: [

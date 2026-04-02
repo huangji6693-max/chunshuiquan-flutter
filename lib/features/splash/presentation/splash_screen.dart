@@ -166,9 +166,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         Text('春水圈',
                             style: GoogleFonts.notoSansSc(
                               color: Colors.white,
-                              fontSize: 38,
+                              fontSize: 36,
                               fontWeight: FontWeight.w900,
-                              letterSpacing: 10,
+                              letterSpacing: 2,
                               height: 1.1,
                             )),
                         const SizedBox(height: 12),
