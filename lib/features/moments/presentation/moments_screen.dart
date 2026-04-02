@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../data/moment_repository.dart';
 import 'create_moment_screen.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
+import '../../../shared/widgets/animated_empty_state.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 final momentsTimelineProvider = FutureProvider<List<MomentItem>>((ref) {
@@ -51,31 +52,14 @@ class MomentsScreen extends ConsumerWidget {
         child: momentsAsync.when(
           data: (moments) {
             if (moments.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFF4D88).withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.dynamic_feed,
-                          size: 40, color: Color(0xFFFF4D88)),
-                    ),
-                    const SizedBox(height: 16),
-                    Text('这里还很安静，等你来打破',
-                        style: TextStyle(
-                            color: Colors.grey.shade400, fontSize: 16)),
-                    const SizedBox(height: 8),
-                    TextButton(
-                      onPressed: () => Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const CreateMomentScreen())),
-                      child: const Text('写下第一个故事'),
-                    ),
-                  ],
+              return AnimatedEmptyState(
+                icon: Icons.dynamic_feed,
+                title: '这里还很安静',
+                subtitle: '等你来写下第一个故事',
+                action: TextButton(
+                  onPressed: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const CreateMomentScreen())),
+                  child: const Text('发布动态'),
                 ),
               );
             }
