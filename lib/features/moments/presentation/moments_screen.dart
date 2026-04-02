@@ -495,7 +495,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: TextField(
