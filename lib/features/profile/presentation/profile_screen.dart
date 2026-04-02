@@ -21,7 +21,7 @@ class ProfileScreen extends ConsumerWidget {
       body: profileState.when(
         loading: () => const Center(
             child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
-        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Color(0xFFFFCDD2)), const SizedBox(height: 12), Text('网络开小差了', style: TextStyle(color: Colors.grey))])),
+        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Color(0xFFFFCDD2)), const SizedBox(height: 12), Text('网络开小差了', style: TextStyle(color: Colors.grey.shade400))])),
         data: (user) => _ProfileContent(user: user),
       ),
     );

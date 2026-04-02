@@ -172,12 +172,12 @@ class MatchesScreen extends ConsumerWidget {
                     ),
                   )
                 else
-                  const SliverToBoxAdapter(
+                  SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.all(32),
                       child: Center(
                         child: Text('快去发送第一条消息吧 👋',
-                            style: TextStyle(color: Colors.grey, fontSize: 14)),
+                            style: TextStyle(color: Colors.grey.shade400, fontSize: 14)),
                       ),
                     ),
                   ),
