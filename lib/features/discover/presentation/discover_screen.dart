@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/discover_repository.dart';
@@ -363,15 +364,18 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
             ShaderMask(
               blendMode: BlendMode.srcIn,
               shaderCallback: (bounds) => const LinearGradient(
-                colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D), Color(0xFFFF8A5C)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ).createShader(bounds),
-              child: const Text(
+              child: Text(
                 '春水圈',
-                style: TextStyle(
-                  fontSize: 24,
+                style: GoogleFonts.notoSansSc(
+                  fontSize: 26,
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
-                  letterSpacing: 3,
+                  letterSpacing: 4,
+                  height: 1.1,
                 ),
               ),
             ),

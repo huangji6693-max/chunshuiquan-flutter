@@ -66,6 +66,9 @@ dependencies:
   audioplayers: ^6.0.0
   path_provider: ^2.1.2
 
+  # 字体
+  google_fonts: ^6.2.1
+
   # 工具
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0

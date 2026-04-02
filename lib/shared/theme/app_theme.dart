@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// 春水圈主题 — Material 3 暗色 + 亮色双主题
+/// 使用 Poppins 英文字体 + 系统中文字体
 /// 核心原则：
-/// 1. ColorScheme.fromSeed 自动生成 7 级 surface 灰阶
-/// 2. 不同层级的组件用不同 surface：
-///    - 背景(surface) < 导航栏(surfaceContainer) < 卡片(surfaceContainerHigh)
-///    - < 弹窗/输入框(surfaceContainerHighest)
-/// 3. 品牌色只用于装饰性渐变，不用于基础组件
-/// 4. 文字用 onSurface/onSurfaceVariant/outline 三级层次
+/// 1. Poppins 的几何感让数字和英文显得现代高端
+/// 2. 中文自动 fallback 到系统字体（iOS=苹方, Android=思源）
+/// 3. 不同层级的组件用不同 surface
+/// 4. 品牌色只用于装饰性渐变
 class AppTheme {
   static const _seed = Color(0xFFFF4D88);
 
@@ -19,35 +19,43 @@ class AppTheme {
     colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
   );
 
-  // ====== 共享样式 ======
+  // ====== 基于 Poppins 的 TextTheme ======
 
-  static const _textTheme = TextTheme(
-    displayLarge: TextStyle(fontSize: 36, fontWeight: FontWeight.w900, letterSpacing: -0.5, height: 1.1),
-    headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: -0.3, height: 1.15),
-    headlineMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, letterSpacing: -0.2, height: 1.2),
-    headlineSmall: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: 0, height: 1.25),
-    titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, letterSpacing: 0.1, height: 1.3),
-    titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15, height: 1.4),
-    titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.1, height: 1.4),
+  static final _textTheme = GoogleFonts.poppinsTextTheme(const TextTheme(
+    displayLarge: TextStyle(fontSize: 36, fontWeight: FontWeight.w800, letterSpacing: -0.5, height: 1.1),
+    headlineLarge: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, letterSpacing: -0.3, height: 1.15),
+    headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -0.2, height: 1.2),
+    headlineSmall: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: 0, height: 1.25),
+    titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, letterSpacing: 0.1, height: 1.3),
+    titleMedium: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 0.15, height: 1.4),
+    titleSmall: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.1, height: 1.4),
     bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.08, height: 1.6),
     bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, letterSpacing: 0.05, height: 1.55),
-    bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 0.4, height: 1.5),
+    bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 0.3, height: 1.5),
     labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.15, height: 1.4),
-    labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.5, height: 1.33),
-    labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.5, height: 1.45),
-  );
+    labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.4, height: 1.33),
+    labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.4, height: 1.45),
+  ));
+
+  // ====== 共享组件样式 ======
 
   static const _appBarTheme = AppBarTheme(
     elevation: 0,
     scrolledUnderElevation: 1,
     surfaceTintColor: null,
+    centerTitle: false,
+    titleTextStyle: TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.3,
+    ),
   );
 
   static final _buttonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      minimumSize: const Size(double.infinity, 54),
+      minimumSize: const Size(double.infinity, 52),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.3),
     ),
   );
 
@@ -65,14 +73,8 @@ class AppTheme {
     elevation: 3,
   );
 
-  static const _navigationBarTheme = NavigationBarThemeData(
-    elevation: 2,
-  );
-
-  static const _dividerTheme = DividerThemeData(
-    thickness: 0.5,
-    space: 0,
-  );
+  static const _navigationBarTheme = NavigationBarThemeData(elevation: 2);
+  static const _dividerTheme = DividerThemeData(thickness: 0.5, space: 0);
 
   static final _listTileTheme = ListTileThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -80,7 +82,7 @@ class AppTheme {
   );
 
   static final _dialogTheme = DialogTheme(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
     elevation: 6,
   );
 
