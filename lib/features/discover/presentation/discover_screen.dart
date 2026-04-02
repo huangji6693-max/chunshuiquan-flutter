@@ -13,6 +13,7 @@ import '../../../shared/widgets/match_dialog.dart';
 import '../../checkin/presentation/checkin_dialog.dart';
 import '../../likes/presentation/likes_screen.dart';
 import '../../boost/presentation/boost_button.dart';
+import '../../../shared/widgets/animated_empty_state.dart';
 import 'package:go_router/go_router.dart';
 
 /// 筛选参数
@@ -394,24 +395,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
           ? const Center(
               child: CircularProgressIndicator(color: Color(0xFFFF4D88)))
           : discoverState.cards.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.explore_off,
-                          size: 72, color: Colors.grey.shade300),
-                      const SizedBox(height: 16),
-                      const Text('暂时没有更多人了',
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey)),
-                      const SizedBox(height: 8),
-                      Text('明天再来看看吧',
-                          style: TextStyle(
-                              fontSize: 14, color: Colors.grey.shade400)),
-                    ],
-                  ),
+              ? AnimatedEmptyState(
+                  icon: Icons.explore_off_rounded,
+                  title: '暂时没有更多人了',
+                  subtitle: '明天再来看看吧',
                 )
               : Column(
                   children: [
