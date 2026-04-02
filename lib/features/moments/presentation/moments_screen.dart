@@ -467,7 +467,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               fontSize: 13,
-                                              color: Colors.grey.shade700)),
+                                              color: Theme.of(context).colorScheme.onSurfaceVariant)),
                                       const SizedBox(height: 2),
                                       Text(c.content,
                                           style: const TextStyle(fontSize: 14)),
