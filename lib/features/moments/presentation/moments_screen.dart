@@ -46,7 +46,7 @@ class MomentsScreen extends ConsumerWidget {
         ],
       ),
       body: RefreshIndicator(
-        color: const Color(0xFFFF4D88),
+        color: Theme.of(context).colorScheme.primary,
         onRefresh: () async => ref.invalidate(momentsTimelineProvider),
         child: momentsAsync.when(
           data: (moments) {

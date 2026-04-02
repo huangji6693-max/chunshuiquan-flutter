@@ -69,7 +69,7 @@ class MatchesScreen extends ConsumerWidget {
             });
 
           return RefreshIndicator(
-            color: const Color(0xFFFF4D88),
+            color: Theme.of(context).colorScheme.primary,
             onRefresh: () async => ref.invalidate(matchesProvider),
             child: CustomScrollView(
               slivers: [
@@ -432,7 +432,7 @@ class _ConversationTile extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFF4D88),
+                          color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
