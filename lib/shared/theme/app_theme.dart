@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 
 /// 春水圈主题 — Material 3 暗色主题
-/// 用 ColorScheme.fromSeed 生成和谐色系，不硬编码
+/// 核心原则：
+/// 1. ColorScheme.fromSeed 自动生成 7 级 surface 灰阶
+/// 2. 不同层级的组件用不同 surface：
+///    - 背景(surface) < 导航栏(surfaceContainer) < 卡片(surfaceContainerHigh)
+///    - < 弹窗/输入框(surfaceContainerHighest)
+/// 3. 品牌色只用于装饰性渐变，不用于基础组件
+/// 4. 文字用 onSurface/onSurfaceVariant/outline 三级层次
 class AppTheme {
   static const _seed = Color(0xFFFF4D88);
 
-  // 品牌渐变（仅用于特殊装饰，不用于基础组件）
+  // 品牌渐变（仅用于特殊装饰元素）
   static const primaryGradient = LinearGradient(
     colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
   );
@@ -17,13 +23,13 @@ class AppTheme {
     useMaterial3: true,
     brightness: Brightness.dark,
 
-    // 核心：让 Material 3 自动生成全套和谐暗色系
+    // 核心色系——fromSeed 自动生成全套暗色和谐色
     colorScheme: ColorScheme.fromSeed(
       seedColor: _seed,
       brightness: Brightness.dark,
     ),
 
-    // 排版 — 精致的字重和字间距
+    // 排版——精致的字重和字间距层级
     textTheme: const TextTheme(
       headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w800, letterSpacing: -0.5),
       headlineMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.3),
@@ -36,12 +42,11 @@ class AppTheme {
       labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.5),
     ),
 
-    // AppBar
+    // AppBar——与背景同色，不抢视觉焦点
     appBarTheme: const AppBarTheme(
       elevation: 0,
-      scrolledUnderElevation: 0,
-      shadowColor: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 1, // 滚动时微微提升
+      surfaceTintColor: null, // 让 M3 自动处理 tint
     ),
 
     // 按钮
@@ -53,9 +58,10 @@ class AppTheme {
       ),
     ),
 
-    // 输入框
+    // 输入框——比卡片更亮一级 (surfaceContainerHighest)
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
+      // fillColor 不设，让 M3 自动用 surfaceContainerHighest
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -71,19 +77,25 @@ class AppTheme {
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     ),
 
-    // 卡片 — 用 outlined 风格，不依赖重阴影
+    // 卡片——elevation 1，M3 会自动添加 surface tint 让卡片比背景亮
     cardTheme: CardTheme(
-      elevation: 0,
+      elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.zero,
     ),
 
-    // BottomSheet
+    // BottomSheet——elevation 自动处理
     bottomSheetTheme: const BottomSheetThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
+      elevation: 3,
+    ),
+
+    // NavigationBar
+    navigationBarTheme: const NavigationBarThemeData(
+      elevation: 2,
     ),
 
     // Divider
@@ -98,7 +110,7 @@ class AppTheme {
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     ),
 
-    // Dialog
+    // Dialog——高 elevation，最亮的浮层
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       elevation: 6,
@@ -108,11 +120,15 @@ class AppTheme {
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 3,
     ),
 
     // Chip
     chipTheme: ChipThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     ),
+
+    // 关键：启用 elevation overlay（暗色下用 surface tint 表现深度）
+    // Material 3 默认启用
   );
 }
