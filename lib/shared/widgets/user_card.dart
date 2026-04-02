@@ -28,19 +28,24 @@ class _UserCardState extends State<UserCard> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withValues(alpha:0.06),
+          color: Colors.white.withValues(alpha: 0.12),
           width: 0.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.4),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.35),
+            blurRadius: 32,
+            offset: const Offset(0, 12),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.15),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 3,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -199,11 +204,13 @@ class _UserCardState extends State<UserCard> {
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.black.withValues(alpha:0.3),
-            Colors.black.withValues(alpha:0.7),
-            Colors.black.withValues(alpha:_expanded ? 0.92 : 0.85),
+            Colors.transparent,
+            Colors.black.withValues(alpha: 0.08),
+            Colors.black.withValues(alpha: 0.3),
+            Colors.black.withValues(alpha: 0.6),
+            Colors.black.withValues(alpha: _expanded ? 0.9 : 0.82),
           ],
-          stops: const [0.0, 0.3, 0.6, 1.0],
+          stops: const [0.0, 0.2, 0.35, 0.5, 0.7, 1.0],
         ),
       ),
       padding: EdgeInsets.fromLTRB(20, _expanded ? 40 : 60, 20, 24),
@@ -219,9 +226,9 @@ class _UserCardState extends State<UserCard> {
               Text(user.name,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.3,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.8,
                     height: 1.1,
                   )),
               const SizedBox(width: 10),
@@ -230,7 +237,7 @@ class _UserCardState extends State<UserCard> {
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 26,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w300,
                       height: 1.1,
                     )),
               const Spacer(),
@@ -338,15 +345,10 @@ class _UserCardState extends State<UserCard> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFFFF4D88).withValues(alpha:0.5),
-                        const Color(0xFFFF8A5C).withValues(alpha:0.5),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                        color: Colors.white.withValues(alpha:0.3),
+                        color: Colors.white.withValues(alpha: 0.2),
                         width: 0.8),
                   ),
                   child: Text(tag,

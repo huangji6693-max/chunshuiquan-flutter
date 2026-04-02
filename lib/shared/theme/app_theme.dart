@@ -27,12 +27,17 @@ class AppTheme {
     colorScheme: ColorScheme.fromSeed(
       seedColor: _seed,
       brightness: Brightness.dark,
+    ).copyWith(
+      surface: const Color(0xFF101014),
+      surfaceContainer: const Color(0xFF1A1A1E),
+      surfaceContainerHigh: const Color(0xFF232328),
+      surfaceContainerHighest: const Color(0xFF2C2C32),
     ),
 
     // 排版——精致的字重和字间距层级
     textTheme: const TextTheme(
-      headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w800, letterSpacing: -0.5),
-      headlineMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.3),
+      headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: -0.5),
+      headlineMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, letterSpacing: -0.3),
       titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
       titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15),
       bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5),
@@ -68,7 +73,7 @@ class AppTheme {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08), width: 0.5),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

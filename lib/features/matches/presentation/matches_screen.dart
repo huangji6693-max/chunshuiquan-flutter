@@ -335,8 +335,18 @@ class _ConversationTile extends ConsumerWidget {
     if (previewText.contains('送了你') || previewText.contains('礼物')) previewText = '🎁 $previewText';
     final hasUnread = match.unreadCount > 0;
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.08),
+          width: 0.5,
+        ),
+      ),
+      child: InkWell(
+      borderRadius: BorderRadius.circular(14),
       onTap: () => context.go('/chat/${match.matchId}', extra: {
         'partnerName': match.otherName,
         'partnerAvatarUrl': match.otherAvatarUrl,
@@ -384,6 +394,13 @@ class _ConversationTile extends ConsumerWidget {
                         shape: BoxShape.circle,
                         color: const Color(0xFF4CAF50),
                         border: Border.all(color: Colors.white, width: 2.5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF4CAF50).withValues(alpha: 0.5),
+                            blurRadius: 6,
+                            spreadRadius: 1,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -458,8 +475,17 @@ class _ConversationTile extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
+                          ),
                           borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFFF4D88).withValues(alpha: 0.3),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: Text(
                           match.unreadCount > 99
@@ -494,6 +520,7 @@ class _ConversationTile extends ConsumerWidget {
           ],
         ),
       ),
+    ),
     );
   }
 

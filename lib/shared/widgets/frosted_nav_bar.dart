@@ -29,13 +29,13 @@ class FrostedNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainer.withValues(alpha:0.92),
+            color: Theme.of(context).colorScheme.surfaceContainer.withValues(alpha: 0.78),
             border: Border(
               top: BorderSide(
-                color: Colors.white.withValues(alpha:0.06),
+                color: Colors.white.withValues(alpha: 0.12),
                 width: 0.5,
               ),
             ),
@@ -74,7 +74,9 @@ class FrostedNavBar extends StatelessWidget {
                                   ? ShaderMask(
                                       key: const ValueKey(true),
                                       shaderCallback: (bounds) => const LinearGradient(
-                                        colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+                                        colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D), Color(0xFFFF8A5C)],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
                                       ).createShader(bounds),
                                       child: Icon(
                                         _icons[i].$1,
