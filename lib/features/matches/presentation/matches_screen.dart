@@ -324,8 +324,10 @@ class _ConversationTile extends ConsumerWidget {
     final displayTime = match.lastMessageAt ?? match.createdAt;
     final timeStr = _formatTime(displayTime);
 
-    // 消息预览文本
-    final previewText = match.lastMessage ?? '还没聊过，打个招呼？';
+    // 消息预览文本——图片消息显示📷，礼物显示🎁
+    var previewText = match.lastMessage ?? '还没聊过，打个招呼？';
+    if (previewText.startsWith('[图片]')) previewText = '📷 图片';
+    if (previewText.contains('送了你') || previewText.contains('礼物')) previewText = '🎁 $previewText';
     final hasUnread = match.unreadCount > 0;
 
     return InkWell(
