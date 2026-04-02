@@ -15,8 +15,8 @@ class CardInfoOverlay extends StatelessWidget {
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.black.withOpacity(0.3),
-            Colors.black.withOpacity(0.85),
+            Colors.black.withValues(alpha:0.3),
+            Colors.black.withValues(alpha:0.85),
           ],
           stops: const [0.2, 0.5, 1.0],
         ),
@@ -93,10 +93,10 @@ class CardInfoOverlay extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.18),
+                              color: Colors.white.withValues(alpha:0.18),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                  color: Colors.white.withOpacity(0.35),
+                                  color: Colors.white.withValues(alpha:0.35),
                                   width: 0.8),
                             ),
                             child: Text(tag,

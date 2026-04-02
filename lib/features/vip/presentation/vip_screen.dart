@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/vip_repository.dart';
 
-final vipStatusProvider = FutureProvider<VipStatus>((ref) {
+final vipStatusProvider = FutureProvider.autoDispose<VipStatus>((ref) {
   return ref.watch(vipRepositoryProvider).getStatus();
 });
 
@@ -74,7 +74,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFFD700).withOpacity(0.4),
+                              color: const Color(0xFFFFD700).withValues(alpha:0.4),
                               blurRadius: 24,
                               spreadRadius: 4,
                             ),
@@ -116,7 +116,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                               )
                             : Text('让每一次心动都不留遗憾',
                                 style: TextStyle(
-                                    color: Colors.white.withOpacity(0.6),
+                                    color: Colors.white.withValues(alpha:0.6),
                                     fontSize: 14)),
                         loading: () => const SizedBox.shrink(),
                         error: (_, __) => const SizedBox.shrink(),
@@ -137,7 +137,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                 color: const Color(0xFF252547),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                    color: const Color(0xFFFFD700).withOpacity(0.2)),
+                    color: const Color(0xFFFFD700).withValues(alpha:0.2)),
               ),
               child: Column(
                 children: [
@@ -242,7 +242,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)),
                     elevation: _selectedPlan != null ? 8 : 0,
-                    shadowColor: const Color(0xFFFFD700).withOpacity(0.4),
+                    shadowColor: const Color(0xFFFFD700).withValues(alpha:0.4),
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
@@ -251,7 +251,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                               colors: [Color(0xFFFFD700), Color(0xFFFFA000)])
                           : null,
                       color: _selectedPlan == null
-                          ? Colors.grey.shade700
+                          ? Theme.of(context).colorScheme.surfaceContainerHighest
                           : null,
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -269,7 +269,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: _selectedPlan != null
-                                    ? Colors.black87
+                                    ? Theme.of(context).colorScheme.onSurface
                                     : Colors.white60,
                               ),
                             ),
@@ -304,7 +304,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
             margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
               color: isSelected
-                  ? accentColor.withOpacity(0.15)
+                  ? accentColor.withValues(alpha:0.15)
                   : const Color(0xFF252547),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
@@ -314,7 +314,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: accentColor.withOpacity(0.25),
+                        color: accentColor.withValues(alpha:0.25),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -334,7 +334,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                       decoration: BoxDecoration(
                         gradient: LinearGradient(colors: [
                           accentColor,
-                          accentColor.withOpacity(0.7),
+                          accentColor.withValues(alpha:0.7),
                         ]),
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(14)),
@@ -381,7 +381,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                       Text(
                         '${(double.parse(plan.price.replaceAll('¥', '')) / (plan.days / 30)).toStringAsFixed(1)}/月',
                         style: TextStyle(
-                          color: accentColor.withOpacity(0.8),
+                          color: accentColor.withValues(alpha:0.8),
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                         ),
@@ -417,7 +417,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('$e'), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     } finally {
@@ -451,7 +451,7 @@ class _FeatureRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: isLast
             ? null
-            : Border(bottom: BorderSide(color: Colors.white.withOpacity(0.06))),
+            : Border(bottom: BorderSide(color: Colors.white.withValues(alpha:0.06))),
       ),
       child: Row(
         children: [
@@ -528,7 +528,7 @@ class _VipSuccessDialog extends StatelessWidget {
               color: (isDiamond
                       ? const Color(0xFF7C4DFF)
                       : const Color(0xFFFFD700))
-                  .withOpacity(0.4),
+                  .withValues(alpha:0.4),
               blurRadius: 32,
             ),
           ],
@@ -550,7 +550,7 @@ class _VipSuccessDialog extends StatelessWidget {
             Text(
               isDiamond ? '已赠送200金币' : '已赠送100金币',
               style: TextStyle(
-                  color: Colors.white.withOpacity(0.8), fontSize: 14),
+                  color: Colors.white.withValues(alpha:0.8), fontSize: 14),
             ),
             const SizedBox(height: 24),
             SizedBox(
@@ -558,7 +558,6 @@ class _VipSuccessDialog extends StatelessWidget {
               height: 48,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(

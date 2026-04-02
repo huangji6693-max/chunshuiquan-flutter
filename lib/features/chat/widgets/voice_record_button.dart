@@ -27,7 +27,7 @@ class VoiceRecordButton extends StatelessWidget {
         height: 42,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: const Color(0xFFFF4D88).withOpacity(0.1),
+          color: const Color(0xFFFF4D88).withValues(alpha:0.1),
         ),
         child: const Icon(Icons.mic_none, color: Color(0xFFFF4D88), size: 22),
       ),

@@ -12,7 +12,12 @@ class WebSocketService {
   WebSocketChannel? _channel;
   StreamSubscription? _subscription;
   bool _isConnected = false;
+  bool _disposed = false;
   Timer? _heartbeatTimer;
+  Timer? _reconnectTimer;
+  int _reconnectAttempts = 0;
+  static const _maxReconnectAttempts = 10;
+  static const _baseReconnectDelay = Duration(seconds: 2);
 
   // 消息回调
   final _messageController = StreamController<Map<String, dynamic>>.broadcast();
@@ -57,6 +62,7 @@ class WebSocketService {
       );
 
       _isConnected = true;
+      _reconnectAttempts = 0; // 连接成功，重置计数
 
       // STOMP 心跳保活
       _heartbeatTimer = Timer.periodic(
@@ -159,18 +165,34 @@ class WebSocketService {
 
   void _onError(dynamic error) {
     _isConnected = false;
-    // 3秒后尝试重连
-    Future.delayed(const Duration(seconds: 3), connect);
+    _heartbeatTimer?.cancel();
+    _scheduleReconnect();
   }
 
   void _onDone() {
     _isConnected = false;
-    // 连接断开，尝试重连
-    Future.delayed(const Duration(seconds: 3), connect);
+    _heartbeatTimer?.cancel();
+    _scheduleReconnect();
+  }
+
+  /// 指数退避重连：2s → 4s → 8s → 16s → 32s → ...最大60s，最多10次
+  void _scheduleReconnect() {
+    if (_disposed) return;
+    if (_reconnectAttempts >= _maxReconnectAttempts) return;
+
+    _reconnectTimer?.cancel();
+    final delay = _baseReconnectDelay * (1 << _reconnectAttempts);
+    final capped = delay > const Duration(seconds: 60)
+        ? const Duration(seconds: 60)
+        : delay;
+    _reconnectAttempts++;
+    _reconnectTimer = Timer(capped, connect);
   }
 
   /// 断开连接
   void disconnect() {
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
     _heartbeatTimer?.cancel();
     _heartbeatTimer = null;
 
@@ -191,6 +213,7 @@ class WebSocketService {
   }
 
   void dispose() {
+    _disposed = true;
     disconnect();
     _messageController.close();
     _readReceiptController.close();

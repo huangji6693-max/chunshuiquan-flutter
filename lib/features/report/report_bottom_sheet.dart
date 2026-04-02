@@ -99,8 +99,8 @@ class _ReportBottomSheetState extends ConsumerState<ReportBottomSheet> {
               icon: const Icon(Icons.block),
               label: const Text('屏蔽此用户'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
+                foregroundColor: Theme.of(context).colorScheme.error,
+                side: BorderSide(color: Theme.of(context).colorScheme.error),
                 minimumSize: const Size(double.infinity, 44),
               ),
             ),
@@ -131,7 +131,7 @@ class _ReportBottomSheetState extends ConsumerState<ReportBottomSheet> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loading ? null : _submit,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
               child: _loading
                   ? const SizedBox(height: 20, width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))

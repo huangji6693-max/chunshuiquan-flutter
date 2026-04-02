@@ -8,7 +8,7 @@ import '../../../core/services/heartbeat_service.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
-final matchesProvider = FutureProvider<List<MatchItem>>((ref) {
+final matchesProvider = FutureProvider.autoDispose<List<MatchItem>>((ref) {
   return ref.watch(matchRepositoryProvider).fetchMatches();
 });
 
@@ -26,11 +26,11 @@ class MatchesScreen extends ConsumerWidget {
         
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        title: const Text('匹配',
+        title: Text('匹配',
             style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 1)),
       ),
       body: state.when(
@@ -39,9 +39,9 @@ class MatchesScreen extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline, size: 48, color: Colors.grey.shade600),
+              Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
               const SizedBox(height: 12),
-              Text('网络开小差了', style: TextStyle(color: Colors.grey.shade400)),
+              Text('网络开小差了', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () => ref.invalidate(matchesProvider),
@@ -105,7 +105,7 @@ class MatchesScreen extends ConsumerWidget {
                   ),
                   const SliverToBoxAdapter(child: SizedBox(height: 8)),
                   SliverToBoxAdapter(
-                    child: Divider(height: 1, color: Colors.grey.shade800),
+                    child: Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
                   ),
                 ] else ...[
                   // 空匹配占位
@@ -125,19 +125,19 @@ class MatchesScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SliverToBoxAdapter(
+                  SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                       child: Center(
                         child: Text('缘分正在路上，继续发现吧 💫',
                             style: TextStyle(
-                                color: Colors.grey,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontSize: 14)),
                       ),
                     ),
                   ),
                   SliverToBoxAdapter(
-                    child: Divider(height: 1, color: Colors.grey.shade800),
+                    child: Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
                   ),
                 ],
 
@@ -149,7 +149,7 @@ class MatchesScreen extends ConsumerWidget {
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Colors.grey.shade700,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             letterSpacing: 1)),
                   ),
                 ),
@@ -177,7 +177,7 @@ class MatchesScreen extends ConsumerWidget {
                       padding: EdgeInsets.all(32),
                       child: Center(
                         child: Text('快去发送第一条消息吧 👋',
-                            style: TextStyle(color: Colors.grey.shade400, fontSize: 14)),
+                            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14)),
                       ),
                     ),
                   ),
@@ -208,8 +208,8 @@ class _EmptyState extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFFFF4D88).withOpacity(0.1),
-                  const Color(0xFFFF8A5C).withOpacity(0.1),
+                  const Color(0xFFFF4D88).withValues(alpha:0.1),
+                  const Color(0xFFFF8A5C).withValues(alpha:0.1),
                 ],
               ),
             ),
@@ -217,14 +217,14 @@ class _EmptyState extends StatelessWidget {
                 size: 48, color: Color(0xFFFF4D88)),
           ),
           const SizedBox(height: 20),
-          const Text('还没有匹配',
+          Text('还没有匹配',
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white)),
+                  color: Theme.of(context).colorScheme.onSurface)),
           const SizedBox(height: 8),
           Text('去滑卡认识新朋友吧',
-              style: TextStyle(fontSize: 15, color: Colors.grey.shade400)),
+              style: TextStyle(fontSize: 15, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );
@@ -256,7 +256,7 @@ class _NewMatchAvatar extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF4D88).withOpacity(0.35),
+                  color: const Color(0xFFFF4D88).withValues(alpha:0.35),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -297,10 +297,10 @@ class _NewMatchAvatar extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white),
+                  color: Theme.of(context).colorScheme.onSurface),
             ),
           ),
         ],
@@ -325,7 +325,9 @@ class _ConversationTile extends ConsumerWidget {
     final timeStr = _formatTime(displayTime);
 
     // 消息预览文本——图片消息显示📷，礼物显示🎁
-    var previewText = match.lastMessage ?? '还没聊过，打个招呼？';
+    var previewText = (match.lastMessage != null && match.lastMessage!.isNotEmpty)
+        ? match.lastMessage!
+        : '还没聊过，打个招呼？';
     if (previewText.startsWith('[图片]')) previewText = '📷 图片';
     if (previewText.contains('送了你') || previewText.contains('礼物')) previewText = '🎁 $previewText';
     final hasUnread = match.unreadCount > 0;
@@ -397,7 +399,7 @@ class _ConversationTile extends ConsumerWidget {
                             style: TextStyle(
                                 fontWeight: hasUnread ? FontWeight.w800 : FontWeight.w700,
                                 fontSize: 16,
-                                color: Colors.white)),
+                                color: Theme.of(context).colorScheme.onSurface)),
                       ),
                       if (match.otherVipTier != null && match.otherVipTier != 'none') ...[
                         const SizedBox(width: 4),
@@ -416,8 +418,8 @@ class _ConversationTile extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         color: hasUnread
-                            ? Colors.white
-                            : Colors.grey.shade400,
+                            ? Theme.of(context).colorScheme.onSurface
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 13,
                         fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal,
                         height: 1.3),
@@ -436,7 +438,7 @@ class _ConversationTile extends ConsumerWidget {
                     style: TextStyle(
                         color: hasUnread
                             ? const Color(0xFFFF4D88)
-                            : Colors.grey.shade400,
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 12,
                         fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal)),
                 const SizedBox(height: 6),
@@ -473,7 +475,7 @@ class _ConversationTile extends ConsumerWidget {
                         height: 32,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFFFF4D88).withOpacity(0.1),
+                          color: const Color(0xFFFF4D88).withValues(alpha:0.1),
                         ),
                         child: const Icon(Icons.call,
                             color: Color(0xFFFF4D88), size: 16),

@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/coin_repository.dart';
 
 /// 金币余额Provider
-final coinBalanceProvider = FutureProvider<int>((ref) {
+final coinBalanceProvider = FutureProvider.autoDispose<int>((ref) {
   return ref.watch(coinRepositoryProvider).getBalance();
 });
 
 /// 金币流水Provider
-final coinTransactionsProvider = FutureProvider<List<CoinTransaction>>((ref) {
+final coinTransactionsProvider = FutureProvider.autoDispose<List<CoinTransaction>>((ref) {
   return ref.watch(coinRepositoryProvider).getTransactions();
 });
 
@@ -74,7 +74,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                         width: 64,
                         height: 64,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha:0.2),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(Icons.monetization_on_rounded,
@@ -118,7 +118,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                   indicatorColor: const Color(0xFFFF4D88),
                   indicatorWeight: 3,
                   labelColor: const Color(0xFFFF4D88),
-                  unselectedLabelColor: Colors.grey,
+                  unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   labelStyle: const TextStyle(
                       fontWeight: FontWeight.w600, fontSize: 15),
                   tabs: const [
@@ -151,11 +151,11 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('选择充值包',
+          Text('选择充值包',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87)),
+                  color: Theme.of(context).colorScheme.onSurface)),
           const SizedBox(height: 16),
 
           // 充值包网格
@@ -183,11 +183,11 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFF4D88),
-                disabledBackgroundColor: Colors.grey.shade700,
+                disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
                 elevation: _selectedPackage != null ? 4 : 0,
-                shadowColor: const Color(0xFFFF4D88).withOpacity(0.4),
+                shadowColor: const Color(0xFFFF4D88).withValues(alpha:0.4),
               ),
               child: _purchasing
                   ? const SizedBox(
@@ -198,7 +198,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                     )
                   : Text(
                       _selectedPackage != null
-                          ? '立即充值 ${CoinRepository.packages.firstWhere((p) => p.id == _selectedPackage).price}'
+                          ? '立即充值 ${CoinRepository.packages.firstWhere((p) => p.id == _selectedPackage, orElse: () => CoinRepository.packages.first).price}'
                           : '请选择充值包',
                       style: const TextStyle(
                           fontSize: 17, fontWeight: FontWeight.w600),
@@ -220,12 +220,12 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
               children: [
                 Row(
                   children: [
-                    Icon(Icons.info_outline, size: 16, color: Colors.grey.shade600),
+                    Icon(Icons.info_outline, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(width: 6),
                     Text('温馨提示',
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade700)),
+                            color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -233,7 +233,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                   '• 金币是你传递心意的小小信使\n• 充值后金币不可退款\n• 如有问题请联系客服',
                   style: TextStyle(
                       fontSize: 13,
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       height: 1.6),
                 ),
               ],
@@ -259,20 +259,20 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? const Color(0xFFFF4D88) : Colors.grey.shade700,
+            color: isSelected ? const Color(0xFFFF4D88) : Theme.of(context).colorScheme.outlineVariant,
             width: isSelected ? 2.5 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: const Color(0xFFFF4D88).withOpacity(0.15),
+                    color: const Color(0xFFFF4D88).withValues(alpha:0.15),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha:0.04),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -323,7 +323,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                       fontWeight: FontWeight.w800,
                       color: isSelected
                           ? const Color(0xFFFF4D88)
-                          : Colors.black87,
+                          : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -332,7 +332,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -370,10 +370,10 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.receipt_long, size: 64, color: Colors.grey.shade600),
+                Icon(Icons.receipt_long, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 const SizedBox(height: 12),
                 Text('暂无交易记录',
-                    style: TextStyle(color: Colors.grey.shade400, fontSize: 16)),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16)),
               ],
             ),
           );
@@ -434,7 +434,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                         Text(
                           _formatDate(tx.createdAt),
                           style: TextStyle(
-                              fontSize: 12, color: Colors.grey.shade400),
+                              fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -457,7 +457,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
       },
       loading: () => Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
       error: (e, _) => Center(
-        child: Text('网络开小差了', style: TextStyle(color: Colors.grey.shade400)),
+        child: Text('网络开小差了', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
       ),
     );
   }
@@ -525,7 +525,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('充值失败: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
         );

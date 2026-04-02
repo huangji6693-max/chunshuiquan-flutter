@@ -65,6 +65,7 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
       final appId = data['appId'] as String;
       final uid = (data['uid'] as num).toInt();
 
+      if (!mounted) return;
       setState(() => _statusText = '连接中...');
 
       _engine = createAgoraRtcEngine();
@@ -165,7 +166,7 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
                 )
               : _GradientBackground(),
 
-          Container(color: Colors.black.withOpacity(0.5)),
+          Container(color: Colors.black.withValues(alpha: 0.5)),
 
           SafeArea(
             child: Column(
@@ -193,7 +194,7 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
                       border: Border.all(color: Colors.white, width: 3),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFFF4D88).withOpacity(0.5),
+                          color: const Color(0xFFFF4D88).withValues(alpha: 0.5),
                           blurRadius: 30,
                           spreadRadius: 5,
                         ),
@@ -235,7 +236,7 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
                 Text(
                   _joined ? _durationText : _statusText,
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.75), fontSize: 16),
+                      color: Colors.white.withValues(alpha: 0.75), fontSize: 16),
                 ),
 
                 const Spacer(flex: 3),
@@ -311,7 +312,7 @@ class _RoundButton extends StatelessWidget {
             width: 62,
             height: 62,
             decoration: BoxDecoration(
-              color: active ? Colors.white : Colors.white.withOpacity(0.2),
+              color: active ? Colors.white : Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -348,7 +349,7 @@ class _HangupButton extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.red.withOpacity(0.5),
+                  color: Colors.red.withValues(alpha: 0.5),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 ),

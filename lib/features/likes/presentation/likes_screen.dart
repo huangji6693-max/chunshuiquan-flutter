@@ -2,10 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../data/likes_repository.dart';
 import '../../vip/presentation/vip_screen.dart';
+import '../../../shared/widgets/page_transitions.dart';
 
-final likesProvider = FutureProvider<LikesResult>((ref) {
+final likesProvider = FutureProvider.autoDispose<LikesResult>((ref) {
   return ref.watch(likesRepositoryProvider).getWhoLikesMe();
 });
 
@@ -28,7 +30,7 @@ class LikesScreen extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFF4D88).withOpacity(0.1),
+                        color: const Color(0xFFFF4D88).withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -57,7 +59,7 @@ class LikesScreen extends ConsumerWidget {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFF4D88).withOpacity(0.1),
+                      color: const Color(0xFFFF4D88).withValues(alpha:0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.favorite_border,
@@ -66,13 +68,13 @@ class LikesScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text('你的故事还在等一个开始',
                       style: TextStyle(
-                          color: Colors.grey.shade400,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 16,
                           fontWeight: FontWeight.w500)),
                   const SizedBox(height: 6),
                   Text('完善资料和照片，让更多人看到你的光芒',
                       style: TextStyle(
-                          color: Colors.grey.shade400, fontSize: 13)),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
                 ],
               ),
             );
@@ -84,7 +86,7 @@ class LikesScreen extends ConsumerWidget {
               if (!result.isVip)
                 GestureDetector(
                   onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const VipScreen())),
+                      fadeSlideRoute(const VipScreen())),
                   child: Container(
                     margin: const EdgeInsets.all(16),
                     padding: const EdgeInsets.all(16),
@@ -95,7 +97,7 @@ class LikesScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFFFD700).withOpacity(0.3),
+                          color: const Color(0xFFFFD700).withValues(alpha:0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -130,18 +132,36 @@ class LikesScreen extends ConsumerWidget {
 
               // 列表
               Expanded(
-                child: GridView.builder(
-                  padding: const EdgeInsets.all(12),
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 0.75,
+                child: RefreshIndicator(
+                  color: Theme.of(context).colorScheme.primary,
+                  onRefresh: () async {
+                    ref.invalidate(likesProvider);
+                  },
+                  child: AnimationLimiter(
+                    child: GridView.builder(
+                    padding: const EdgeInsets.all(12),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 0.75,
+                    ),
+                    itemCount: result.likes.length,
+                    itemBuilder: (_, i) =>
+                        AnimationConfiguration.staggeredGrid(
+                          position: i,
+                          columnCount: 2,
+                          duration: const Duration(milliseconds: 375),
+                          child: SlideAnimation(
+                            verticalOffset: 30,
+                            child: FadeInAnimation(
+                              child: _LikeCard(item: result.likes[i]),
+                            ),
+                          ),
+                        ),
                   ),
-                  itemCount: result.likes.length,
-                  itemBuilder: (_, i) =>
-                      _LikeCard(item: result.likes[i]),
+                  ),
                 ),
               ),
             ],
@@ -149,7 +169,7 @@ class LikesScreen extends ConsumerWidget {
         },
         loading: () => const Center(
             child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
-        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Colors.grey.shade600), const SizedBox(height: 12), Text('网络不太好，稍后再试', style: TextStyle(color: Colors.grey)), const SizedBox(height: 8), TextButton(onPressed: () => ref.invalidate(likesProvider), child: const Text('点击重试'))])),
+        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant), const SizedBox(height: 12), Text('网络不太好，稍后再试', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)), const SizedBox(height: 8), TextButton(onPressed: () => ref.invalidate(likesProvider), child: const Text('点击重试'))])),
       ),
     );
   }
@@ -167,7 +187,7 @@ class _LikeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -191,7 +211,7 @@ class _LikeCard extends StatelessWidget {
                     fit: BoxFit.cover,
                   )
           else
-            Container(color: Colors.grey.shade700),
+            Container(color: Theme.of(context).colorScheme.outlineVariant),
 
           // Super Like 标签
           if (item.direction == 'UP')
@@ -233,7 +253,7 @@ class _LikeCard extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withOpacity(0.6),
+                    Colors.black.withValues(alpha:0.6),
                   ],
                 ),
               ),
@@ -259,7 +279,7 @@ class _LikeCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha:0.3),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.lock, color: Colors.white, size: 24),

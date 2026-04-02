@@ -65,7 +65,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ),
           // 暗层让内容更突出
-          Container(color: Colors.black.withOpacity(0.4)),
+          Container(color: Colors.black.withValues(alpha: 0.4)),
 
           // 页面内容
           PageView.builder(
@@ -99,7 +99,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             : null,
                         color: i == _current
                             ? null
-                            : Colors.white.withOpacity(0.2),
+                            : Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -119,7 +119,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFFF4D88).withOpacity(0.4),
+                          color: const Color(0xFFFF4D88).withValues(alpha: 0.4),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -153,7 +153,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     onPressed: () => context.go('/auth/login'),
                     child: Text.rich(TextSpan(
                       text: '已有账号？',
-                      style: TextStyle(color: Colors.white.withOpacity(0.5)),
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
                       children: const [
                         TextSpan(
                           text: '立即登录',
@@ -191,7 +191,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: page.iconColors.first.withOpacity(0.4),
+                    color: page.iconColors.first.withValues(alpha: 0.4),
                     blurRadius: 30,
                     offset: const Offset(0, 10),
                   ),
@@ -218,7 +218,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               page.subtitle,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.55),
+                color: Colors.white.withValues(alpha: 0.55),
                 fontSize: 16,
                 height: 1.6,
                 letterSpacing: 0.5,

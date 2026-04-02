@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../data/moment_repository.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../profile/data/upload_repository.dart';
 
 /// 发布动态页面 — 顶级UI
@@ -51,7 +52,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
                       ? const LinearGradient(
                           colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)])
                       : null,
-                  color: _canPublish ? null : Colors.grey.shade700,
+                  color: _canPublish ? null : Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: _publishing
@@ -84,9 +85,9 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 hintText: '此刻的你，在想什么...',
-                hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
+                hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
                 border: InputBorder.none,
-                counterStyle: TextStyle(color: Colors.grey.shade500),
+                counterStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               style: const TextStyle(fontSize: 16, height: 1.5),
             ),
@@ -107,10 +108,20 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(_imageUrls[i],
+                      child: CachedNetworkImage(
+                          imageUrl: _imageUrls[i],
                           fit: BoxFit.cover,
                           width: double.infinity,
-                          height: double.infinity),
+                          height: double.infinity,
+                          placeholder: (_, __) => Container(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                          ),
+                          errorWidget: (_, __, ___) => Container(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          ),
+                        ),
                     ),
                     Positioned(
                       top: 4,
@@ -144,9 +155,9 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
                   width: double.infinity,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade900,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Colors.grey.shade700),
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
                   ),
                   child: _uploading
                       ? const Center(
@@ -161,11 +172,11 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.add_photo_alternate_outlined,
-                                color: Colors.grey.shade600, size: 24),
+                                color: Theme.of(context).colorScheme.onSurfaceVariant, size: 24),
                             const SizedBox(width: 8),
                             Text('添加图片 (${_imageUrls.length}/9)',
                                 style: TextStyle(
-                                    color: Colors.grey.shade600,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                                     fontSize: 14)),
                           ],
                         ),
@@ -181,7 +192,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
     final picker = ImagePicker();
     final picked = await picker.pickImage(
         source: ImageSource.gallery, maxWidth: 1080, imageQuality: 85);
-    if (picked == null) return;
+    if (picked == null || !mounted) return;
 
     setState(() => _uploading = true);
     try {
@@ -198,7 +209,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
       if (mounted) {
         setState(() => _uploading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('上传失败: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('上传失败: $e'), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     }
@@ -216,7 +227,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('$e'), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     } finally {

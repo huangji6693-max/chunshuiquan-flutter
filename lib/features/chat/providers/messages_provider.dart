@@ -11,6 +11,12 @@ class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String> {
   Timer? _pollTimer;
   StreamSubscription? _wsSub;
   StreamSubscription? _readSub;
+  int _currentPage = 0;
+  bool _hasMore = true;
+  bool _loadingMore = false;
+  bool _refreshing = false;
+
+  bool get hasMore => _hasMore;
 
   @override
   Future<List<ChatMessage>> build(String arg) async {
@@ -25,6 +31,9 @@ class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String> {
     _readSub = ws.onReadReceipt.listen((data) {
       final current = state.valueOrNull;
       if (current == null) return;
+      // 验证回执属于当前 match
+      final receiptMatchId = data['matchId'] as String?;
+      if (receiptMatchId != null && receiptMatchId != _matchId) return;
       final readerId = data['readerId'] as String?;
       if (readerId == null) return;
       // 标记该读者发送的消息为已读
@@ -48,21 +57,53 @@ class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String> {
       _readSub?.cancel();
     });
 
-    return _fetch();
+    _currentPage = 0;
+    _hasMore = true;
+    return _fetch(page: 0);
   }
 
   String get _matchId => arg;
 
-  Future<List<ChatMessage>> _fetch() {
-    return ref.read(messageRepositoryProvider).fetchMessages(_matchId);
+  Future<List<ChatMessage>> _fetch({int page = 0, int size = 20}) async {
+    final messages = await ref.read(messageRepositoryProvider).fetchMessages(_matchId, page: page, size: size);
+    if (messages.length < size) _hasMore = false;
+    return messages;
+  }
+
+  /// 上滑加载更多历史消息
+  Future<void> loadMore() async {
+    if (_loadingMore || !_hasMore) return;
+    _loadingMore = true;
+    final current = state.valueOrNull ?? [];
+    _currentPage++;
+    try {
+      final older = await _fetch(page: _currentPage);
+      if (older.isEmpty) {
+        _hasMore = false;
+        return;
+      }
+      // 去重后追加到末尾（旧消息在后）
+      final existingIds = current.map((m) => m.id).toSet();
+      final newMsgs = older.where((m) => !existingIds.contains(m.id)).toList();
+      state = AsyncData([...current, ...newMsgs]);
+    } catch (_) {
+      _currentPage--; // 失败回退页码
+    } finally {
+      _loadingMore = false;
+    }
   }
 
   Future<void> _silentRefresh() async {
+    if (_refreshing) return;
     if (state is! AsyncData) return;
+    _refreshing = true;
     try {
       final fresh = await _fetch();
       state = AsyncData(fresh);
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      _refreshing = false;
+    }
   }
 
   /// 乐观更新：立即显示，失败回滚

@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -113,7 +112,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
           // 半透明暗层——让Logo更突出
           Container(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha:0.25),
           ),
 
           // 主内容
@@ -132,15 +131,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         width: 96,
                         height: 96,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha:0.15),
                           borderRadius: BorderRadius.circular(28),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha:0.2),
                             width: 0.5,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFF4D88).withOpacity(0.4),
+                              color: const Color(0xFFFF4D88).withValues(alpha:0.4),
                               blurRadius: 40,
                               spreadRadius: 8,
                             ),
@@ -173,7 +172,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         const SizedBox(height: 12),
                         Text('遇见心动的 Ta',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha:0.7),
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
                               letterSpacing: 4,

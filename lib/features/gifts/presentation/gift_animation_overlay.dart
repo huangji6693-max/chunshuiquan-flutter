@@ -118,7 +118,7 @@ class _GiftAnimationWidgetState extends State<_GiftAnimationWidget>
               // 半透明背景
               Positioned.fill(
                 child: Container(
-                  color: Colors.black.withOpacity(0.3 * _opacityAnim.value),
+                  color: Colors.black.withValues(alpha: 0.3 * _opacityAnim.value),
                 ),
               ),
 
@@ -156,11 +156,11 @@ class _GiftAnimationWidgetState extends State<_GiftAnimationWidget>
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 10),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF4D88).withOpacity(0.3),
+                                color: const Color(0xFFFF4D88).withValues(alpha: 0.3),
                                 blurRadius: 20,
                               ),
                             ],
@@ -221,7 +221,7 @@ class _ParticlePainter extends CustomPainter {
       final opacity = (1.0 - progress).clamp(0.0, 1.0);
 
       final paint = Paint()
-        ..color = p.color.withOpacity(opacity)
+        ..color = p.color.withValues(alpha: opacity)
         ..style = PaintingStyle.fill;
 
       canvas.drawCircle(Offset(x, y), p.size * (1 - progress * 0.5), paint);

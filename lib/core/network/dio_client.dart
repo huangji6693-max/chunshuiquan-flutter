@@ -26,19 +26,36 @@ final dioProvider = Provider<Dio>((ref) {
     onSessionExpired: onSessionExpired,
   ));
 
-  // 网络抖动自动重试（仅GET请求，最多1次）
+  // 网络抖动自动重试——指数退避，GET最多3次，幂等写操作最多1次
   dio.interceptors.add(InterceptorsWrapper(
     onError: (error, handler) async {
-      final isTimeout = error.type == DioExceptionType.connectionTimeout ||
+      final opts = error.requestOptions;
+      final retryCount = (opts.extra['_retryCount'] as int?) ?? 0;
+
+      // 可重试的错误类型
+      final isNetwork = error.type == DioExceptionType.connectionTimeout ||
           error.type == DioExceptionType.receiveTimeout ||
           error.type == DioExceptionType.connectionError;
-      final isGet = error.requestOptions.method == 'GET';
-      final isRetry = error.requestOptions.extra['_retried'] == true;
+      final isServerError = error.response?.statusCode != null &&
+          error.response!.statusCode! >= 500;
+      final isRetryable = isNetwork || isServerError;
 
-      if (isTimeout && isGet && !isRetry) {
-        error.requestOptions.extra['_retried'] = true;
+      // GET最多重试3次，PUT/DELETE最多1次，POST不重试
+      final method = opts.method.toUpperCase();
+      final maxRetries = method == 'GET' ? 3 : (method == 'PUT' || method == 'DELETE') ? 1 : 0;
+
+      // 不重试认证错误
+      final status = error.response?.statusCode;
+      if (status == 401 || status == 403 || status == 429) {
+        return handler.next(error);
+      }
+
+      if (isRetryable && retryCount < maxRetries) {
+        opts.extra['_retryCount'] = retryCount + 1;
+        // 指数退避：1s → 2s → 4s
+        await Future.delayed(Duration(seconds: 1 << retryCount));
         try {
-          final res = await dio.fetch(error.requestOptions);
+          final res = await dio.fetch(opts);
           return handler.resolve(res);
         } catch (_) {}
       }

@@ -103,6 +103,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       );
       if (mounted) context.go('/onboarding');
     } on AppException catch (e) {
+      if (!mounted) return;
       setState(() => _error = e.message);
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -114,21 +115,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         labelText: label,
         prefixIcon: Icon(icon, size: 20, color: Colors.white70),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.12),
-        labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14),
+        fillColor: Colors.white.withValues(alpha:0.12),
+        labelStyle: TextStyle(color: Colors.white.withValues(alpha:0.7), fontSize: 14),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.white.withOpacity(0.3))),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha:0.3))),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.white.withOpacity(0.25))),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha:0.25))),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: Colors.white, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.yellow.withOpacity(0.6)),
+          borderSide: BorderSide(color: Colors.yellow.withValues(alpha:0.6)),
         ),
         errorStyle: const TextStyle(color: Colors.yellowAccent, fontSize: 12),
         contentPadding:
@@ -202,7 +203,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       '创建你的专属档案',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withOpacity(0.75),
+                        color: Colors.white.withValues(alpha:0.75),
                         letterSpacing: 2,
                       ),
                     ),
@@ -215,10 +216,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                         child: Container(
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
+                            color: Colors.white.withValues(alpha:0.15),
                             borderRadius: BorderRadius.circular(28),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.3),
+                              color: Colors.white.withValues(alpha:0.3),
                               width: 1,
                             ),
                           ),
@@ -236,7 +237,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                 Text('三步开启你的心动之旅',
                                     style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.white.withOpacity(0.7))),
+                                        color: Colors.white.withValues(alpha:0.7))),
                                 const SizedBox(height: 24),
 
                                 // 昵称
@@ -303,10 +304,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 16),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.12),
+                                      color: Colors.white.withValues(alpha:0.12),
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
-                                        color: Colors.white.withOpacity(0.25),
+                                        color: Colors.white.withValues(alpha:0.25),
                                       ),
                                     ),
                                     child: Row(
@@ -327,7 +328,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                         ),
                                         const Spacer(),
                                         Icon(Icons.arrow_drop_down,
-                                            color: Colors.white.withOpacity(0.5)),
+                                            color: Colors.white.withValues(alpha:0.5)),
                                       ],
                                     ),
                                   ),
@@ -338,7 +339,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                 Text('性别',
                                     style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.white.withOpacity(0.7),
+                                        color: Colors.white.withValues(alpha:0.7),
                                         fontWeight: FontWeight.w500)),
                                 const SizedBox(height: 10),
                                 Row(
@@ -373,7 +374,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 12, vertical: 8),
                                     decoration: BoxDecoration(
-                                      color: Colors.red.withOpacity(0.2),
+                                      color: Colors.red.withValues(alpha:0.2),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Row(
@@ -417,7 +418,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                         borderRadius: BorderRadius.circular(27),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.15),
+                                            color: Colors.black.withValues(alpha:0.15),
                                             blurRadius: 15,
                                             offset: const Offset(0, 6),
                                           ),
@@ -487,17 +488,17 @@ class _GenderCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
           color: selected
-              ? Colors.white.withOpacity(0.3)
-              : Colors.white.withOpacity(0.08),
+              ? Colors.white.withValues(alpha:0.3)
+              : Colors.white.withValues(alpha:0.08),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: selected ? Colors.white : Colors.white.withOpacity(0.2),
+            color: selected ? Colors.white : Colors.white.withValues(alpha:0.2),
             width: selected ? 2 : 1,
           ),
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha:0.15),
                     blurRadius: 12,
                     spreadRadius: 1,
                   )
@@ -554,9 +555,9 @@ class _DatePickerSheetState extends State<_DatePickerSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -566,7 +567,7 @@ class _DatePickerSheetState extends State<_DatePickerSheet> {
           Container(
             width: 40, height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade700,
+              color: Theme.of(context).colorScheme.outlineVariant,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -578,8 +579,8 @@ class _DatePickerSheetState extends State<_DatePickerSheet> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('取消',
-                      style: TextStyle(color: Colors.grey, fontSize: 16)),
+                  child: Text('取消',
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16)),
                 ),
                 const Text('选择生日',
                     style: TextStyle(
@@ -606,7 +607,7 @@ class _DatePickerSheetState extends State<_DatePickerSheet> {
               child: CalendarDatePicker(
                 initialDate: _selected,
                 firstDate: DateTime(1950),
-                lastDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
+                lastDate: DateTime(DateTime.now().year - 18, DateTime.now().month, DateTime.now().day),
                 onDateChanged: (date) => setState(() => _selected = date),
               ),
             ),
@@ -628,11 +629,11 @@ class _WavePainter extends CustomPainter {
     _drawWave(canvas, size,
         amplitude: 18, wavelength: size.width * 0.8,
         phase: animation * 2 * pi, yOffset: size.height * 0.84,
-        color: Colors.white.withOpacity(0.05));
+        color: Colors.white.withValues(alpha:0.05));
     _drawWave(canvas, size,
         amplitude: 14, wavelength: size.width * 0.6,
         phase: animation * 2 * pi + 1.5, yOffset: size.height * 0.88,
-        color: Colors.white.withOpacity(0.04));
+        color: Colors.white.withValues(alpha:0.04));
   }
 
   void _drawWave(Canvas canvas, Size size, {

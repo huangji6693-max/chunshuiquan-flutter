@@ -28,17 +28,17 @@ class _UserCardState extends State<UserCard> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.06),
+          color: Colors.white.withValues(alpha:0.06),
           width: 0.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withValues(alpha:0.4),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha:0.15),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -101,7 +101,7 @@ class _UserCardState extends State<UserCard> {
                           borderRadius: BorderRadius.circular(1.5),
                           color: i == _currentPhotoIndex
                               ? Colors.white
-                              : Colors.white.withOpacity(0.35),
+                              : Colors.white.withValues(alpha:0.35),
                         ),
                       ),
                     );
@@ -159,8 +159,8 @@ class _UserCardState extends State<UserCard> {
         width: double.infinity,
         height: double.infinity,
         placeholder: (_, __) => Shimmer.fromColors(
-          baseColor: Colors.grey.shade800,
-          highlightColor: Colors.grey.shade700,
+          baseColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+          highlightColor: Theme.of(context).colorScheme.outlineVariant,
           child: Container(
             color: Colors.white,
           ),
@@ -198,9 +198,9 @@ class _UserCardState extends State<UserCard> {
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.black.withOpacity(0.3),
-            Colors.black.withOpacity(0.7),
-            Colors.black.withOpacity(_expanded ? 0.92 : 0.85),
+            Colors.black.withValues(alpha:0.3),
+            Colors.black.withValues(alpha:0.7),
+            Colors.black.withValues(alpha:_expanded ? 0.92 : 0.85),
           ],
           stops: const [0.0, 0.3, 0.6, 1.0],
         ),
@@ -339,13 +339,13 @@ class _UserCardState extends State<UserCard> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFFFF4D88).withOpacity(0.5),
-                        const Color(0xFFFF8A5C).withOpacity(0.5),
+                        const Color(0xFFFF4D88).withValues(alpha:0.5),
+                        const Color(0xFFFF8A5C).withValues(alpha:0.5),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha:0.3),
                         width: 0.8),
                   ),
                   child: Text(tag,
@@ -371,10 +371,10 @@ class _UserCardState extends State<UserCard> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.18),
+                        color: Colors.white.withValues(alpha:0.18),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha:0.3),
                             width: 0.8),
                       ),
                       child: Text(tag,
@@ -406,10 +406,10 @@ class _InfoTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withValues(alpha:0.15),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha:0.25),
           width: 0.8,
         ),
       ),

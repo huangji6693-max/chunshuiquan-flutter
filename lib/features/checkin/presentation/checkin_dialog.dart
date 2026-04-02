@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/checkin_repository.dart';
 
-final checkInStatusProvider = FutureProvider<CheckInStatus>((ref) {
+final checkInStatusProvider = FutureProvider.autoDispose<CheckInStatus>((ref) {
   return ref.watch(checkInRepositoryProvider).getStatus();
 });
 
@@ -69,7 +69,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFF4D88).withOpacity(0.15),
+              color: const Color(0xFFFF4D88).withValues(alpha: 0.15),
               blurRadius: 30,
               offset: const Offset(0, 10),
             ),
@@ -121,7 +121,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                       Text('周${_dayLabels[i]}',
                           style: TextStyle(
                               fontSize: 11,
-                              color: Colors.grey.shade400,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w500)),
                       const SizedBox(height: 6),
 
@@ -140,7 +140,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                                   ],
                                 )
                               : null,
-                          color: checked ? null : Colors.grey.shade800,
+                          color: checked ? null : Theme.of(context).colorScheme.outlineVariant,
                           border: isToday && !checked
                               ? Border.all(
                                   color: const Color(0xFFFF4D88), width: 2)
@@ -149,7 +149,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                               ? [
                                   BoxShadow(
                                     color: const Color(0xFFFF4D88)
-                                        .withOpacity(0.3),
+                                        .withValues(alpha: 0.3),
                                     blurRadius: 6,
                                     offset: const Offset(0, 2),
                                   ),
@@ -166,7 +166,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                                     fontSize: 10,
                                     color: isToday
                                         ? const Color(0xFFFF4D88)
-                                        : Colors.grey.shade400,
+                                        : Theme.of(context).colorScheme.onSurfaceVariant,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -227,12 +227,12 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                         : _handleCheckIn,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF4D88),
-                      disabledBackgroundColor: Colors.grey.shade700,
+                      disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14)),
                       elevation: status.checkedInToday ? 0 : 4,
                       shadowColor:
-                          const Color(0xFFFF4D88).withOpacity(0.4),
+                          const Color(0xFFFF4D88).withValues(alpha: 0.4),
                     ),
                     child: _checking
                         ? const SizedBox(
@@ -276,12 +276,13 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
         _justCheckedIn = true;
         _reward = result.todayReward;
       });
+      if (!mounted) return;
       _coinController.forward();
       ref.invalidate(checkInStatusProvider);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('$e'), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     } finally {

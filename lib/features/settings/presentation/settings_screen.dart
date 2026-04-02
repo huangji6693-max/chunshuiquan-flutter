@@ -11,6 +11,7 @@ import '../../gifts/presentation/gift_history_screen.dart';
 import '../../verification/presentation/verification_screen.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/errors/app_exception.dart';
+import '../../../shared/widgets/page_transitions.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -22,9 +23,7 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       
       appBar: AppBar(
-        title: const Text('设置', style: TextStyle(color: Colors.white)),
-        
-        surfaceTintColor: Colors.transparent,
+        title: Text('设置', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -34,7 +33,7 @@ class SettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GestureDetector(
               onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const CoinShopScreen())),
+                  fadeSlideRoute(const CoinShopScreen())),
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -46,7 +45,7 @@ class SettingsScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFF4D88).withOpacity(0.3),
+                      color: const Color(0xFFFF4D88).withValues(alpha: 0.3),
                       blurRadius: 16,
                       offset: const Offset(0, 6),
                     ),
@@ -58,7 +57,7 @@ class SettingsScreen extends ConsumerWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(Icons.account_balance_wallet_rounded,
@@ -130,7 +129,7 @@ class SettingsScreen extends ConsumerWidget {
                     label: 'VIP会员',
                     gradient: const [Color(0xFFFFD700), Color(0xFFFFA000)],
                     onTap: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const VipScreen())),
+                        fadeSlideRoute(const VipScreen())),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -140,7 +139,7 @@ class SettingsScreen extends ConsumerWidget {
                     label: '礼物记录',
                     gradient: const [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
                     onTap: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const GiftHistoryScreen())),
+                        fadeSlideRoute(const GiftHistoryScreen())),
                   ),
                 ),
               ],
@@ -161,7 +160,7 @@ class SettingsScreen extends ConsumerWidget {
             title: '实名认证',
             subtitle: '获取蓝色徽章，提升信任度',
             onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const VerificationScreen())),
+                fadeSlideRoute(const VerificationScreen())),
           ),
           _SettingsTile(
             icon: Icons.shield_outlined,
@@ -214,19 +213,27 @@ class SettingsScreen extends ConsumerWidget {
             icon: Icons.privacy_tip_outlined,
             title: '隐私政策',
             trailing: Icon(Icons.open_in_new, size: 16, color: Theme.of(context).colorScheme.outline),
-            onTap: () => launchUrl(
-              Uri.parse('https://huangji6693-max.github.io/chunshuiquan-privacy'),
-              mode: LaunchMode.externalApplication,
-            ),
+            onTap: () async {
+              try {
+                await launchUrl(
+                  Uri.parse('https://huangji6693-max.github.io/chunshuiquan-privacy'),
+                  mode: LaunchMode.externalApplication,
+                );
+              } catch (_) {}
+            },
           ),
           _SettingsTile(
             icon: Icons.description_outlined,
             title: '用户协议',
             trailing: Icon(Icons.open_in_new, size: 16, color: Theme.of(context).colorScheme.outline),
-            onTap: () => launchUrl(
-              Uri.parse('https://huangji6693-max.github.io/chunshuiquan-privacy/terms'),
-              mode: LaunchMode.externalApplication,
-            ),
+            onTap: () async {
+              try {
+                await launchUrl(
+                  Uri.parse('https://huangji6693-max.github.io/chunshuiquan-privacy/terms'),
+                  mode: LaunchMode.externalApplication,
+                );
+              } catch (_) {}
+            },
           ),
           _SettingsTile(
             icon: Icons.info_outline,
@@ -299,8 +306,8 @@ class SettingsScreen extends ConsumerWidget {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+              foregroundColor: Theme.of(ctx).colorScheme.onError,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
             ),
@@ -356,11 +363,11 @@ class _QuickEntryCard extends StatelessWidget {
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withOpacity(0.04),
+            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.08),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -401,7 +408,7 @@ class _SectionHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Colors.grey.shade400,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             letterSpacing: 0.5,
           )),
     );
@@ -441,7 +448,7 @@ class _SettingsTile extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: (iconColor ?? const Color(0xFFFF4D88)).withOpacity(0.1),
+            color: (iconColor ?? const Color(0xFFFF4D88)).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: iconColor ?? const Color(0xFFFF4D88), size: 20),
@@ -450,15 +457,15 @@ class _SettingsTile extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 15,
-              color: titleColor ?? Colors.black87,
+              color: titleColor ?? Theme.of(context).colorScheme.onSurface,
             )),
         subtitle: subtitle != null
             ? Text(subtitle!,
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade400))
+                style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.outline))
             : null,
         trailing: trailing ??
             (onTap != null
-                ? Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 20)
+                ? Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.outline, size: 20)
                 : null),
         onTap: onTap,
       ),

@@ -87,6 +87,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         context.go(user.onboardingCompleted ? '/discover' : '/onboarding');
       }
     } on AppException catch (e) {
+      if (!mounted) return;
       setState(() => _error = e.message);
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -155,7 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         '遇见对的人',
                         style: TextStyle(
                           fontSize: 17,
-                          color: Colors.white.withOpacity(0.85),
+                          color: Colors.white.withValues(alpha:0.85),
                           letterSpacing: 4,
                           fontWeight: FontWeight.w300,
                         ),
@@ -166,15 +167,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       Container(
                         padding: const EdgeInsets.all(28),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha:0.15),
                           borderRadius: BorderRadius.circular(28),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha:0.3),
                             width: 1,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha:0.1),
                               blurRadius: 30,
                               offset: const Offset(0, 10),
                             ),
@@ -194,7 +195,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               Text('登录你的账号',
                                   style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.white.withOpacity(0.7))),
+                                      color: Colors.white.withValues(alpha:0.7))),
                               const SizedBox(height: 24),
 
                               // 邮箱输入框
@@ -238,7 +239,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: Colors.red.withOpacity(0.2),
+                                    color: Colors.red.withValues(alpha:0.2),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
@@ -282,7 +283,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                       borderRadius: BorderRadius.circular(27),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withOpacity(0.15),
+                                          color: Colors.black.withValues(alpha:0.15),
                                           blurRadius: 15,
                                           offset: const Offset(0, 6),
                                         ),
@@ -322,7 +323,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         children: [
                           Text('没有账号？',
                               style: TextStyle(
-                                  color: Colors.white.withOpacity(0.8),
+                                  color: Colors.white.withValues(alpha:0.8),
                                   fontSize: 14)),
                           TextButton(
                             onPressed: () => context.push('/auth/register'),
@@ -354,15 +355,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       labelText: label,
       prefixIcon: Icon(icon, size: 20, color: Colors.white70),
       filled: true,
-      fillColor: Colors.white.withOpacity(0.12),
-      labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14),
+      fillColor: Colors.white.withValues(alpha:0.12),
+      labelStyle: TextStyle(color: Colors.white.withValues(alpha:0.7), fontSize: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+        borderSide: BorderSide(color: Colors.white.withValues(alpha:0.3)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.25)),
+        borderSide: BorderSide(color: Colors.white.withValues(alpha:0.25)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
@@ -370,7 +371,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: Colors.yellow.withOpacity(0.6)),
+        borderSide: BorderSide(color: Colors.yellow.withValues(alpha:0.6)),
       ),
       errorStyle: const TextStyle(color: Colors.yellowAccent, fontSize: 12),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -393,7 +394,7 @@ class _WavePainter extends CustomPainter {
       wavelength: size.width * 0.8,
       phase: animation * 2 * pi,
       yOffset: size.height * 0.82,
-      color: Colors.white.withOpacity(0.06),
+      color: Colors.white.withValues(alpha:0.06),
     );
 
     // 第二层波浪
@@ -403,7 +404,7 @@ class _WavePainter extends CustomPainter {
       wavelength: size.width * 0.6,
       phase: animation * 2 * pi + 1.5,
       yOffset: size.height * 0.86,
-      color: Colors.white.withOpacity(0.04),
+      color: Colors.white.withValues(alpha:0.04),
     );
 
     // 第三层波浪
@@ -413,7 +414,7 @@ class _WavePainter extends CustomPainter {
       wavelength: size.width * 1.0,
       phase: animation * 2 * pi + 3.0,
       yOffset: size.height * 0.90,
-      color: Colors.white.withOpacity(0.03),
+      color: Colors.white.withValues(alpha:0.03),
     );
   }
 

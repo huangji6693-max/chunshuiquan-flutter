@@ -48,7 +48,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
               SliverAppBar(
                 expandedHeight: screenHeight * 0.55,
                 pinned: true,
-                backgroundColor: Colors.black,
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 leading: _circleButton(
                   icon: Icons.arrow_back_ios_new,
                   onTap: () => Navigator.pop(context),
@@ -75,16 +75,16 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                             imageUrl: user.avatarUrls[i],
                             fit: BoxFit.cover,
                             placeholder: (_, __) =>
-                                Container(color: Colors.grey.shade700),
+                                Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
                             errorWidget: (_, __, ___) =>
-                                Container(color: Colors.grey.shade700),
+                                Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
                           ),
                         )
                       else
                         Container(
-                          color: Colors.grey.shade700,
-                          child: const Icon(Icons.person,
-                              size: 80, color: Colors.grey),
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          child: Icon(Icons.person,
+                              size: 80, color: Theme.of(context).colorScheme.outline),
                         ),
 
                       // 照片指示器（顶部白线）
@@ -104,7 +104,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                                   decoration: BoxDecoration(
                                     color: i == _currentPhoto
                                         ? Colors.white
-                                        : Colors.white.withOpacity(0.35),
+                                        : Colors.white.withValues(alpha:0.35),
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -126,7 +126,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                               end: Alignment.bottomCenter,
                               colors: [
                                 Colors.transparent,
-                                Colors.black.withOpacity(0.6),
+                                Colors.black.withValues(alpha:0.6),
                               ],
                             ),
                           ),
@@ -242,16 +242,16 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                     children: [
                       // Bio
                       if (user.bio != null && user.bio!.isNotEmpty) ...[
-                        const Text('关于我',
+                        Text('关于我',
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.black87)),
+                                color: Theme.of(context).colorScheme.onSurface)),
                         const SizedBox(height: 8),
                         Text(user.bio!,
                             style: TextStyle(
                                 fontSize: 15,
-                                color: Colors.grey.shade700,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 height: 1.5)),
                         const SizedBox(height: 24),
                       ],
@@ -263,11 +263,11 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
 
                       // 兴趣标签
                       if (user.tags.isNotEmpty) ...[
-                        const Text('兴趣爱好',
+                        Text('兴趣爱好',
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.black87)),
+                                color: Theme.of(context).colorScheme.onSurface)),
                         const SizedBox(height: 12),
                         Wrap(
                           spacing: 8,
@@ -280,9 +280,9 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                                       gradient: LinearGradient(
                                         colors: [
                                           const Color(0xFFFF4D88)
-                                              .withOpacity(0.1),
+                                              .withValues(alpha:0.1),
                                           const Color(0xFFFF8A5C)
-                                              .withOpacity(0.1),
+                                              .withValues(alpha:0.1),
                                         ],
                                       ),
                                       borderRadius: BorderRadius.circular(20),
@@ -301,11 +301,11 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
 
                       // 生活方式
                       if (user.smoking != null || user.drinking != null) ...[
-                        const Text('生活方式',
+                        Text('生活方式',
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.black87)),
+                                color: Theme.of(context).colorScheme.onSurface)),
                         const SizedBox(height: 12),
                         if (user.smoking != null)
                           _lifestyleRow(
@@ -336,7 +336,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                 color: Theme.of(context).colorScheme.surfaceContainer,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha:0.08),
                     blurRadius: 16,
                     offset: const Offset(0, -4),
                   ),
@@ -347,7 +347,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                   // NOPE
                   _actionButton(
                     icon: Icons.close,
-                    color: Colors.red.shade400,
+                    color: Theme.of(context).colorScheme.error,
                     size: 54,
                     onTap: () => Navigator.pop(context, 'LEFT'),
                   ),
@@ -372,7 +372,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                               borderRadius: BorderRadius.circular(16)),
                           elevation: 4,
                           shadowColor:
-                              const Color(0xFFFF4D88).withOpacity(0.4),
+                              const Color(0xFFFF4D88).withValues(alpha:0.4),
                         ),
                         child: Ink(
                           decoration: BoxDecoration(
@@ -430,11 +430,11 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('基本信息',
+        Text('基本信息',
             style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: Colors.black87)),
+                color: Theme.of(context).colorScheme.onSurface)),
         const SizedBox(height: 12),
         Wrap(
           spacing: 10,
@@ -444,19 +444,19 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade900,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
                       border:
-                          Border.all(color: Colors.grey.shade700, width: 1),
+                          Border.all(color: Theme.of(context).colorScheme.outline, width: 1),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(c.icon, size: 16, color: Colors.grey.shade600),
+                        Icon(c.icon, size: 16, color: Theme.of(context).colorScheme.outline),
                         const SizedBox(width: 6),
                         Text(c.label,
                             style: TextStyle(
-                                color: Colors.grey.shade700,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500)),
                       ],
@@ -473,10 +473,10 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: Colors.grey.shade400),
+          Icon(icon, size: 18, color: Theme.of(context).colorScheme.outline),
           const SizedBox(width: 10),
           Text(label,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 14)),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14)),
           const Spacer(),
           Text(value,
               style: const TextStyle(
@@ -496,7 +496,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha:0.3),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: Colors.white, size: 18),
@@ -522,10 +522,10 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
-          border: Border.all(color: color.withOpacity(0.3), width: 2),
+          border: Border.all(color: color.withValues(alpha:0.3), width: 2),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha:0.15),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),
@@ -546,7 +546,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.flag_outlined, color: Colors.red),
+              leading: Icon(Icons.flag_outlined, color: Theme.of(context).colorScheme.error),
               title: const Text('举报'),
               onTap: () {
                 Navigator.pop(context);

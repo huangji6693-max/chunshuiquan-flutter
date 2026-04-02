@@ -7,10 +7,48 @@ import 'create_moment_screen.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import '../../../shared/widgets/animated_empty_state.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import '../../../shared/widgets/page_transitions.dart';
 
-final momentsTimelineProvider = FutureProvider<List<MomentItem>>((ref) {
-  return ref.watch(momentRepositoryProvider).getTimeline();
-});
+final momentsTimelineProvider =
+    AutoDisposeAsyncNotifierProvider<MomentsNotifier, List<MomentItem>>(MomentsNotifier.new);
+
+class MomentsNotifier extends AutoDisposeAsyncNotifier<List<MomentItem>> {
+  int _page = 0;
+  bool _hasMore = true;
+  bool _loadingMore = false;
+
+  bool get hasMore => _hasMore;
+
+  @override
+  Future<List<MomentItem>> build() async {
+    _page = 0;
+    _hasMore = true;
+    return _fetch(0);
+  }
+
+  Future<List<MomentItem>> _fetch(int page) async {
+    final items = await ref.read(momentRepositoryProvider).getTimeline(page: page);
+    if (items.length < 20) _hasMore = false;
+    return items;
+  }
+
+  Future<void> loadMore() async {
+    if (_loadingMore || !_hasMore) return;
+    _loadingMore = true;
+    try {
+      _page++;
+      final older = await _fetch(_page);
+      final current = state.valueOrNull ?? [];
+      final existingIds = current.map((m) => m.id).toSet();
+      final newItems = older.where((m) => !existingIds.contains(m.id)).toList();
+      state = AsyncData([...current, ...newItems]);
+    } catch (_) {
+      _page--;
+    } finally {
+      _loadingMore = false;
+    }
+  }
+}
 
 class MomentsScreen extends ConsumerWidget {
   const MomentsScreen({super.key});
@@ -39,7 +77,7 @@ class MomentsScreen extends ConsumerWidget {
             ),
             onPressed: () async {
               final created = await Navigator.push<bool>(context,
-                  MaterialPageRoute(builder: (_) => const CreateMomentScreen()));
+                  fadeSlideRoute<bool>(const CreateMomentScreen()));
               if (created == true) ref.invalidate(momentsTimelineProvider);
             },
           ),
@@ -58,34 +96,51 @@ class MomentsScreen extends ConsumerWidget {
                 subtitle: '等你来写下第一个故事',
                 action: TextButton(
                   onPressed: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const CreateMomentScreen())),
+                      fadeSlideRoute(const CreateMomentScreen())),
                   child: const Text('发布动态'),
                 ),
               );
             }
 
-            return AnimationLimiter(
+            final notifier = ref.read(momentsTimelineProvider.notifier);
+            return NotificationListener<ScrollNotification>(
+              onNotification: (scroll) {
+                if (scroll.metrics.pixels > scroll.metrics.maxScrollExtent - 200) {
+                  notifier.loadMore();
+                }
+                return false;
+              },
+              child: AnimationLimiter(
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 8, bottom: 100),
-                itemCount: moments.length,
-                itemBuilder: (_, i) => AnimationConfiguration.staggeredList(
-                  position: i,
-                  duration: const Duration(milliseconds: 375),
-                  child: SlideAnimation(
-                    verticalOffset: 30,
-                    child: FadeInAnimation(
-                      child: _MomentCard(
-                        moment: moments[i],
-                        onLikeToggled: () => ref.invalidate(momentsTimelineProvider),
+                itemCount: moments.length + (notifier.hasMore ? 1 : 0),
+                itemBuilder: (_, i) {
+                  if (i >= moments.length) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    );
+                  }
+                  return AnimationConfiguration.staggeredList(
+                    position: i,
+                    duration: const Duration(milliseconds: 375),
+                    child: SlideAnimation(
+                      verticalOffset: 30,
+                      child: FadeInAnimation(
+                        child: _MomentCard(
+                          moment: moments[i],
+                          onLikeToggled: () => ref.invalidate(momentsTimelineProvider),
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
+            ),
             );
           },
           loading: () => const MomentsSkeleton(),
-          error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Colors.grey.shade600), const SizedBox(height: 12), Text('网络不太好，稍后再试', style: TextStyle(color: Colors.grey)), const SizedBox(height: 8), TextButton(onPressed: () => ref.invalidate(momentsTimelineProvider), child: const Text('点击重试'))])),
+          error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant), const SizedBox(height: 12), Text('网络不太好，稍后再试', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)), const SizedBox(height: 8), TextButton(onPressed: () => ref.invalidate(momentsTimelineProvider), child: const Text('点击重试'))])),
         ),
       ),
     );
@@ -124,11 +179,11 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.15),
+          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.15),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 3),
           ),
@@ -147,7 +202,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                   backgroundImage: m.authorAvatar != null
                       ? CachedNetworkImageProvider(m.authorAvatar!)
                       : null,
-                  backgroundColor: Colors.grey.shade800,
+                  backgroundColor: Theme.of(context).colorScheme.outlineVariant,
                   child: m.authorAvatar == null
                       ? Text(m.authorName[0],
                           style: const TextStyle(
@@ -181,14 +236,14 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                         children: [
                           Text(_formatTime(m.createdAt),
                               style: TextStyle(
-                                  fontSize: 12, color: Colors.grey.shade400)),
+                                  fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                           if (m.location != null && m.location!.isNotEmpty) ...[
                             const SizedBox(width: 6),
                             Icon(Icons.location_on,
-                                size: 12, color: Colors.grey.shade400),
+                                size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                             Text(m.location!,
                                 style: TextStyle(
-                                    fontSize: 12, color: Colors.grey.shade400)),
+                                    fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                           ],
                         ],
                       ),
@@ -222,7 +277,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                 // 点赞
                 _InteractionBtn(
                   icon: _liked ? Icons.favorite : Icons.favorite_border,
-                  color: _liked ? const Color(0xFFFF4D88) : Colors.grey,
+                  color: _liked ? const Color(0xFFFF4D88) : Theme.of(context).colorScheme.onSurfaceVariant,
                   label: _likeCount > 0 ? '$_likeCount' : '赞',
                   onTap: _handleLike,
                 ),
@@ -418,7 +473,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-                color: Colors.grey.shade600,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 borderRadius: BorderRadius.circular(2)),
           ),
           Padding(
@@ -435,7 +490,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
                 : (_comments == null || _comments!.isEmpty)
                     ? Center(
                         child: Text('还没有评论',
-                            style: TextStyle(color: Colors.grey.shade400)))
+                            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)))
                     : ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         itemCount: _comments!.length,
@@ -488,7 +543,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
             decoration: BoxDecoration(
               
               border: Border(
-                  top: BorderSide(color: Colors.grey.shade700, width: 0.5)),
+                  top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 0.5)),
             ),
             child: Row(
               children: [

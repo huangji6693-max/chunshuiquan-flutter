@@ -74,8 +74,8 @@ class _AnimatedEmptyStateState extends State<AnimatedEmptyState>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          colors[0].withOpacity(0.12),
-                          colors[1].withOpacity(0.12),
+                          colors[0].withValues(alpha:0.12),
+                          colors[1].withValues(alpha:0.12),
                         ],
                       ),
                       shape: BoxShape.circle,
@@ -111,7 +111,7 @@ class _AnimatedEmptyStateState extends State<AnimatedEmptyState>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey.shade400,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   height: 1.4,
                 ),
               ),

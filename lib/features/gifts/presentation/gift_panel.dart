@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/gift_repository.dart';
 import '../domain/gift.dart';
 import '../../coins/presentation/coin_shop_screen.dart';
+import '../../../shared/widgets/page_transitions.dart';
 
 /// 礼物列表 Provider
-final giftsProvider = FutureProvider<List<Gift>>((ref) {
+final giftsProvider = FutureProvider.autoDispose<List<Gift>>((ref) {
   return ref.watch(giftRepositoryProvider).getGifts();
 });
 
@@ -77,7 +78,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade600,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -87,12 +88,12 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
               children: [
-                const Text(
+                Text(
                   '送TA一份礼物',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const Spacer(),
@@ -102,8 +103,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                     Navigator.pop(context);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => const CoinShopScreen()),
+                      fadeSlideRoute(const CoinShopScreen()),
                     );
                   },
                   child: Container(
@@ -111,7 +111,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                         horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFFFFD700).withOpacity(0.15), Color(0xFFFFA000).withOpacity(0.1)],
+                        colors: [Color(0xFFFFD700).withValues(alpha: 0.15), Color(0xFFFFA000).withValues(alpha: 0.1)],
                       ),
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -170,11 +170,11 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                     _selected != null && !_sending ? _handleSend : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFF4D88),
-                  disabledBackgroundColor: Colors.grey.shade700,
+                  disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                   elevation: _selected != null ? 3 : 0,
-                  shadowColor: const Color(0xFFFF4D88).withOpacity(0.4),
+                  shadowColor: const Color(0xFFFF4D88).withValues(alpha: 0.4),
                 ),
                 child: _sending
                     ? const SizedBox(
@@ -228,19 +228,19 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
           margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           decoration: BoxDecoration(
             color: isSelected
-                ? const Color(0xFFFF4D88).withOpacity(0.1)
-                : Colors.grey.shade900,
+                ? const Color(0xFFFF4D88).withValues(alpha: 0.1)
+                : Theme.of(context).colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isSelected
                   ? const Color(0xFFFF4D88)
-                  : Colors.grey.shade700,
+                  : Theme.of(context).colorScheme.outlineVariant,
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: const Color(0xFFFF4D88).withOpacity(0.15),
+                      color: const Color(0xFFFF4D88).withValues(alpha: 0.15),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
                     ),
@@ -259,7 +259,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                   fontWeight: FontWeight.w600,
                   color: isSelected
                       ? const Color(0xFFFF4D88)
-                      : Colors.black87,
+                      : Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 2),
@@ -273,7 +273,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                     '${gift.coins}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -309,7 +309,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('$e'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
         );

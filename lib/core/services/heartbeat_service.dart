@@ -67,7 +67,7 @@ final heartbeatServiceProvider = Provider<HeartbeatService>((ref) {
 });
 
 /// 在线状态 Provider：获取指定用户的在线状态
-final onlineStatusProvider = FutureProvider.family<bool, String>((ref, userId) async {
+final onlineStatusProvider = FutureProvider.autoDispose.family<bool, String>((ref, userId) async {
   try {
     final dio = ref.watch(dioProvider);
     final res = await dio.get('/api/users/$userId/online');

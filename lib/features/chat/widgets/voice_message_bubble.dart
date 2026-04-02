@@ -88,7 +88,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble>
           boxShadow: [
             if (!widget.isMe)
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha:0.04),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -112,7 +112,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble>
                 builder: (_, __) => CustomPaint(
                   size: const Size(double.infinity, 24),
                   painter: _WavePainter(
-                    color: color.withOpacity(0.6),
+                    color: color.withValues(alpha:0.6),
                     activeColor: color,
                     progress: _progress,
                     animValue: _playing ? _waveCtrl.value : 0,

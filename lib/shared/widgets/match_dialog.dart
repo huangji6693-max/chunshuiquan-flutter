@@ -130,7 +130,7 @@ class _MatchDialogState extends State<MatchDialog>
           // 深色半透明背景
           GestureDetector(
             onTap: widget.onDismiss,
-            child: Container(color: Colors.black.withOpacity(0.7)),
+            child: Container(color: Colors.black.withValues(alpha:0.7)),
           ),
 
           // 星星粒子效果
@@ -181,7 +181,7 @@ class _MatchDialogState extends State<MatchDialog>
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFFF4D88).withOpacity(0.5),
+                                    color: const Color(0xFFFF4D88).withValues(alpha:0.5),
                                     blurRadius: 20,
                                     spreadRadius: 4,
                                   ),
@@ -230,7 +230,7 @@ class _MatchDialogState extends State<MatchDialog>
                             Text(
                               '你和 ${widget.match.partnerName ?? "Ta"} 配对成功了',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.white.withValues(alpha:0.7),
                                 fontSize: 15,
                               ),
                             ),
@@ -248,7 +248,7 @@ class _MatchDialogState extends State<MatchDialog>
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFFF4D88).withOpacity(0.4),
+                                    color: const Color(0xFFFF4D88).withValues(alpha:0.4),
                                     blurRadius: 16,
                                     offset: const Offset(0, 6),
                                   ),
@@ -339,12 +339,12 @@ class _AnimatedAvatar extends StatelessWidget {
         border: Border.all(color: Colors.white, width: 3),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF4D88).withOpacity(0.4),
+            color: const Color(0xFFFF4D88).withValues(alpha:0.4),
             blurRadius: 20,
             spreadRadius: 4,
           ),
           BoxShadow(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha:0.2),
             blurRadius: 12,
             spreadRadius: 1,
           ),
@@ -391,14 +391,14 @@ class _StarsPainter extends CustomPainter {
         Colors.white,
         const Color(0xFFFF4D88),
         _random.nextDouble() * 0.3,
-      )!.withOpacity(opacity);
+      )!.withValues(alpha:opacity);
 
       canvas.drawCircle(Offset(x, y), radius, paint);
 
       // 部分星星画十字光芒
       if (baseRadius > 1.5 && twinkle > 0.6) {
         final glowPaint = Paint()
-          ..color = Colors.white.withOpacity(opacity * 0.4)
+          ..color = Colors.white.withValues(alpha:opacity * 0.4)
           ..strokeWidth = 0.5
           ..style = PaintingStyle.stroke;
 

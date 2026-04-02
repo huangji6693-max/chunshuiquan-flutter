@@ -13,6 +13,7 @@ import '../../../core/providers/current_user_provider.dart';
 import '../../../core/network/websocket_service.dart';
 import '../../profile/data/upload_repository.dart';
 import '../data/message_repository.dart';
+import '../../../shared/widgets/page_transitions.dart';
 
 /// 聊天页 - 升级版UI
 /// 精致AppBar + 自定义气泡颜色 + 图片发送 + 在线状态
@@ -47,7 +48,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   void dispose() {
     try {
-      // 不读ref在dispose中，WebSocket取消订阅在上层处理
+      ref.read(webSocketServiceProvider).unsubscribeChatChannel(widget.matchId);
     } catch (_) {}
     super.dispose();
   }
@@ -89,6 +90,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   Future<void> _handleSend(types.PartialText msg) async {
     final myId = ref.read(currentUserProvider).asData?.value.id ?? '';
+    if (myId.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('用户信息加载中，请稍后重试')),
+        );
+      }
+      return;
+    }
     try {
       await ref.read(messagesProvider(widget.matchId).notifier)
           .sendMessage(msg.text, myId);
@@ -162,12 +171,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             color: Theme.of(context).colorScheme.surface,
             border: Border(
               bottom: BorderSide(
-                color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.2),
+                color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha:0.2),
               ),
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha:0.04),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -197,8 +206,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
                     child: widget.partnerAvatarUrl == null ||
                             widget.partnerAvatarUrl!.isEmpty
-                        ? const Icon(Icons.person,
-                            size: 22, color: Colors.grey)
+                        ? Icon(Icons.person,
+                            size: 22, color: Theme.of(context).colorScheme.onSurfaceVariant)
                         : null,
                   ),
                   ),
@@ -247,20 +256,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       height: 38,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFFFF4D88).withOpacity(0.1),
+                        color: const Color(0xFFFF4D88).withValues(alpha:0.1),
                       ),
                       child: const Icon(Icons.call_outlined,
                           color: Color(0xFFFF4D88), size: 20),
                     ),
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => VoiceCallScreen(
-                          matchId: widget.matchId,
-                          partnerName: widget.partnerName ?? '对方',
-                          partnerAvatarUrl: widget.partnerAvatarUrl,
-                        ),
-                      ),
+                      fadeSlideRoute(VoiceCallScreen(
+                        matchId: widget.matchId,
+                        partnerName: widget.partnerName ?? '对方',
+                        partnerAvatarUrl: widget.partnerAvatarUrl,
+                      )),
                     ),
                   ),
 
@@ -271,7 +278,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       height: 38,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFFFF4D88).withOpacity(0.1),
+                        color: const Color(0xFFFF4D88).withValues(alpha:0.1),
                       ),
                       child: const Icon(Icons.videocam_outlined,
                           color: Color(0xFFFF4D88), size: 20),
@@ -291,11 +298,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       body: messagesAsync.when(
         loading: () => const Center(
             child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
-        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Color(0xFFFFCDD2)), const SizedBox(height: 12), Text('消息加载失败，下拉重试', style: TextStyle(color: Colors.grey))])),
+        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Theme.of(context).colorScheme.error), const SizedBox(height: 12), Text('消息加载失败，下拉重试', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant))])),
         data: (messages) => Chat(
           messages: _toUiMessages(
               messages, myId, widget.partnerName, widget.partnerAvatarUrl),
           onSendPressed: _handleSend,
+          onEndReached: () => ref
+              .read(messagesProvider(widget.matchId).notifier)
+              .loadMore(),
+          onEndReachedThreshold: 0.75,
           user: types.User(id: myId),
           showUserAvatars: true,
           showUserNames: false,
@@ -316,7 +327,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               color: Theme.of(context).colorScheme.surfaceContainer,
               border: Border(
                 top: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha:0.3),
                 ),
               ),
             ),
@@ -363,8 +374,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFFFF4D88).withOpacity(0.1),
-                        const Color(0xFFFF8A5C).withOpacity(0.1),
+                        const Color(0xFFFF4D88).withValues(alpha:0.1),
+                        const Color(0xFFFF8A5C).withValues(alpha:0.1),
                       ],
                     ),
                   ),
@@ -375,13 +386,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 Text(
                   '说点什么打破沉默吧 ☺️',
                   style: TextStyle(
-                      color: Colors.grey[500],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 16,
                       fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 4),
                 Text('也许一句Hi就是故事的开头',
-                    style: TextStyle(color: Colors.grey[400], fontSize: 13)),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
               ],
             ),
           ),
@@ -471,7 +482,7 @@ class _ChatInputState extends State<_ChatInput> {
         color: Theme.of(context).colorScheme.surfaceContainer,
         border: Border(
           top: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha:0.3),
           ),
         ),
       ),
@@ -487,8 +498,8 @@ class _ChatInputState extends State<_ChatInput> {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFFFF4D88).withOpacity(0.15),
-                    const Color(0xFFFF8A5C).withOpacity(0.15),
+                    const Color(0xFFFF4D88).withValues(alpha:0.15),
+                    const Color(0xFFFF8A5C).withValues(alpha:0.15),
                   ],
                 ),
               ),
@@ -506,7 +517,7 @@ class _ChatInputState extends State<_ChatInput> {
               height: 42,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFFF4D88).withOpacity(0.1),
+                color: const Color(0xFFFF4D88).withValues(alpha:0.1),
               ),
               child: widget.uploading
                   ? const Padding(
@@ -560,7 +571,7 @@ class _ChatInputState extends State<_ChatInput> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFFF4D88).withOpacity(0.3),
+                          color: const Color(0xFFFF4D88).withValues(alpha:0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -586,7 +597,7 @@ class _ChatInputState extends State<_ChatInput> {
                     height: 42,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: const Color(0xFFFF4D88).withOpacity(0.1),
+                      color: const Color(0xFFFF4D88).withValues(alpha:0.1),
                     ),
                     child: const Icon(Icons.mic_none,
                         color: Color(0xFFFF4D88), size: 22),

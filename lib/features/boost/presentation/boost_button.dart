@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import '../../../core/network/dio_client.dart';
 
 /// Boost 状态 Provider
-final boostStatusProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final boostStatusProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
   final res = await dio.get('/api/boost/status');
   return res.data as Map<String, dynamic>;
@@ -91,7 +91,7 @@ class _BoostButtonState extends ConsumerState<BoostButton>
                     color: (_active
                             ? const Color(0xFF7C4DFF)
                             : const Color(0xFFFF4D88))
-                        .withOpacity(0.4),
+                        .withValues(alpha:0.4),
                     blurRadius: _active ? 16 : 8,
                     offset: const Offset(0, 4),
                   ),
@@ -149,7 +149,7 @@ class _BoostButtonState extends ConsumerState<BoostButton>
         final msg = (e.response?.data as Map<String, dynamic>?)?['error'] ??
             '激活失败';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg), backgroundColor: Colors.red),
+          SnackBar(content: Text(msg), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     }

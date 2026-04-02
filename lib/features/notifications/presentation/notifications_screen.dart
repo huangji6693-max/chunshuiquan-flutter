@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 /// 通知类型
 enum NotificationType {
@@ -138,7 +139,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
         bottom: TabBar(
           controller: _tabCtrl,
           labelColor: pink,
-          unselectedLabelColor: Colors.grey,
+          unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
           indicatorColor: pink,
           indicatorWeight: 3,
           labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
@@ -154,18 +155,43 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
         controller: _tabCtrl,
         children: List.generate(3, (tabIndex) {
           final filtered = _filterNotifications(notifications, tabIndex);
-          if (filtered.isEmpty) {
-            return _buildEmptyState(tabIndex);
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.only(top: 8, bottom: 100),
-            itemCount: filtered.length,
-            separatorBuilder: (_, __) => Divider(
-              height: 1,
-              color: Colors.grey.shade800,
-              indent: 76,
-            ),
-            itemBuilder: (_, i) => _NotificationTile(item: filtered[i]),
+          return RefreshIndicator(
+            color: Theme.of(context).colorScheme.primary,
+            onRefresh: () async {
+              ref.invalidate(notificationsProvider);
+            },
+            child: filtered.isEmpty
+                ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.6,
+                        child: _buildEmptyState(tabIndex),
+                      ),
+                    ],
+                  )
+                : AnimationLimiter(
+                    child: ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(top: 8, bottom: 100),
+                    itemCount: filtered.length,
+                    separatorBuilder: (_, __) => Divider(
+                      height: 1,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                      indent: 76,
+                    ),
+                    itemBuilder: (_, i) => AnimationConfiguration.staggeredList(
+                      position: i,
+                      duration: const Duration(milliseconds: 375),
+                      child: SlideAnimation(
+                        verticalOffset: 30,
+                        child: FadeInAnimation(
+                          child: _NotificationTile(item: filtered[i]),
+                        ),
+                      ),
+                    ),
+                  ),
+                  ),
           );
         }),
       ),
@@ -198,7 +224,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
             child: Icon(
               icons[tabIndex],
               size: 40,
-              color: const Color(0xFFFF4D88).withOpacity(0.4),
+              color: const Color(0xFFFF4D88).withValues(alpha: 0.4),
             ),
           ),
           const SizedBox(height: 16),
@@ -206,7 +232,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
             texts[tabIndex],
             style: TextStyle(
               fontSize: 16,
-              color: Colors.grey[400],
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -297,7 +323,7 @@ class _NotificationTile extends StatelessWidget {
                     _formatTime(item.createdAt),
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey[400],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],

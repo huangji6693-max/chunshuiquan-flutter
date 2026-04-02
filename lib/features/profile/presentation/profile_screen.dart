@@ -21,7 +21,7 @@ class ProfileScreen extends ConsumerWidget {
       body: profileState.when(
         loading: () => const Center(
             child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
-        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Color(0xFFFFCDD2)), const SizedBox(height: 12), Text('网络开小差了', style: TextStyle(color: Colors.grey.shade400))])),
+        error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Theme.of(context).colorScheme.error), const SizedBox(height: 12), Text('网络开小差了', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant))])),
         data: (user) => _ProfileContent(user: user),
       ),
     );
@@ -152,7 +152,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
               child: const Text('取消')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('删除', style: TextStyle(color: Colors.red)),
+            child: Text('删除', style: TextStyle(color: Theme.of(ctx).colorScheme.error)),
           ),
         ],
       ),
@@ -199,6 +199,11 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
     final user = widget.user;
     final photos = user.avatarUrls;
 
+    // 删除照片后 _headerPhotoIndex 可能越界，需要修正
+    if (_headerPhotoIndex >= photos.length) {
+      _headerPhotoIndex = photos.isEmpty ? 0 : photos.length - 1;
+    }
+
     return CustomScrollView(
       slivers: [
         // 顶部大图 AppBar + 视差 + 照片轮播
@@ -212,7 +217,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                 width: 36, height: 36,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha:0.3),
                 ),
                 child: Icon(_editing ? Icons.close : Icons.edit,
                     color: Colors.white, size: 18),
@@ -224,7 +229,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                 width: 36, height: 36,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha:0.3),
                 ),
                 child: const Icon(Icons.settings_outlined,
                     color: Colors.white, size: 18),
@@ -294,7 +299,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.5),
+                          Colors.black.withValues(alpha:0.5),
                         ],
                       ),
                     ),
@@ -318,7 +323,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                             borderRadius: BorderRadius.circular(4),
                             color: i == _headerPhotoIndex
                                 ? Colors.white
-                                : Colors.white.withOpacity(0.4),
+                                : Colors.white.withValues(alpha:0.4),
                           ),
                         );
                       }),
@@ -339,7 +344,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                           color: const Color(0xFFFF4D88),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFF4D88).withOpacity(0.4),
+                              color: const Color(0xFFFF4D88).withValues(alpha:0.4),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -384,14 +389,14 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                             Text('${user.age}岁',
                                 style: TextStyle(
                                     fontSize: 18,
-                                    color: Colors.grey.shade600)),
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
                           ],
                         ],
                       ),
                       const SizedBox(height: 6),
                       Text(user.email,
-                          style: const TextStyle(
-                              color: Colors.grey, fontSize: 13)),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
                       const SizedBox(height: 10),
                       // 城市和职业
                       Wrap(
@@ -478,8 +483,8 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                               : '写点什么，让别人认识真实的你',
                           style: TextStyle(
                               color: user.bio?.isNotEmpty == true
-                                  ? Colors.black87
-                                  : Colors.grey,
+                                  ? Theme.of(context).colorScheme.onSurface
+                                  : Theme.of(context).colorScheme.onSurfaceVariant,
                               height: 1.6,
                               fontSize: 15)),
                 ),
@@ -501,7 +506,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFF4D88).withOpacity(0.2),
+                              color: const Color(0xFFFF4D88).withValues(alpha:0.2),
                               blurRadius: 6,
                               offset: const Offset(0, 2),
                             ),
@@ -531,7 +536,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                         borderRadius: BorderRadius.circular(27),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF4D88).withOpacity(0.3),
+                            color: const Color(0xFFFF4D88).withValues(alpha:0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -590,7 +595,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
     }
     if (tags.isEmpty) {
       return Text('点击编辑添加详细信息',
-          style: TextStyle(color: Colors.grey.shade400, fontSize: 14));
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14));
     }
     return Wrap(spacing: 8, runSpacing: 8, children: tags);
   }
@@ -613,7 +618,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                 suffixText: 'cm',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.grey.shade700),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12, vertical: 10),
@@ -745,7 +750,7 @@ class _DropdownSelector extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade700),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         borderRadius: BorderRadius.circular(10),
         color: Theme.of(context).colorScheme.surfaceContainerLow,
       ),
@@ -754,13 +759,13 @@ class _DropdownSelector extends StatelessWidget {
           isExpanded: true,
           value: value != null && options.contains(value) ? value : null,
           hint: Text(hint,
-              style: TextStyle(color: Colors.grey.shade400, fontSize: 14)),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14)),
           items: options.map((o) => DropdownMenuItem(
             value: o,
             child: Text(o, style: const TextStyle(fontSize: 14)),
           )).toList(),
           onChanged: onChanged,
-          icon: Icon(Icons.arrow_drop_down, color: Colors.grey.shade400),
+          icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).colorScheme.onSurfaceVariant),
           isDense: true,
         ),
       ),
@@ -782,12 +787,12 @@ class _DetailTag extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFFFF4D88).withOpacity(0.08),
-            const Color(0xFFFF8A5C).withOpacity(0.06),
+            const Color(0xFFFF4D88).withValues(alpha:0.08),
+            const Color(0xFFFF8A5C).withValues(alpha:0.06),
           ],
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFFF4D88).withOpacity(0.15)),
+        border: Border.all(color: const Color(0xFFFF4D88).withValues(alpha:0.15)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -858,7 +863,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
+                  color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.08),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
@@ -872,7 +877,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                 width: double.infinity,
                 height: double.infinity,
                 placeholder: (_, __) => Container(
-                  color: Colors.grey.shade700,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: const Center(
                     child: SizedBox(
                       width: 20, height: 20,
@@ -881,8 +886,8 @@ class _PhotoGridState extends State<_PhotoGrid> {
                   ),
                 ),
                 errorWidget: (_, __, ___) => Container(
-                  color: Colors.grey.shade700,
-                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ),
             ),
@@ -893,7 +898,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF4D88).withOpacity(0.85),
+                  color: const Color(0xFFFF4D88).withValues(alpha:0.85),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(12),
                     bottomRight: Radius.circular(12),
@@ -916,7 +921,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                 child: Container(
                   width: 24, height: 24,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha:0.6),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.close,
@@ -930,7 +935,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
               child: Container(
                 width: 22, height: 22,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha:0.5),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Icon(Icons.drag_indicator,
@@ -963,10 +968,10 @@ class _PhotoGridState extends State<_PhotoGrid> {
                 onTap: widget.uploading ? null : widget.onAdd,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade800,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFFFF4D88).withOpacity(0.4),
+                      color: const Color(0xFFFF4D88).withValues(alpha:0.4),
                       width: 1.5,
                       strokeAlign: BorderSide.strokeAlignInside,
                     ),
@@ -1036,10 +1041,10 @@ class _PhotoGridState extends State<_PhotoGrid> {
                   height: cardHeight,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade700,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFFFF4D88).withOpacity(0.3),
+                        color: const Color(0xFFFF4D88).withValues(alpha:0.3),
                         width: 1.5,
                         style: BorderStyle.solid,
                       ),
@@ -1078,6 +1083,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
       ),
       itemCount: _urls.length,
       itemBuilder: (context, index) {
+        if (index >= _urls.length) return const SizedBox.shrink();
         return _buildPhotoCard(_urls[index], index);
       },
     );
@@ -1101,7 +1107,7 @@ class _SectionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.12),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),

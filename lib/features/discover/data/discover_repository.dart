@@ -19,9 +19,14 @@ class DiscoverRepository {
     int? maxAge,
     String? gender,
     double? maxDistance,
+    int page = 0,
+    int size = 20,
   }) async {
     try {
-      final queryParams = <String, dynamic>{};
+      final queryParams = <String, dynamic>{
+        'page': page,
+        'size': size,
+      };
       if (minAge != null) queryParams['minAge'] = minAge;
       if (maxAge != null) queryParams['maxAge'] = maxAge;
       if (gender != null && gender.isNotEmpty) queryParams['gender'] = gender;

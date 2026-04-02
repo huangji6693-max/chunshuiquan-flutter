@@ -82,12 +82,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _uploadPhotos() async {
+    int failCount = 0;
     for (final photo in _photos) {
       try {
         await ref.read(uploadRepositoryProvider).uploadAvatar(photo);
       } catch (_) {
-        // 上传失败继续，不阻断 onboarding 流程
+        failCount++;
       }
+    }
+    if (failCount > 0 && mounted) {
+      setState(() => _error = '$failCount张照片上传失败，可稍后在资料页重新上传');
     }
   }
 
@@ -121,8 +125,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
       if (mounted) context.go('/discover');
     } on AppException catch (e) {
+      if (!mounted) return;
       setState(() => _error = e.message);
     } catch (e) {
+      if (!mounted) return;
       setState(() => _error = '保存失败，请重试');
     } finally {
       if (mounted) setState(() => _uploading = false);
@@ -154,7 +160,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
                             )
                           : null,
-                      color: i <= _page ? null : Colors.grey.shade700,
+                      color: i <= _page ? null : Theme.of(context).colorScheme.outlineVariant,
                     ),
                   ),
                 )),
@@ -169,10 +175,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 children: [
                   Text(
                     _stepTitles[_page],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w900,
-                      color: Color(0xFF1A1A2E),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -180,7 +186,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     _stepSubtitles[_page],
                     style: TextStyle(
                       fontSize: 15,
-                      color: Colors.grey[500],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -227,12 +233,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.08),
+                    color: Theme.of(context).colorScheme.error.withValues(alpha:0.08),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     _error!,
-                    style: const TextStyle(color: Colors.redAccent, fontSize: 14),
+                    style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 14),
                   ),
                 ),
               ),
@@ -275,7 +281,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF4D88).withOpacity(0.3),
+                            color: const Color(0xFFFF4D88).withValues(alpha:0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -357,10 +363,10 @@ class _PhotoPage extends StatelessWidget {
               onTap: onAdd,
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF4D88).withOpacity(0.1),
+                  color: const Color(0xFFFF4D88).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: const Color(0xFFFF4D88).withOpacity(0.3),
+                    color: const Color(0xFFFF4D88).withValues(alpha:0.3),
                     width: 1.5,
                     strokeAlign: BorderSide.strokeAlignInside,
                   ),
@@ -371,14 +377,14 @@ class _PhotoPage extends StatelessWidget {
                     Icon(
                       Icons.add_photo_alternate_rounded,
                       size: 32,
-                      color: const Color(0xFFFF4D88).withOpacity(0.6),
+                      color: const Color(0xFFFF4D88).withValues(alpha:0.6),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '添加',
                       style: TextStyle(
                         fontSize: 12,
-                        color: const Color(0xFFFF4D88).withOpacity(0.6),
+                        color: const Color(0xFFFF4D88).withValues(alpha:0.6),
                       ),
                     ),
                   ],
@@ -569,17 +575,17 @@ class _PreferencePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               decoration: BoxDecoration(
                 color: lookingFor == opt.$1
-                    ? const Color(0xFFFF4D88).withOpacity(0.1)
-                    : Colors.white,
+                    ? const Color(0xFFFF4D88).withValues(alpha:0.1)
+                    : Theme.of(context).colorScheme.surface,
                 border: Border.all(
-                  color: lookingFor == opt.$1 ? pink : Colors.grey.shade700,
+                  color: lookingFor == opt.$1 ? pink : Theme.of(context).colorScheme.outlineVariant,
                   width: lookingFor == opt.$1 ? 2 : 1,
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: lookingFor == opt.$1
                     ? [
                         BoxShadow(
-                          color: pink.withOpacity(0.1),
+                          color: pink.withValues(alpha:0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -593,12 +599,12 @@ class _PreferencePage extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: lookingFor == opt.$1
-                        ? pink.withOpacity(0.1)
-                        : Colors.grey.shade800,
+                        ? pink.withValues(alpha:0.1)
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                   ),
                   child: Icon(
                     opt.$3,
-                    color: lookingFor == opt.$1 ? pink : Colors.grey,
+                    color: lookingFor == opt.$1 ? pink : Theme.of(context).colorScheme.onSurfaceVariant,
                     size: 24,
                   ),
                 ),
@@ -606,7 +612,7 @@ class _PreferencePage extends StatelessWidget {
                 Text(opt.$2, style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
-                  color: lookingFor == opt.$1 ? pink : Colors.black87,
+                  color: lookingFor == opt.$1 ? pink : Theme.of(context).colorScheme.onSurface,
                 )),
                 const Spacer(),
                 if (lookingFor == opt.$1)

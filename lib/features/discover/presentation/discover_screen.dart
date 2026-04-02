@@ -12,6 +12,7 @@ import '../../../shared/widgets/user_card.dart';
 import '../../../shared/widgets/match_dialog.dart';
 import '../../checkin/presentation/checkin_dialog.dart';
 import '../../likes/presentation/likes_screen.dart';
+import '../../../shared/widgets/page_transitions.dart';
 import '../../boost/presentation/boost_button.dart';
 import '../../../shared/widgets/animated_empty_state.dart';
 import 'package:go_router/go_router.dart';
@@ -76,6 +77,8 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
   final Ref _ref;
   bool _fetchingMore = false;
   int _swipedCount = 0;
+  int _currentPage = 0;
+  bool _hasMore = true;
 
   _DiscoverNotifier(this._ref) : super(const _DiscoverState()) {
     _loadFilterAndFetch();
@@ -114,6 +117,8 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
   /// 应用新的筛选条件
   Future<void> refresh() async {
     _swipedCount = 0;
+    _currentPage = 0;
+    _hasMore = true;
     state = state.copyWith(cards: []);
     await _load();
   }
@@ -121,6 +126,8 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
   Future<void> applyFilter(DiscoverFilter filter) async {
     await _saveFilter(filter);
     _swipedCount = 0;
+    _currentPage = 0;
+    _hasMore = true;
     state = state.copyWith(filter: filter, cards: []);
     await _load();
   }
@@ -134,7 +141,9 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
         maxAge: f.maxAge,
         gender: f.gender.isNotEmpty ? f.gender : null,
         maxDistance: f.maxDistance,
+        page: 0,
       );
+      if (profiles.length < 20) _hasMore = false;
       state = state.copyWith(cards: profiles, isLoading: false);
     } catch (_) {
       state = state.copyWith(isLoading: false);
@@ -142,19 +151,28 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
   }
 
   Future<void> _loadMore() async {
-    if (_fetchingMore) return;
+    if (_fetchingMore || !_hasMore) return;
     _fetchingMore = true;
     try {
+      _currentPage++;
       final f = state.filter;
       final more = await _ref.read(discoverRepositoryProvider).fetchFeed(
         minAge: f.minAge,
         maxAge: f.maxAge,
         gender: f.gender.isNotEmpty ? f.gender : null,
         maxDistance: f.maxDistance,
+        page: _currentPage,
       );
-      if (more.isNotEmpty) {
-        state = state.copyWith(cards: [...state.cards, ...more]);
+      if (more.isEmpty) {
+        _hasMore = false;
+      } else {
+        // 去重
+        final existingIds = state.cards.map((c) => c.id).toSet();
+        final newCards = more.where((c) => !existingIds.contains(c.id)).toList();
+        state = state.copyWith(cards: [...state.cards, ...newCards]);
       }
+    } catch (_) {
+      _currentPage--; // 失败回退
     } finally {
       _fetchingMore = false;
     }
@@ -220,7 +238,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
       try {
         final user = await ref.read(currentUserProvider.future)
             .timeout(const Duration(seconds: 3));
-        if (user != null && !user.onboardingCompleted && mounted) {
+        if (!user.onboardingCompleted && mounted) {
           context.go('/onboarding');
         }
       } catch (_) {
@@ -296,6 +314,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
     // 监听 pendingMatch，弹 MatchDialog
     ref.listen<_DiscoverState>(_discoverNotifierProvider, (prev, next) {
       if (next.pendingMatch != null && prev?.pendingMatch == null) {
+        if (!mounted) return;
         final myAvatar = ref
                 .read(currentUserProvider)
                 .asData
@@ -368,7 +387,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
             icon: const Icon(Icons.favorite,
                 color: Color(0xFFFF4D88), size: 22),
             onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const LikesScreen())),
+                fadeSlideRoute(const LikesScreen())),
             tooltip: '谁喜欢了我',
           ),
           // 筛选按钮
@@ -379,8 +398,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
               alignment: Alignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.tune_rounded,
-                      color: Colors.white70, size: 24),
+                  icon: Icon(Icons.tune_rounded,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant, size: 24),
                   onPressed: () => _showFilterSheet(context, ref),
                 ),
                 if (_isFilterActive(discoverState.filter))
@@ -393,7 +412,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: const Color(0xFFFF4D88),
-                        border: Border.all(color: Colors.white, width: 1.5),
+                        border: Border.all(color: Theme.of(context).colorScheme.surface, width: 1.5),
                       ),
                     ),
                   ),
@@ -498,7 +517,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                                       padding: const EdgeInsets.all(20),
                                       decoration: BoxDecoration(
                                         color: const Color(0xFF5B9AFF)
-                                            .withOpacity(0.15),
+                                            .withValues(alpha:0.15),
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(
@@ -716,22 +735,22 @@ class _ActionButtonState extends State<_ActionButton>
                 width: widget.size,
                 height: widget.size,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: widget.color.withOpacity(0.35),
+                      color: widget.color.withValues(alpha:0.35),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
+                      color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.06),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
                   ],
                   border: Border.all(
-                    color: widget.color.withOpacity(0.15),
+                    color: widget.color.withValues(alpha:0.15),
                     width: 2,
                   ),
                 ),
@@ -819,12 +838,12 @@ class _SuperLikeBtnState extends State<_SuperLikeBtn>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: _blue.withOpacity(0.45),
+                      color: _blue.withValues(alpha:0.45),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
                     BoxShadow(
-                      color: _blue.withOpacity(0.20),
+                      color: _blue.withValues(alpha:0.20),
                       blurRadius: 40,
                       spreadRadius: 4,
                     ),
@@ -906,7 +925,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade600,
+                color: Theme.of(context).colorScheme.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -917,11 +936,11 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('筛选',
+              Text('筛选',
                   style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white70)),
+                      color: Theme.of(context).colorScheme.onSurface)),
               TextButton(
                 onPressed: () {
                   setState(() {
@@ -943,11 +962,11 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('年龄范围',
+              Text('年龄范围',
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white70)),
+                      color: Theme.of(context).colorScheme.onSurface)),
               Text('${_ageRange.start.round()} - ${_ageRange.end.round()}岁',
                   style: const TextStyle(
                       fontSize: 14,
@@ -958,9 +977,9 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: const Color(0xFFFF4D88),
-              inactiveTrackColor: const Color(0xFFFF4D88).withOpacity(0.25),
+              inactiveTrackColor: const Color(0xFFFF4D88).withValues(alpha:0.25),
               thumbColor: const Color(0xFFFF4D88),
-              overlayColor: const Color(0xFFFF4D88).withOpacity(0.1),
+              overlayColor: const Color(0xFFFF4D88).withValues(alpha:0.1),
               rangeThumbShape: const RoundRangeSliderThumbShape(
                   enabledThumbRadius: 10),
             ),
@@ -978,11 +997,11 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('距离范围',
+              Text('距离范围',
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white70)),
+                      color: Theme.of(context).colorScheme.onSurface)),
               Text('${_maxDistance.round()}km',
                   style: const TextStyle(
                       fontSize: 14,
@@ -993,9 +1012,9 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: const Color(0xFFFF4D88),
-              inactiveTrackColor: const Color(0xFFFF4D88).withOpacity(0.25),
+              inactiveTrackColor: const Color(0xFFFF4D88).withValues(alpha:0.25),
               thumbColor: const Color(0xFFFF4D88),
-              overlayColor: const Color(0xFFFF4D88).withOpacity(0.1),
+              overlayColor: const Color(0xFFFF4D88).withValues(alpha:0.1),
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
             ),
             child: Slider(
@@ -1009,11 +1028,11 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           const SizedBox(height: 16),
 
           // 性别筛选
-          const Text('性别',
+          Text('性别',
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white70)),
+                  color: Theme.of(context).colorScheme.onSurface)),
           const SizedBox(height: 10),
           Wrap(
             spacing: 10,
@@ -1023,7 +1042,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                 label: Text(option['label']!),
                 selected: selected,
                 selectedColor: const Color(0xFFFF4D88),
-                backgroundColor: Colors.grey.shade800,
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 labelStyle: TextStyle(
                   color: selected ? Colors.white : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -1050,7 +1069,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                 borderRadius: BorderRadius.circular(26),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFF4D88).withOpacity(0.3),
+                    color: const Color(0xFFFF4D88).withValues(alpha:0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),

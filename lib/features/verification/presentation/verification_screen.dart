@@ -7,7 +7,7 @@ import 'package:dio/dio.dart';
 import '../../../core/network/dio_client.dart';
 import '../../profile/data/upload_repository.dart';
 
-final verificationStatusProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final verificationStatusProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
   final dio = ref.watch(dioProvider);
   final res = await dio.get('/api/verification/status');
   return res.data as Map<String, dynamic>;
@@ -77,7 +77,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                    color: Colors.green.withOpacity(0.3),
+                    color: Colors.green.withValues(alpha: 0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 6)),
               ],
@@ -92,7 +92,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                   color: Color(0xFF4CAF50))),
           const SizedBox(height: 8),
           Text('你的身份已验证，享受更高的信任度',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 15)),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 15)),
         ],
       ),
     );
@@ -122,7 +122,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
           const SizedBox(height: 8),
           Text('我们正在审核你的认证信息，通常需要1-3个工作日',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 15)),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 15)),
         ],
       ),
     );
@@ -140,17 +140,17 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               padding: const EdgeInsets.all(14),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.red.shade50,
+                color: Theme.of(context).colorScheme.errorContainer,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.red.shade200),
+                border: Border.all(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.error_outline, color: Colors.red.shade400, size: 20),
+                  Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error, size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text('上次被拒原因：$rejectReason',
-                        style: TextStyle(color: Colors.red.shade700, fontSize: 13)),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer, fontSize: 13)),
                   ),
                 ],
               ),
@@ -161,8 +161,8 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
-                const Color(0xFFFF4D88).withOpacity(0.08),
-                const Color(0xFFFF8A5C).withOpacity(0.08),
+                const Color(0xFFFF4D88).withValues(alpha: 0.08),
+                const Color(0xFFFF8A5C).withValues(alpha: 0.08),
               ]),
               borderRadius: BorderRadius.circular(14),
             ),
@@ -178,7 +178,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                           style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                       const SizedBox(height: 4),
                       Text('认证后获得蓝色徽章，增加曝光和信任度',
-                          style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
                     ],
                   ),
                 ),
@@ -200,7 +200,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               fillColor: Theme.of(context).colorScheme.surfaceContainerHigh,
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade700)),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant)),
             ),
           ),
 
@@ -211,7 +211,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
           const SizedBox(height: 4),
           Text('上传身份证正面照片',
-              style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
           const SizedBox(height: 8),
           _PhotoUploadBox(
             url: _idPhotoUrl,
@@ -228,7 +228,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
           const SizedBox(height: 4),
           Text('手持身份证拍一张自拍照',
-              style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
           const SizedBox(height: 8),
           _PhotoUploadBox(
             url: _selfieUrl,
@@ -248,7 +248,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               onPressed: _canSubmit ? _submit : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFF4D88),
-                disabledBackgroundColor: Colors.grey.shade700,
+                disabledBackgroundColor: Theme.of(context).colorScheme.outlineVariant,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
               ),
@@ -266,7 +266,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
           const SizedBox(height: 16),
           Center(
             child: Text('信息仅用于身份验证，不会公开展示',
-                style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
           ),
         ],
       ),
@@ -304,7 +304,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
       if (mounted) {
         setState(() => _uploading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('上传失败'), backgroundColor: Colors.red));
+            SnackBar(content: Text('上传失败'), backgroundColor: Theme.of(context).colorScheme.error));
       }
     }
   }
@@ -324,7 +324,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
       if (mounted) {
         final msg = (e.response?.data as Map<String, dynamic>?)?['error'] ?? '提交失败';
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(msg), backgroundColor: Colors.red));
+            SnackBar(content: Text(msg), backgroundColor: Theme.of(context).colorScheme.error));
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -355,10 +355,10 @@ class _PhotoUploadBox extends StatelessWidget {
         width: double.infinity,
         height: 140,
         decoration: BoxDecoration(
-          color: url != null ? null : Colors.grey.shade900,
+          color: url != null ? null : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: url != null ? const Color(0xFFFF4D88) : Colors.grey.shade700,
+            color: url != null ? const Color(0xFFFF4D88) : Theme.of(context).colorScheme.outlineVariant,
             width: url != null ? 2 : 1,
           ),
           image: url != null
@@ -373,11 +373,11 @@ class _PhotoUploadBox extends StatelessWidget {
                     const CircularProgressIndicator(
                         strokeWidth: 2, color: Color(0xFFFF4D88))
                   else ...[
-                    Icon(icon, size: 36, color: Colors.grey.shade400),
+                    Icon(icon, size: 36, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(height: 8),
                     Text(label,
                         style: TextStyle(
-                            color: Colors.grey.shade400, fontSize: 13)),
+                            color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
                   ],
                 ],
               )

@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../../discover/data/discover_repository.dart';
 import '../../discover/domain/user_profile.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import '../../profile/presentation/user_detail_screen.dart';
+import '../../../shared/widgets/page_transitions.dart';
 
 /// 附近用户列表 Provider
-final nearbyUsersProvider = FutureProvider.family<List<UserProfile>, double>(
+final nearbyUsersProvider = FutureProvider.autoDispose.family<List<UserProfile>, double>(
   (ref, radius) async {
     return ref.watch(discoverRepositoryProvider).getNearby(radiusKm: radius);
   },
@@ -31,14 +33,20 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
 
     return Scaffold(
       
-      body: CustomScrollView(
+      body: RefreshIndicator(
+        color: Theme.of(context).colorScheme.primary,
+        onRefresh: () async {
+          ref.invalidate(nearbyUsersProvider(_radius));
+        },
+        child: AnimationLimiter(
+          child: CustomScrollView(
         slivers: [
           // ====== 顶部 ======
           SliverAppBar(
             floating: true,
             
             surfaceTintColor: Colors.transparent,
-            title: const Text('附近的人', style: TextStyle(color: Colors.white)),
+            title: Text('附近的人', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             actions: [
               // 切换视图
               IconButton(
@@ -70,10 +78,10 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                         data: SliderThemeData(
                           activeTrackColor: const Color(0xFFFF4D88),
                           inactiveTrackColor:
-                              const Color(0xFFFF4D88).withOpacity(0.15),
+                              const Color(0xFFFF4D88).withValues(alpha: 0.15),
                           thumbColor: const Color(0xFFFF4D88),
                           overlayColor:
-                              const Color(0xFFFF4D88).withOpacity(0.1),
+                              const Color(0xFFFF4D88).withValues(alpha: 0.1),
                           trackHeight: 3,
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 7),
@@ -108,7 +116,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                           width: 80,
                           height: 80,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFF4D88).withOpacity(0.1),
+                            color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(Icons.explore_off,
@@ -117,13 +125,13 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                         const SizedBox(height: 16),
                         Text('这片星空暂时只有你',
                             style: TextStyle(
-                                color: Colors.grey.shade400,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500)),
                         const SizedBox(height: 6),
                         Text('试试把范围拉大一点',
                             style: TextStyle(
-                                color: Colors.grey.shade400, fontSize: 13)),
+                                color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
                       ],
                     ),
                   ),
@@ -142,7 +150,17 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                       childAspectRatio: 0.72,
                     ),
                     delegate: SliverChildBuilderDelegate(
-                      (context, i) => _NearbyCard(user: users[i]),
+                      (context, i) => AnimationConfiguration.staggeredGrid(
+                        position: i,
+                        columnCount: 2,
+                        duration: const Duration(milliseconds: 375),
+                        child: SlideAnimation(
+                          verticalOffset: 30,
+                          child: FadeInAnimation(
+                            child: _NearbyCard(user: users[i]),
+                          ),
+                        ),
+                      ),
                       childCount: users.length,
                     ),
                   ),
@@ -150,8 +168,16 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
               } else {
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, i) =>
-                        _NearbyListTile(user: users[i]),
+                    (context, i) => AnimationConfiguration.staggeredList(
+                      position: i,
+                      duration: const Duration(milliseconds: 375),
+                      child: SlideAnimation(
+                        verticalOffset: 30,
+                        child: FadeInAnimation(
+                          child: _NearbyListTile(user: users[i]),
+                        ),
+                      ),
+                    ),
                     childCount: users.length,
                   ),
                 );
@@ -169,7 +195,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                       width: 80,
                       height: 80,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFF4D88).withOpacity(0.1),
+                        color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.location_off_rounded,
@@ -181,7 +207,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                           ? '需要开启定位权限'
                           : '加载失败，点击重试',
                       style: TextStyle(
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 16,
                           fontWeight: FontWeight.w500),
                     ),
@@ -191,7 +217,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                           ? '在个人资料中更新你的位置信息'
                           : '检查网络连接后再试',
                       style: TextStyle(
-                          color: Colors.grey.shade400, fontSize: 13),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
@@ -204,6 +230,8 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
             ),
           ),
         ],
+      ),
+      ),
       ),
     );
   }
@@ -225,11 +253,11 @@ class _NearbyCard extends StatelessWidget {
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.2),
+            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.12),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -245,19 +273,19 @@ class _NearbyCard extends StatelessWidget {
                 imageUrl: avatar,
                 fit: BoxFit.cover,
                 placeholder: (_, __) => Container(
-                  color: Colors.grey.shade800,
+                  color: Theme.of(context).colorScheme.outlineVariant,
                   child: const Center(
                       child: CircularProgressIndicator(strokeWidth: 2)),
                 ),
                 errorWidget: (_, __, ___) => Container(
-                  color: Colors.grey.shade800,
-                  child: const Icon(Icons.person, size: 48, color: Colors.grey),
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                  child: Icon(Icons.person, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               )
             else
               Container(
-                color: Colors.grey.shade800,
-                child: const Icon(Icons.person, size: 48, color: Colors.grey),
+                color: Theme.of(context).colorScheme.outlineVariant,
+                child: Icon(Icons.person, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
 
             // 底部渐变信息
@@ -273,7 +301,7 @@ class _NearbyCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withOpacity(0.7),
+                      Colors.black.withValues(alpha: 0.7),
                     ],
                   ),
                 ),
@@ -338,7 +366,7 @@ class _NearbyCard extends StatelessWidget {
                   border: Border.all(color: Colors.white, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.green.withOpacity(0.4),
+                      color: Colors.green.withValues(alpha: 0.4),
                       blurRadius: 6,
                     ),
                   ],
@@ -354,7 +382,7 @@ class _NearbyCard extends StatelessWidget {
   void _openProfile(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => UserDetailScreen(user: user)),
+      fadeSlideRoute(UserDetailScreen(user: user)),
     );
   }
 }
@@ -371,7 +399,7 @@ class _NearbyListTile extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => UserDetailScreen(user: user)),
+        fadeSlideRoute(UserDetailScreen(user: user)),
       ),
       child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -379,11 +407,11 @@ class _NearbyListTile extends StatelessWidget {
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.08),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -401,11 +429,11 @@ class _NearbyListTile extends StatelessWidget {
                     imageUrl: avatar,
                     fit: BoxFit.cover,
                     errorWidget: (_, __, ___) =>
-                        Container(color: Colors.grey.shade800),
+                        Container(color: Theme.of(context).colorScheme.outlineVariant),
                   )
                 : Container(
-                    color: Colors.grey.shade800,
-                    child: const Icon(Icons.person, color: Colors.grey),
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                    child: Icon(Icons.person, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
           ),
         ),
@@ -435,7 +463,7 @@ class _NearbyListTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        color: Colors.grey.shade600, fontSize: 13)),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
               ),
             if (user.city != null)
               Padding(
@@ -443,11 +471,11 @@ class _NearbyListTile extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(Icons.location_on,
-                        size: 13, color: Colors.grey.shade400),
+                        size: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(width: 2),
                     Text(user.city!,
                         style: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade400)),
+                            fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ],
                 ),
               ),
@@ -457,7 +485,7 @@ class _NearbyListTile extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: const Color(0xFFFF4D88).withOpacity(0.1),
+            color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.favorite_border,

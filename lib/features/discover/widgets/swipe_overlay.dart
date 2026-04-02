@@ -18,8 +18,8 @@ class SwipeOverlay extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           gradient: LinearGradient(
             colors: isLike
-                ? [const Color(0xFF4CAF50).withOpacity(0.15), Colors.transparent]
-                : [const Color(0xFFFF5A5A).withOpacity(0.15), Colors.transparent],
+                ? [const Color(0xFF4CAF50).withValues(alpha:0.15), Colors.transparent]
+                : [const Color(0xFFFF5A5A).withValues(alpha:0.15), Colors.transparent],
             begin: isLike ? Alignment.centerLeft : Alignment.centerRight,
             end: isLike ? Alignment.centerRight : Alignment.centerLeft,
           ),
