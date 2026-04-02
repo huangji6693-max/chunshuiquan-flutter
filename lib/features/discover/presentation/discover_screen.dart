@@ -942,7 +942,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: const Color(0xFFFF4D88),
-              inactiveTrackColor: const Color(0xFFFF4D88).withOpacity(0.15),
+              inactiveTrackColor: const Color(0xFFFF4D88).withOpacity(0.25),
               thumbColor: const Color(0xFFFF4D88),
               overlayColor: const Color(0xFFFF4D88).withOpacity(0.1),
               rangeThumbShape: const RoundRangeSliderThumbShape(
@@ -977,7 +977,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: const Color(0xFFFF4D88),
-              inactiveTrackColor: const Color(0xFFFF4D88).withOpacity(0.15),
+              inactiveTrackColor: const Color(0xFFFF4D88).withOpacity(0.25),
               thumbColor: const Color(0xFFFF4D88),
               overlayColor: const Color(0xFFFF4D88).withOpacity(0.1),
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),

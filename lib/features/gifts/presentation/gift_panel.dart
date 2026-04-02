@@ -110,8 +110,8 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFFF3E0), Color(0xFFFFE0B2)],
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFFD700).withOpacity(0.15), Color(0xFFFFA000).withOpacity(0.1)],
                       ),
                       borderRadius: BorderRadius.circular(20),
                     ),

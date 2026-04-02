@@ -62,7 +62,7 @@ class _AnimatedEmptyStateState extends State<AnimatedEmptyState>
           mainAxisSize: MainAxisSize.min,
           children: [
             // 呼吸动画图标
-            AnimatedBuilder(
+            _EmptyAnimBuilder(
               listenable: _ctrl,
               builder: (_, __) => Transform.scale(
                 scale: _scale.value,
@@ -96,10 +96,10 @@ class _AnimatedEmptyStateState extends State<AnimatedEmptyState>
             Text(
               widget.title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF2D2D2D),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
 
@@ -130,10 +130,10 @@ class _AnimatedEmptyStateState extends State<AnimatedEmptyState>
 }
 
 /// AnimatedBuilder 内部封装
-class AnimatedBuilder extends AnimatedWidget {
+class _EmptyAnimBuilder extends AnimatedWidget {
   final Widget Function(BuildContext, Widget?) builder;
   final Widget? child;
-  const AnimatedBuilder({
+  const _EmptyAnimBuilder({
     super.key,
     required super.listenable,
     required this.builder,
