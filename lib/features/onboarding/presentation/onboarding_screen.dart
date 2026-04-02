@@ -572,7 +572,7 @@ class _PreferencePage extends StatelessWidget {
                     ? const Color(0xFFFF4D88).withOpacity(0.1)
                     : Colors.white,
                 border: Border.all(
-                  color: lookingFor == opt.$1 ? pink : Colors.grey[300]!,
+                  color: lookingFor == opt.$1 ? pink : Colors.grey.shade700,
                   width: lookingFor == opt.$1 ? 2 : 1,
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -594,7 +594,7 @@ class _PreferencePage extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: lookingFor == opt.$1
                         ? pink.withOpacity(0.1)
-                        : Colors.grey[100],
+                        : Colors.grey.shade800,
                   ),
                   child: Icon(
                     opt.$3,

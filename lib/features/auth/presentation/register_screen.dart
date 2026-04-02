@@ -566,7 +566,7 @@ class _DatePickerSheetState extends State<_DatePickerSheet> {
           Container(
             width: 40, height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: Colors.grey.shade700,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
