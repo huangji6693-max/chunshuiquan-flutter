@@ -383,44 +383,91 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
         ),
         centerTitle: false,
         actions: [
-          // 签到按钮
-          IconButton(
-            icon: const Icon(Icons.calendar_today_rounded,
-                color: Color(0xFFFF4D88), size: 22),
-            onPressed: () => CheckInDialog.show(context),
-            tooltip: '每日签到',
+          // 签到——带文字标签的胶囊按钮
+          GestureDetector(
+            onTap: () => CheckInDialog.show(context),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF4D88).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: const Color(0xFFFF4D88).withValues(alpha: 0.25), width: 0.5),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.card_giftcard_rounded, color: Color(0xFFFF4D88), size: 16),
+                  SizedBox(width: 4),
+                  Text('签到', style: TextStyle(
+                    color: Color(0xFFFF4D88), fontSize: 12, fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
           ),
-          // 谁喜欢了我
-          IconButton(
-            icon: const Icon(Icons.favorite,
-                color: Color(0xFFFF4D88), size: 22),
-            onPressed: () => Navigator.push(context,
+          const SizedBox(width: 4),
+          // 谁喜欢我——带数量提示
+          GestureDetector(
+            onTap: () => Navigator.push(context,
                 fadeSlideRoute(const LikesScreen())),
-            tooltip: '谁喜欢了我',
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF4D88).withValues(alpha: 0.25),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.visibility_rounded, color: Colors.white, size: 14),
+                  SizedBox(width: 4),
+                  Text('喜欢我', style: TextStyle(
+                    color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+                ],
+              ),
+            ),
           ),
-          // 筛选按钮
+          const SizedBox(width: 4),
+          // 筛选
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 4),
             child: Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.center,
               children: [
                 IconButton(
                   icon: Icon(Icons.tune_rounded,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant, size: 24),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant, size: 22),
                   onPressed: () => _showFilterSheet(context, ref),
+                  tooltip: '筛选',
                 ),
                 if (_isFilterActive(discoverState.filter))
                   Positioned(
                     right: 8,
                     top: 8,
                     child: Container(
-                      width: 8,
-                      height: 8,
+                      width: 7,
+                      height: 7,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: const Color(0xFFFF4D88),
-                        border: Border.all(color: Theme.of(context).colorScheme.surface, width: 1.5),
+                        border: Border.all(color: Theme.of(context).colorScheme.surface, width: 1),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFFF4D88).withValues(alpha: 0.5),
+                            blurRadius: 4,
+                          ),
+                        ],
                       ),
                     ),
                   ),

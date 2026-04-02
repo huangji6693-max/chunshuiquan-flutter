@@ -76,17 +76,21 @@ final heartbeatServiceProvider = Provider<HeartbeatService>((ref) {
   return service;
 });
 
-/// 在线状态 Provider：获取指定用户的在线状态
-final onlineStatusProvider = FutureProvider.autoDispose.family<bool, String>((ref, userId) async {
-  try {
-    final dio = ref.watch(dioProvider);
-    final res = await dio.get('/api/users/$userId/online');
-    final data = res.data;
-    if (data is Map<String, dynamic>) {
-      return data['online'] as bool? ?? false;
+/// 在线状态 Provider：获取指定用户的在线状态（30秒自动刷新）
+final onlineStatusProvider = StreamProvider.autoDispose.family<bool, String>((ref, userId) async* {
+  final dio = ref.watch(dioProvider);
+  while (true) {
+    try {
+      final res = await dio.get('/api/users/$userId/online');
+      final data = res.data;
+      if (data is Map<String, dynamic>) {
+        yield data['online'] as bool? ?? false;
+      } else {
+        yield false;
+      }
+    } catch (_) {
+      yield false;
     }
-    return false;
-  } catch (_) {
-    return false;
+    await Future.delayed(const Duration(seconds: 30));
   }
 });
