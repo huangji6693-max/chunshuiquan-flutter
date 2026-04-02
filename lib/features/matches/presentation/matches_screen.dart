@@ -264,9 +264,9 @@ class _NewMatchAvatar extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(3),
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
               ),
               padding: const EdgeInsets.all(2),
               child: CircleAvatar(
