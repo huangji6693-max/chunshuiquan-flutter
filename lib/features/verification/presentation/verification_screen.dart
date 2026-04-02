@@ -248,7 +248,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               onPressed: _canSubmit ? _submit : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFF4D88),
-                disabledBackgroundColor: Colors.grey.shade300,
+                disabledBackgroundColor: Colors.grey.shade700,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
               ),

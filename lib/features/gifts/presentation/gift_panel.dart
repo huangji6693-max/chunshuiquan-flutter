@@ -77,7 +77,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: Colors.grey.shade600,
               borderRadius: BorderRadius.circular(2),
             ),
           ),

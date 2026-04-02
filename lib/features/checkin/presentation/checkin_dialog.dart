@@ -227,7 +227,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                         : _handleCheckIn,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF4D88),
-                      disabledBackgroundColor: Colors.grey.shade300,
+                      disabledBackgroundColor: Colors.grey.shade700,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14)),
                       elevation: status.checkedInToday ? 0 : 4,

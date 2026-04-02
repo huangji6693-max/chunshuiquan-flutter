@@ -85,7 +85,7 @@ class MomentsScreen extends ConsumerWidget {
             );
           },
           loading: () => const MomentsSkeleton(),
-          error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Colors.grey.shade300), const SizedBox(height: 12), Text('网络不太好，稍后再试', style: TextStyle(color: Colors.grey)), const SizedBox(height: 8), TextButton(onPressed: () => ref.invalidate(momentsTimelineProvider), child: const Text('点击重试'))])),
+          error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Colors.grey.shade600), const SizedBox(height: 12), Text('网络不太好，稍后再试', style: TextStyle(color: Colors.grey)), const SizedBox(height: 8), TextButton(onPressed: () => ref.invalidate(momentsTimelineProvider), child: const Text('点击重试'))])),
         ),
       ),
     );
@@ -418,7 +418,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Colors.grey.shade600,
                 borderRadius: BorderRadius.circular(2)),
           ),
           Padding(

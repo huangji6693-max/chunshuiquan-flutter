@@ -183,7 +183,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFF4D88),
-                disabledBackgroundColor: Colors.grey.shade300,
+                disabledBackgroundColor: Colors.grey.shade700,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
                 elevation: _selectedPackage != null ? 4 : 0,
@@ -370,7 +370,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.receipt_long, size: 64, color: Colors.grey.shade300),
+                Icon(Icons.receipt_long, size: 64, color: Colors.grey.shade600),
                 const SizedBox(height: 12),
                 Text('暂无交易记录',
                     style: TextStyle(color: Colors.grey.shade400, fontSize: 16)),

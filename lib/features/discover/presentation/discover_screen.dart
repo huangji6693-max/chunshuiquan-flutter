@@ -890,7 +890,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Colors.grey.shade600,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),

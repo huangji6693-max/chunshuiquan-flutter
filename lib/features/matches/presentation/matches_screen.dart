@@ -39,7 +39,7 @@ class MatchesScreen extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline, size: 48, color: Colors.grey.shade300),
+              Icon(Icons.error_outline, size: 48, color: Colors.grey.shade600),
               const SizedBox(height: 12),
               Text('网络开小差了', style: TextStyle(color: Colors.grey.shade400)),
               const SizedBox(height: 8),

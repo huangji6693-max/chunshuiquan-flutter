@@ -613,7 +613,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                 suffixText: 'cm',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
+                  borderSide: BorderSide(color: Colors.grey.shade700),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12, vertical: 10),
@@ -745,7 +745,7 @@ class _DropdownSelector extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: Colors.grey.shade700),
         borderRadius: BorderRadius.circular(10),
         color: Theme.of(context).colorScheme.surfaceContainerLow,
       ),
