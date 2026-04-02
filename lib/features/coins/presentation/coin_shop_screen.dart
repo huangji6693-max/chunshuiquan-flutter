@@ -50,7 +50,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
-            backgroundColor: const Color(0xFFFF4D88),
+            backgroundColor: Theme.of(context).colorScheme.primary,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => Navigator.pop(context),
