@@ -215,11 +215,16 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
   @override
   void initState() {
     super.initState();
-    // 异步检查 onboarding 状态（不阻塞UI）
-    Future.microtask(() {
-      final user = ref.read(currentUserProvider).valueOrNull;
-      if (user != null && !user.onboardingCompleted && mounted) {
-        context.go('/onboarding');
+    // 异步检查 onboarding 状态（3秒超时，失败不阻塞）
+    Future.microtask(() async {
+      try {
+        final user = await ref.read(currentUserProvider.future)
+            .timeout(const Duration(seconds: 3));
+        if (user != null && !user.onboardingCompleted && mounted) {
+          context.go('/onboarding');
+        }
+      } catch (_) {
+        // 超时或网络错误，不阻塞发现页
       }
     });
     _superLikeAnimCtrl = AnimationController(
