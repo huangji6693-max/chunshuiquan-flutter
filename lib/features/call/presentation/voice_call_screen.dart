@@ -54,8 +54,14 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
     await Permission.microphone.request();
 
     try {
-      // 从后端获取 Agora token
+      // 发送通话邀请推送给对方
       final dio = ref.read(dioProvider);
+      try {
+        await dio.post('/api/agora/invite',
+            queryParameters: {'matchId': widget.matchId});
+      } catch (_) {}
+
+      // 从后端获取 Agora token
       final resp = await dio.get(
         '/api/agora/token',
         queryParameters: {'channelName': widget.matchId},
@@ -77,15 +83,18 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
             setState(() {
               _joined = true;
               _loading = false;
-              _statusText = '通话中';
-            });
-            Stream.periodic(const Duration(seconds: 1)).listen((_) {
-              if (mounted && _joined) setState(() => _duration++);
+              _statusText = '等待对方接听...';
             });
           }
         },
         onUserJoined: (_, __, ___) {
-          if (mounted) setState(() => _statusText = '通话中');
+          if (mounted) {
+            setState(() => _statusText = '通话中');
+            // 对方加入后才开始计时
+            Stream.periodic(const Duration(seconds: 1)).listen((_) {
+              if (mounted && _joined) setState(() => _duration++);
+            });
+          }
         },
         onUserOffline: (_, __, ___) => _hangUp(),
         onLeaveChannel: (_, __) {},

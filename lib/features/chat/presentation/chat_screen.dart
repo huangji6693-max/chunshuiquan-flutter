@@ -266,11 +266,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           color: Color(0xFFFF4D88), size: 20),
                     ),
                     onPressed: () {
-                      // 发送通话邀请推送给对方
-                      try {
-                        ref.read(dioProvider).post('/api/agora/invite',
-                            queryParameters: {'matchId': widget.matchId});
-                      } catch (_) {}
                       Navigator.push(
                         context,
                         fadeSlideRoute(VoiceCallScreen(
