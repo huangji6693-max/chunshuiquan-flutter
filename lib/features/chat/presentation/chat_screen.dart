@@ -529,9 +529,9 @@ class _ChatInputState extends State<_ChatInput> {
               ),
               child: TextField(
                 controller: _controller,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: '输入消息...',
-                  hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
+                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 15),
                   border: InputBorder.none,
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 16, vertical: 10),

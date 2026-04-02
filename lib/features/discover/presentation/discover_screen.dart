@@ -157,7 +157,7 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
   Future<void> onSwiped(int cardIndex, String direction) async {
     _swipedCount++;
     final remaining = state.cards.length - _swipedCount;
-    if (remaining <= 2) _loadMore();
+    if (remaining <= 5) _loadMore();
 
     if (direction == 'nope') {
       if (cardIndex < state.cards.length) {
