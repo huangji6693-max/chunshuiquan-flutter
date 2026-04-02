@@ -132,7 +132,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       const SizedBox(height: 60),
 
                       // Logo 和品牌名
-                      const Text('🌊', style: TextStyle(fontSize: 64)),
+                      const Icon(Icons.favorite_rounded, color: Colors.white, size: 56),
                       const SizedBox(height: 12),
                       const Text(
                         '春水圈',

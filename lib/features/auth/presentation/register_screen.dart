@@ -180,8 +180,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             onPressed: () => context.pop(),
                           ),
                           const Spacer(),
-                          const Text('🌊',
-                              style: TextStyle(fontSize: 28)),
+                          const Icon(Icons.favorite_rounded, color: Colors.white, size: 48),
                           const SizedBox(width: 8),
                           const Text('春水圈',
                               style: TextStyle(
