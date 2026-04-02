@@ -50,7 +50,7 @@ class _NetworkAwareBannerState extends State<NetworkAwareBanner> {
         AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           height: _connected ? 0 : 36,
-          color: Colors.red.shade400,
+          color: Theme.of(context).colorScheme.errorContainer,
           child: _connected
               ? const SizedBox.shrink()
               : const Center(
