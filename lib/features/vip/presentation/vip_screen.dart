@@ -37,7 +37,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
     final statusAsync = ref.watch(vipStatusProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E),
+      
       body: CustomScrollView(
         slivers: [
           // ====== 顶部展示区 ======
