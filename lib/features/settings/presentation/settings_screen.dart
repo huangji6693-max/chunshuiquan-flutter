@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'legal_page.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../coins/presentation/coin_shop_screen.dart';
 import '../../vip/presentation/vip_screen.dart';
@@ -24,7 +24,7 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       
       appBar: AppBar(
-        title: Text('设置', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+        title: Text('设置', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, letterSpacing: 0.5)),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -71,7 +71,7 @@ class SettingsScreen extends ConsumerWidget {
                         children: [
                           const Text('我的钱包',
                               style: TextStyle(
-                                  color: Colors.white70, fontSize: 13)),
+                                  color: Colors.white70, fontSize: 13, letterSpacing: 0.3)),
                           const SizedBox(height: 4),
                           Row(
                             children: [
@@ -223,28 +223,20 @@ class SettingsScreen extends ConsumerWidget {
           _SettingsTile(
             icon: Icons.privacy_tip_outlined,
             title: '隐私政策',
-            trailing: Icon(Icons.open_in_new, size: 16, color: Theme.of(context).colorScheme.outline),
-            onTap: () async {
-              try {
-                await launchUrl(
-                  Uri.parse('https://huangji6693-max.github.io/chunshuiquan-privacy'),
-                  mode: LaunchMode.externalApplication,
-                );
-              } catch (_) {}
-            },
+            onTap: () => Navigator.push(context,
+                fadeSlideRoute(const LegalPage(
+                  title: '隐私政策',
+                  content: PrivacyContent.privacy,
+                ))),
           ),
           _SettingsTile(
             icon: Icons.description_outlined,
             title: '用户协议',
-            trailing: Icon(Icons.open_in_new, size: 16, color: Theme.of(context).colorScheme.outline),
-            onTap: () async {
-              try {
-                await launchUrl(
-                  Uri.parse('https://huangji6693-max.github.io/chunshuiquan-privacy/terms'),
-                  mode: LaunchMode.externalApplication,
-                );
-              } catch (_) {}
-            },
+            onTap: () => Navigator.push(context,
+                fadeSlideRoute(const LegalPage(
+                  title: '用户协议',
+                  content: PrivacyContent.terms,
+                ))),
           ),
           _SettingsTile(
             icon: Icons.info_outline,

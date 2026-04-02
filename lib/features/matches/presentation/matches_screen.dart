@@ -31,7 +31,7 @@ class MatchesScreen extends ConsumerWidget {
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: Theme.of(context).colorScheme.onSurface,
-                letterSpacing: 1)),
+                letterSpacing: 1.5)),
       ),
       body: state.when(
         loading: () => const MatchesSkeleton(),
@@ -422,6 +422,7 @@ class _ConversationTile extends ConsumerWidget {
                             style: TextStyle(
                                 fontWeight: hasUnread ? FontWeight.w800 : FontWeight.w700,
                                 fontSize: 16,
+                                letterSpacing: 0.1,
                                 color: Theme.of(context).colorScheme.onSurface)),
                       ),
                       if (match.otherVipTier != null && match.otherVipTier != 'none') ...[
@@ -444,7 +445,8 @@ class _ConversationTile extends ConsumerWidget {
                             ? Theme.of(context).colorScheme.onSurface
                             : Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 13,
-                        fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal,
+                        fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w400,
+                        letterSpacing: 0.1,
                         height: 1.3),
                   ),
                 ],

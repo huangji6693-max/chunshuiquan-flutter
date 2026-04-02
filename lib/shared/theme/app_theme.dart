@@ -22,15 +22,19 @@ class AppTheme {
   // ====== 共享样式 ======
 
   static const _textTheme = TextTheme(
-    headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: -0.5),
-    headlineMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, letterSpacing: -0.3),
-    titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-    titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15),
-    bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5),
-    bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.43),
-    bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 0.4),
-    labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.1),
-    labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.5),
+    displayLarge: TextStyle(fontSize: 36, fontWeight: FontWeight.w900, letterSpacing: -0.5, height: 1.1),
+    headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: -0.3, height: 1.15),
+    headlineMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, letterSpacing: -0.2, height: 1.2),
+    headlineSmall: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: 0, height: 1.25),
+    titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, letterSpacing: 0.1, height: 1.3),
+    titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15, height: 1.4),
+    titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.1, height: 1.4),
+    bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.08, height: 1.6),
+    bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, letterSpacing: 0.05, height: 1.55),
+    bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 0.4, height: 1.5),
+    labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.15, height: 1.4),
+    labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.5, height: 1.33),
+    labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.5, height: 1.45),
   );
 
   static const _appBarTheme = AppBarTheme(

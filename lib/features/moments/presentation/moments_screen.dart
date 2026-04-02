@@ -244,14 +244,14 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                         children: [
                           Text(_formatTime(m.createdAt),
                               style: TextStyle(
-                                  fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                                  fontSize: 12, letterSpacing: 0.3, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                           if (m.location != null && m.location!.isNotEmpty) ...[
                             const SizedBox(width: 6),
                             Icon(Icons.location_on,
                                 size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                             Text(m.location!,
                                 style: TextStyle(
-                                    fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                                    fontSize: 12, letterSpacing: 0.3, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                           ],
                         ],
                       ),
@@ -267,7 +267,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: Text(m.content!,
-                  style: const TextStyle(fontSize: 15, height: 1.5)),
+                  style: const TextStyle(fontSize: 15, height: 1.6, letterSpacing: 0.1)),
             ),
 
           // 图片网格

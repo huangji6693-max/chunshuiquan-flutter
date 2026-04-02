@@ -371,7 +371,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
-                  letterSpacing: 2,
+                  letterSpacing: 3,
                 ),
               ),
             ),

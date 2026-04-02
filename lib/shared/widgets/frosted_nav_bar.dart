@@ -98,6 +98,7 @@ class FrostedNavBar extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+                              letterSpacing: selected ? 0.5 : 0.2,
                               color: selected
                                   ? const Color(0xFFFF4D88)
                                   : Theme.of(context).colorScheme.onSurfaceVariant,
