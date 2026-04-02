@@ -20,12 +20,20 @@ class MessagesNotifier extends FamilyAsyncNotifier<List<ChatMessage>, String> {
 
   @override
   Future<List<ChatMessage>> build(String arg) async {
-    // 15秒轮询兜底（WebSocket 优先）
-    _pollTimer = Timer.periodic(const Duration(seconds: 15), (_) => _silentRefresh());
-
-    // WebSocket 新消息到达时立即刷新
     final ws = ref.read(webSocketServiceProvider);
-    _wsSub = ws.onMessage.listen((_) => _silentRefresh());
+
+    // WebSocket 优先，轮询兜底：仅在 WebSocket 未连接时启动轮询
+    _wsSub = ws.onMessage.listen((_) {
+      // WebSocket 收到消息说明连接正常，取消轮询
+      _pollTimer?.cancel();
+      _pollTimer = null;
+      _silentRefresh();
+    });
+
+    if (!ws.isConnected) {
+      // WebSocket 未连接时才启动轮询兜底
+      _pollTimer = Timer.periodic(const Duration(seconds: 15), (_) => _silentRefresh());
+    }
 
     // WebSocket 已读回执：更新本地消息状态
     _readSub = ws.onReadReceipt.listen((data) {

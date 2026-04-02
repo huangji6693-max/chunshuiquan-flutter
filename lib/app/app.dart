@@ -23,7 +23,8 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
     // 延迟初始化，避免阻塞 UI 渲染
     Future.microtask(() {
       _setupServices();
-      _setupFCM();
+      // FCM 初始化延迟1秒，避免与心跳和 WebSocket 并发请求导致卡顿
+      Future.delayed(const Duration(seconds: 1), _setupFCM);
     });
   }
 

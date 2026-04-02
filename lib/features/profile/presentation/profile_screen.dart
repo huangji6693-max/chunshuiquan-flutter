@@ -248,6 +248,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                     itemCount: photos.length,
                     onPageChanged: (i) => setState(() => _headerPhotoIndex = i),
                     itemBuilder: (_, i) => CachedNetworkImage(
+                      memCacheWidth: 800,
                       imageUrl: photos[i],
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Container(
@@ -874,6 +875,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
               child: CachedNetworkImage(
                 imageUrl: url,
                 fit: BoxFit.cover,
+                memCacheWidth: 400,
                 width: double.infinity,
                 height: double.infinity,
                 placeholder: (_, __) => Container(

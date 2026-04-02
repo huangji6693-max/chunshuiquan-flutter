@@ -204,11 +204,13 @@ class _LikeCard extends StatelessWidget {
                     child: CachedNetworkImage(
                       imageUrl: item.avatarUrl!,
                       fit: BoxFit.cover,
+                      memCacheWidth: 400,
                     ),
                   )
                 : CachedNetworkImage(
                     imageUrl: item.avatarUrl!,
                     fit: BoxFit.cover,
+                    memCacheWidth: 400,
                   )
           else
             Container(color: Theme.of(context).colorScheme.outlineVariant),

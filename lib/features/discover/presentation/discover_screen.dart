@@ -229,6 +229,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
   late Animation<double> _superLikeScale;
   late Animation<double> _superLikeOpacity;
   bool _showSuperLikeOverlay = false;
+  bool _animatingSuper = false;
 
   @override
   void initState() {
@@ -265,12 +266,15 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
 
     _superLikeAnimCtrl.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
+        _animatingSuper = false;
         setState(() => _showSuperLikeOverlay = false);
       }
     });
   }
 
   void _playSuperLikeAnimation() {
+    if (_animatingSuper) return;
+    _animatingSuper = true;
     setState(() => _showSuperLikeOverlay = true);
     _superLikeAnimCtrl.forward(from: 0);
   }

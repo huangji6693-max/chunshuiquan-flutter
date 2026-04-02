@@ -200,7 +200,10 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                 CircleAvatar(
                   radius: 20,
                   backgroundImage: m.authorAvatar != null
-                      ? CachedNetworkImageProvider(m.authorAvatar!)
+                      ? ResizeImage(
+                          CachedNetworkImageProvider(m.authorAvatar!),
+                          width: 200,
+                        )
                       : null,
                   backgroundColor: Theme.of(context).colorScheme.outlineVariant,
                   child: m.authorAvatar == null
@@ -312,6 +315,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
           child: CachedNetworkImage(
             imageUrl: urls.first,
             fit: BoxFit.cover,
+            memCacheWidth: 800,
             width: double.infinity,
           ),
         ),
@@ -330,7 +334,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
       itemCount: urls.length,
       itemBuilder: (_, i) => ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: CachedNetworkImage(imageUrl: urls[i], fit: BoxFit.cover),
+        child: CachedNetworkImage(imageUrl: urls[i], fit: BoxFit.cover, memCacheWidth: 400),
       ),
     );
   }
@@ -504,8 +508,11 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
                                 CircleAvatar(
                                   radius: 16,
                                   backgroundImage: c.authorAvatar != null
-                                      ? CachedNetworkImageProvider(
-                                          c.authorAvatar!)
+                                      ? ResizeImage(
+                                          CachedNetworkImageProvider(
+                                              c.authorAvatar!),
+                                          width: 200,
+                                        )
                                       : null,
                                   child: c.authorAvatar == null
                                       ? Text(c.authorName[0],

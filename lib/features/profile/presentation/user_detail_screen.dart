@@ -74,6 +74,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                           itemBuilder: (_, i) => CachedNetworkImage(
                             imageUrl: user.avatarUrls[i],
                             fit: BoxFit.cover,
+                            memCacheWidth: 800,
                             placeholder: (_, __) =>
                                 Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
                             errorWidget: (_, __, ___) =>

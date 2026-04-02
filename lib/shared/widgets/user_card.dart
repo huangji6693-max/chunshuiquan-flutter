@@ -156,6 +156,7 @@ class _UserCardState extends State<UserCard> {
         key: ValueKey('photo_$_currentPhotoIndex'),
         imageUrl: url,
         fit: BoxFit.cover,
+        memCacheWidth: 800,
         width: double.infinity,
         height: double.infinity,
         placeholder: (_, __) => Shimmer.fromColors(

@@ -272,7 +272,10 @@ class _NewMatchAvatar extends StatelessWidget {
               child: CircleAvatar(
                 radius: 32,
                 backgroundImage: match.otherAvatarUrl != null
-                    ? CachedNetworkImageProvider(match.otherAvatarUrl!)
+                    ? ResizeImage(
+                        CachedNetworkImageProvider(match.otherAvatarUrl!),
+                        width: 200,
+                      )
                     : null,
                 backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
                 child: match.otherAvatarUrl == null
@@ -350,7 +353,10 @@ class _ConversationTile extends ConsumerWidget {
                   child: CircleAvatar(
                   radius: 30,
                   backgroundImage: match.otherAvatarUrl != null
-                      ? CachedNetworkImageProvider(match.otherAvatarUrl!)
+                      ? ResizeImage(
+                          CachedNetworkImageProvider(match.otherAvatarUrl!),
+                          width: 200,
+                        )
                       : null,
                   backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
                   child: match.otherAvatarUrl == null

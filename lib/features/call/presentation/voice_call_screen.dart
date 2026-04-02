@@ -161,6 +161,7 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
                   child: CachedNetworkImage(
                     imageUrl: widget.partnerAvatarUrl!,
                     fit: BoxFit.cover,
+                    memCacheWidth: 400,
                     errorWidget: (_, __, ___) => _GradientBackground(),
                   ),
                 )
@@ -204,7 +205,10 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
                       radius: 62,
                       backgroundImage: widget.partnerAvatarUrl != null &&
                               widget.partnerAvatarUrl!.isNotEmpty
-                          ? CachedNetworkImageProvider(widget.partnerAvatarUrl!)
+                          ? ResizeImage(
+                              CachedNetworkImageProvider(widget.partnerAvatarUrl!),
+                              width: 200,
+                            )
                           : null,
                       backgroundColor: const Color(0xFFFF4D88),
                       child: widget.partnerAvatarUrl == null ||

@@ -9,6 +9,7 @@ import '../network/dio_client.dart';
 class HeartbeatService with WidgetsBindingObserver {
   final Dio _dio;
   Timer? _timer;
+  Timer? _resumeTimer;
   bool _active = false;
 
   HeartbeatService(this._dio);
@@ -42,18 +43,27 @@ class HeartbeatService with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // App回到前台，重新启动心跳
-      _timer?.cancel();
-      _sendHeartbeat();
-      _timer = Timer.periodic(const Duration(seconds: 30), (_) => _sendHeartbeat());
-    } else if (state == AppLifecycleState.paused) {
-      // App进入后台，停止心跳
+      // App回到前台，延迟1秒再重启心跳，避免与 WebSocket 重连并发冲突
       _timer?.cancel();
       _timer = null;
+      _resumeTimer?.cancel();
+      _resumeTimer = Timer(const Duration(seconds: 1), () {
+        _sendHeartbeat();
+        _timer = Timer.periodic(const Duration(seconds: 30), (_) => _sendHeartbeat());
+      });
+    } else if (state == AppLifecycleState.paused ||
+               state == AppLifecycleState.inactive) {
+      // App进入后台或不活跃，停止心跳
+      _timer?.cancel();
+      _timer = null;
+      _resumeTimer?.cancel();
+      _resumeTimer = null;
     }
   }
 
   void dispose() {
+    _resumeTimer?.cancel();
+    _resumeTimer = null;
     stop();
   }
 }

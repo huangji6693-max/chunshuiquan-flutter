@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,6 +27,13 @@ class NearbyScreen extends ConsumerStatefulWidget {
 class _NearbyScreenState extends ConsumerState<NearbyScreen> {
   double _radius = 50;
   bool _isGridView = true;
+  Timer? _radiusDebounce;
+
+  @override
+  void dispose() {
+    _radiusDebounce?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +100,13 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                           max: 200,
                           divisions: 39,
                           onChanged: (v) => setState(() => _radius = v),
-                          onChangeEnd: (_) =>
-                              ref.invalidate(nearbyUsersProvider(_radius)),
+                          onChangeEnd: (_) {
+                            _radiusDebounce?.cancel();
+                            _radiusDebounce = Timer(
+                              const Duration(milliseconds: 500),
+                              () => ref.invalidate(nearbyUsersProvider(_radius)),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -272,6 +285,7 @@ class _NearbyCard extends StatelessWidget {
               CachedNetworkImage(
                 imageUrl: avatar,
                 fit: BoxFit.cover,
+                memCacheWidth: 400,
                 placeholder: (_, __) => Container(
                   color: Theme.of(context).colorScheme.outlineVariant,
                   child: const Center(
@@ -428,6 +442,7 @@ class _NearbyListTile extends StatelessWidget {
                 ? CachedNetworkImage(
                     imageUrl: avatar,
                     fit: BoxFit.cover,
+                    memCacheWidth: 200,
                     errorWidget: (_, __, ___) =>
                         Container(color: Theme.of(context).colorScheme.outlineVariant),
                   )

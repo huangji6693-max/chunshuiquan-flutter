@@ -202,7 +202,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     radius: 22,
                     backgroundImage: widget.partnerAvatarUrl != null &&
                             widget.partnerAvatarUrl!.isNotEmpty
-                        ? CachedNetworkImageProvider(widget.partnerAvatarUrl!)
+                        ? ResizeImage(
+                            CachedNetworkImageProvider(widget.partnerAvatarUrl!),
+                            width: 200,
+                          )
                         : null,
                     backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
                     child: widget.partnerAvatarUrl == null ||
@@ -409,7 +412,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             child: CircleAvatar(
               radius: 16,
               backgroundImage: author.imageUrl != null
-                  ? CachedNetworkImageProvider(author.imageUrl!)
+                  ? ResizeImage(
+                      CachedNetworkImageProvider(author.imageUrl!),
+                      width: 200,
+                    )
                   : null,
               backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
               child: author.imageUrl == null

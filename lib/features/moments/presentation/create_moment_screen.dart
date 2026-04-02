@@ -111,6 +111,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
                       child: CachedNetworkImage(
                           imageUrl: _imageUrls[i],
                           fit: BoxFit.cover,
+                          memCacheWidth: 400,
                           width: double.infinity,
                           height: double.infinity,
                           placeholder: (_, __) => Container(
