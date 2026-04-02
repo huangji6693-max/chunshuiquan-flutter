@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mesh_gradient/mesh_gradient.dart';
 
 /// 欢迎引导页 — 暗色沉浸式，荷尔蒙风格
 class WelcomeScreen extends StatefulWidget {
@@ -48,52 +49,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 深色背景
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF1A0E2E), Color(0xFF0F0A1A)],
-              ),
+          // 流体渐变背景
+          AnimatedMeshGradient(
+            colors: const [
+              Color(0xFF0F0A1A),
+              Color(0xFF1A0E2E),
+              Color(0xFFFF4D88),
+              Color(0xFF0F0A1A),
+            ],
+            options: AnimatedMeshGradientOptions(
+              speed: 1.5,
+              frequency: 2,
+              amplitude: 30,
+              grain: 0.2,
             ),
           ),
-
-          // 背景装饰光晕
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.15,
-            left: -50,
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFFFF4D88).withOpacity(0.15),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.3,
-            right: -80,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFF8B5CF6).withOpacity(0.12),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
+          // 暗层让内容更突出
+          Container(color: Colors.black.withOpacity(0.4)),
 
           // 页面内容
           PageView.builder(
