@@ -82,11 +82,11 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
               minLines: 4,
               maxLength: 500,
               onChanged: (_) => setState(() {}),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: '此刻的你，在想什么...',
-                hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
+                hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
                 border: InputBorder.none,
-                counterStyle: TextStyle(color: Colors.grey),
+                counterStyle: TextStyle(color: Colors.grey.shade500),
               ),
               style: const TextStyle(fontSize: 16, height: 1.5),
             ),
