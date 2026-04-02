@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../shared/theme/app_theme.dart';
+import '../shared/theme/theme_provider.dart';
 import '../shared/widgets/network_aware.dart';
 import '../core/network/dio_client.dart';
 import '../core/services/heartbeat_service.dart';
@@ -153,11 +154,12 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
   @override
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
+    final themeMode = ref.watch(themeModeProvider);
     return MaterialApp.router(
       title: '春水圈',
-      theme: AppTheme.theme,
+      theme: AppTheme.lightTheme,
       darkTheme: AppTheme.theme,
-      themeMode: ThemeMode.dark,
+      themeMode: themeMode,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       builder: (context, child) => NetworkAwareBanner(child: child!),

@@ -11,6 +11,7 @@ import '../../gifts/presentation/gift_history_screen.dart';
 import '../../verification/presentation/verification_screen.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/errors/app_exception.dart';
+import '../../../shared/theme/theme_provider.dart';
 import '../../../shared/widgets/page_transitions.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -183,6 +184,16 @@ class SettingsScreen extends ConsumerWidget {
             title: '消息通知',
             subtitle: '推送、声音、振动',
             onTap: () => _showComingSoon(context),
+          ),
+          _SettingsTile(
+            icon: Icons.dark_mode_outlined,
+            title: '深色模式',
+            subtitle: '切换深色/浅色外观',
+            trailing: Switch(
+              value: ref.watch(themeModeProvider) == ThemeMode.dark,
+              onChanged: (_) => ref.read(themeModeProvider.notifier).toggle(),
+              activeColor: const Color(0xFFFF4D88),
+            ),
           ),
           _SettingsTile(
             icon: Icons.visibility_off_outlined,
