@@ -154,7 +154,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                 itemCount: gifts.length,
                 itemBuilder: (context, i) => _buildGiftItem(gifts[i]),
               ),
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
               error: (_, __) => const Center(child: Text('加载失败，请重试')),
             ),
           ),

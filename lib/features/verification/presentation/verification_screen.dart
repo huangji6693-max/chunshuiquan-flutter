@@ -57,7 +57,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               ? status['rejectReason'] as String?
               : null);
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
         error: (e, _) => Center(child: Text('$e')),
       ),
     );

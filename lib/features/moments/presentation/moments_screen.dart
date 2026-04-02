@@ -431,7 +431,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
           // 评论列表
           Expanded(
             child: _loading
-                ? const Center(child: CircularProgressIndicator())
+                ? Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary))
                 : (_comments == null || _comments!.isEmpty)
                     ? Center(
                         child: Text('还没有评论',

@@ -455,7 +455,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
       error: (e, _) => Center(
         child: Text('网络开小差了', style: TextStyle(color: Colors.grey.shade400)),
       ),

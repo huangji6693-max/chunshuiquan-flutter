@@ -253,9 +253,9 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
               ],
             ],
           ),
-          loading: () => const SizedBox(
+          loading: () => SizedBox(
             height: 200,
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
           ),
           error: (_, __) => const SizedBox(
             height: 100,
