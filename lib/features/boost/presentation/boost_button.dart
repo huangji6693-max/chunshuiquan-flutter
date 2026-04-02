@@ -79,50 +79,51 @@ class _BoostButtonState extends ConsumerState<BoostButton>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-              Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: _active
-                    ? const LinearGradient(
-                        colors: [Color(0xFF7C4DFF), Color(0xFFE040FB)])
-                    : const LinearGradient(
-                        colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)]),
-                boxShadow: [
-                  BoxShadow(
-                    color: (_active
-                            ? const Color(0xFF7C4DFF)
-                            : const Color(0xFFFF4D88))
-                        .withValues(alpha:0.4),
-                    blurRadius: _active ? 16 : 8,
-                    offset: const Offset(0, 4),
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: _active
+                        ? const LinearGradient(
+                            colors: [Color(0xFF7C4DFF), Color(0xFFE040FB)])
+                        : const LinearGradient(
+                            colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)]),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (_active
+                                ? const Color(0xFF7C4DFF)
+                                : const Color(0xFFFF4D88))
+                            .withValues(alpha: 0.4),
+                        blurRadius: _active ? 16 : 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    _active ? Icons.rocket_launch : Icons.flash_on,
-                    color: Colors.white,
-                    size: 22,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _active ? Icons.rocket_launch : Icons.flash_on,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                      if (_active)
+                        Text('${_minutesLeft}m',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700)),
+                    ],
                   ),
-                  if (_active)
-                    Text('${_minutesLeft}m',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700)),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(_active ? '加速中' : '加速',
-                  style: TextStyle(
-                    color: _active ? const Color(0xFF7C4DFF) : const Color(0xFFFF4D88),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                  )),
+                ),
+                const SizedBox(height: 6),
+                Text(_active ? '加速中' : '加速',
+                    style: TextStyle(
+                      color: _active ? const Color(0xFF7C4DFF) : const Color(0xFFFF4D88),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    )),
               ],
             ),
           );
