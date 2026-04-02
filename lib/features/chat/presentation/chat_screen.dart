@@ -553,9 +553,18 @@ class _ChatInputState extends State<_ChatInput> {
                   child: Container(
                     width: 42,
                     height: 42,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Color(0xFFFF4D88),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFFF4D88).withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: const Icon(Icons.send_rounded,
                         color: Colors.white, size: 20),

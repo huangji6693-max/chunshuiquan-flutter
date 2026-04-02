@@ -112,6 +112,12 @@ class _DiscoverNotifier extends StateNotifier<_DiscoverState> {
   }
 
   /// 应用新的筛选条件
+  Future<void> refresh() async {
+    _swipedCount = 0;
+    state = state.copyWith(cards: []);
+    await _load();
+  }
+
   Future<void> applyFilter(DiscoverFilter filter) async {
     await _saveFilter(filter);
     _swipedCount = 0;
@@ -398,7 +404,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
               ? AnimatedEmptyState(
                   icon: Icons.explore_off_rounded,
                   title: '暂时没有更多人了',
-                  subtitle: '明天再来看看吧',
+                  subtitle: '下拉刷新试试',
+                  action: TextButton.icon(
+                    onPressed: () => ref.read(_discoverNotifierProvider.notifier).refresh(),
+                    icon: const Icon(Icons.refresh_rounded, size: 18),
+                    label: const Text('刷新'),
+                  ),
                 )
               : Column(
                   children: [
