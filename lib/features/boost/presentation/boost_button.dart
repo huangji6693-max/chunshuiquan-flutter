@@ -76,9 +76,12 @@ class _BoostButtonState extends ConsumerState<BoostButton>
           final scale = _active ? 1.0 + _pulseController.value * 0.1 : 1.0;
           return Transform.scale(
             scale: scale,
-            child: Container(
-              width: 56,
-              height: 56,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+              Container(
+              width: 50,
+              height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: _active
@@ -113,6 +116,14 @@ class _BoostButtonState extends ConsumerState<BoostButton>
                             fontWeight: FontWeight.w700)),
                 ],
               ),
+              const SizedBox(height: 6),
+              Text(_active ? '加速中' : '加速',
+                  style: TextStyle(
+                    color: _active ? const Color(0xFF7C4DFF) : const Color(0xFFFF4D88),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  )),
+              ],
             ),
           );
         },

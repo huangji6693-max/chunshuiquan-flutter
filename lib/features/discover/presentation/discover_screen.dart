@@ -534,9 +534,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                       ),
                     ),
 
-                    // 底部动作按钮 + Boost
+                    // 底部动作按钮 + Boost（避开底部导航栏）
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                      padding: EdgeInsets.fromLTRB(16, 8, 16,
+                          MediaQuery.of(context).padding.bottom + 70),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -544,21 +545,21 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                           // Boost 曝光加速
                           const BoostButton(),
 
-                          // NOPE 按钮 - 红色
+                          // 不喜欢
                           _ActionButton(
                             icon: Icons.close_rounded,
                             color: const Color(0xFFFF5A5A),
-                            label: 'NOPE',
-                            size: 68,
+                            label: '不喜欢',
+                            size: 62,
                             onTap: () {
                               HapticFeedback.mediumImpact();
                               _swiperCtrl.swipe(CardSwiperDirection.left);
                             },
                           ),
 
-                          // SUPER LIKE 按钮 - 蓝色，带脉冲动画
+                          // 超级喜欢按钮 - 蓝色脉冲
                           Transform.translate(
-                            offset: const Offset(0, -10),
+                            offset: const Offset(0, -6),
                             child: _SuperLikeBtn(
                               onTap: () {
                                 HapticFeedback.heavyImpact();
@@ -568,12 +569,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                             ),
                           ),
 
-                          // LIKE 按钮 - 绿色
+                          // 喜欢
                           _ActionButton(
                             icon: Icons.favorite_rounded,
                             color: const Color(0xFF4CAF50),
-                            label: 'LIKE',
-                            size: 68,
+                            label: '喜欢',
+                            size: 62,
                             onTap: () {
                               HapticFeedback.mediumImpact();
                               _swiperCtrl.swipe(CardSwiperDirection.right);
@@ -813,7 +814,7 @@ class _SuperLikeBtnState extends State<_SuperLikeBtn>
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'SUPER LIKE',
+      label: '超级喜欢',
       button: true,
       child: AnimatedBuilder(
         animation: _pulseAnim,
@@ -853,12 +854,11 @@ class _SuperLikeBtnState extends State<_SuperLikeBtn>
                     color: Colors.white, size: 28),
               ),
               const SizedBox(height: 6),
-              const Text('SUPER',
+              const Text('超级喜欢',
                   style: TextStyle(
                     color: _blue,
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
                   )),
             ],
           ),

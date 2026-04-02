@@ -80,7 +80,7 @@ class SettingsScreen extends ConsumerWidget {
                               balanceAsync.when(
                                 data: (c) => Text('$c',
                                     style: const TextStyle(
-                                        
+                                        color: Colors.white,
                                         fontSize: 24,
                                         fontWeight: FontWeight.w800)),
                                 loading: () => const Text('...',
@@ -101,12 +101,12 @@ class SettingsScreen extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        
+                        color: Colors.white.withValues(alpha: 0.25),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Text('充值',
+                      child: const Text('充值 →',
                           style: TextStyle(
-                              color: Color(0xFFFF4D88),
+                              color: Colors.white,
                               fontWeight: FontWeight.w700,
                               fontSize: 14)),
                     ),

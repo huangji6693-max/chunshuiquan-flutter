@@ -140,7 +140,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
 
               if (_isGridView) {
                 return SliverPadding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 100),
                   sliver: SliverGrid(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
