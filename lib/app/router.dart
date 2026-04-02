@@ -68,10 +68,39 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(path: '/', builder: (_, __) => const SplashScreen()),
-      GoRoute(path: '/welcome', builder: (_, __) => const WelcomeScreen()),
-      GoRoute(path: '/auth/login', builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/auth/register', builder: (_, __) => const RegisterScreen()),
+      GoRoute(
+        path: '/',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SplashScreen(),
+          transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
+        ),
+      ),
+      GoRoute(
+        path: '/welcome',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const WelcomeScreen(),
+          transitionDuration: const Duration(milliseconds: 500),
+          transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
+        ),
+      ),
+      GoRoute(
+        path: '/auth/login',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const LoginScreen(),
+          transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
+        ),
+      ),
+      GoRoute(
+        path: '/auth/register',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const RegisterScreen(),
+          transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
+        ),
+      ),
       GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingScreen()),
       ShellRoute(
         builder: (context, state, child) => MainScaffold(child: child),
