@@ -326,6 +326,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
           ),
           const SizedBox(height: 12),
+          // 提示文字
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              '上传3张以上照片，匹配率提升200% \u{1F525}',
+              style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+          ),
           // 小照片（横排）
           SizedBox(
             height: 80,
@@ -336,7 +345,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 return Expanded(
                   child: GestureDetector(
                     onTap: hasPhoto
-                        ? () => setState(() => _photos.removeAt(photoIdx))
+                        ? () => showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                title: const Text('删除照片？'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('取消'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      setState(() => _photos.removeAt(photoIdx));
+                                    },
+                                    child: const Text('删除',
+                                        style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              ),
+                            )
                         : (photoIdx <= _photos.length ? _pickPhoto : null),
                     child: Container(
                       margin: EdgeInsets.only(right: i < 4 ? 8 : 0),

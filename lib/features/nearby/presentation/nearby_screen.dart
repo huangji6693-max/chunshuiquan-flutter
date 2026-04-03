@@ -77,7 +77,13 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                     Icon(Icons.location_on,
                         color: const Color(0xFFFF4D88), size: 18),
                     const SizedBox(width: 6),
-                    Text('${_radius.toInt()}km 范围内',
+                    Text('${_radius.toInt()} km',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            color: Color(0xFFFF4D88))),
+                    const SizedBox(width: 4),
+                    Text('范围内',
                         style: const TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 14)),
                     const SizedBox(width: 8),
@@ -201,43 +207,29 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
             ),
             error: (e, _) => SliverFillRemaining(
               child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.cloud_off_rounded, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      const SizedBox(height: 16),
+                      Text('加载失败', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
+                      const SizedBox(height: 6),
+                      Text(
+                        e.toString().contains('经纬度')
+                            ? '需要开启定位权限，在个人资料中更新位置信息'
+                            : '请检查网络后重试',
+                        style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
-                      child: const Icon(Icons.location_off_rounded,
-                          size: 40, color: Color(0xFFFF4D88)),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      e.toString().contains('经纬度')
-                          ? '需要开启定位权限'
-                          : '加载失败，点击重试',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      e.toString().contains('经纬度')
-                          ? '在个人资料中更新你的位置信息'
-                          : '检查网络连接后再试',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
-                    ),
-                    const SizedBox(height: 12),
-                    TextButton(
-                      onPressed: () => ref.invalidate(nearbyUsersProvider(_radius)),
-                      child: const Text('重试'),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      TextButton.icon(
+                        onPressed: () => ref.invalidate(nearbyUsersProvider(_radius)),
+                        icon: const Icon(Icons.refresh_rounded, size: 18),
+                        label: const Text('重试'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

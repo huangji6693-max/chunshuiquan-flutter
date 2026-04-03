@@ -140,7 +140,27 @@ class MomentsScreen extends ConsumerWidget {
             );
           },
           loading: () => const MomentsSkeleton(),
-          error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant), const SizedBox(height: 12), Text('网络不太好，稍后再试', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)), const SizedBox(height: 8), TextButton(onPressed: () => ref.invalidate(momentsTimelineProvider), child: const Text('点击重试'))])),
+          error: (e, _) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.cloud_off_rounded, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  const SizedBox(height: 16),
+                  Text('加载失败', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
+                  const SizedBox(height: 6),
+                  Text('请检查网络后重试', style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                  const SizedBox(height: 16),
+                  TextButton.icon(
+                    onPressed: () => ref.invalidate(momentsTimelineProvider),
+                    icon: const Icon(Icons.refresh_rounded, size: 18),
+                    label: const Text('重试'),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

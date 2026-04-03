@@ -497,36 +497,69 @@ class _ChatInputState extends State<_ChatInput> {
       ),
       child: Row(
         children: [
-          // 礼物按钮
+          // + 按钮（图片 + 礼物）
           GestureDetector(
-            onTap: widget.onGiftTap,
-            child: Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFFFF4D88).withValues(alpha:0.15),
-                    const Color(0xFFFF8A5C).withValues(alpha:0.15),
-                  ],
+            onTap: widget.uploading ? null : () {
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
-              ),
-              child: const Icon(Icons.card_giftcard_rounded,
-                  color: Color(0xFFFF4D88), size: 22),
-            ),
-          ),
-          const SizedBox(width: 6),
-
-          // 图片按钮
-          GestureDetector(
-            onTap: widget.uploading ? null : widget.onImageTap,
+                builder: (_) => SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 8),
+                      Container(
+                        width: 36, height: 4,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ListTile(
+                        leading: Container(
+                          width: 40, height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
+                          ),
+                          child: const Icon(Icons.image_outlined, color: Color(0xFFFF4D88), size: 22),
+                        ),
+                        title: const Text('图片'),
+                        onTap: () { Navigator.pop(context); widget.onImageTap(); },
+                      ),
+                      ListTile(
+                        leading: Container(
+                          width: 40, height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFFFF4D88).withValues(alpha: 0.15),
+                                const Color(0xFFFF8A5C).withValues(alpha: 0.15),
+                              ],
+                            ),
+                          ),
+                          child: const Icon(Icons.card_giftcard_rounded, color: Color(0xFFFF4D88), size: 22),
+                        ),
+                        title: const Text('礼物'),
+                        onTap: () { Navigator.pop(context); widget.onGiftTap(); },
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
+                ),
+              );
+            },
             child: Container(
               width: 42,
               height: 42,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFFF4D88).withValues(alpha:0.1),
+                color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
               ),
               child: widget.uploading
                   ? const Padding(
@@ -534,8 +567,8 @@ class _ChatInputState extends State<_ChatInput> {
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Color(0xFFFF4D88)),
                     )
-                  : const Icon(Icons.image_outlined,
-                      color: Color(0xFFFF4D88), size: 22),
+                  : const Icon(Icons.add_circle_outline,
+                      color: Color(0xFFFF4D88), size: 24),
             ),
           ),
           const SizedBox(width: 8),

@@ -16,10 +16,8 @@ class RegisterScreen extends ConsumerStatefulWidget {
 class _RegisterScreenState extends ConsumerState<RegisterScreen>
     with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-  final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
-  DateTime? _birthDate;
   String _gender = 'male';
   bool _loading = false;
   bool _obscure = true;
@@ -67,38 +65,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     _animCtrl.dispose();
     _waveCtrl.dispose();
     _btnCtrl.dispose();
-    _nameCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
     super.dispose();
   }
 
-  /// 底部弹出日期选择器
-  Future<void> _pickDate() async {
-    final picked = await showModalBottomSheet<DateTime>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => _DatePickerSheet(
-        initialDate: _birthDate ?? DateTime(2000),
-      ),
-    );
-    if (picked != null) setState(() => _birthDate = picked);
-  }
-
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_birthDate == null) {
-      setState(() => _error = '请选择生日');
-      return;
-    }
     setState(() { _loading = true; _error = null; });
     try {
+      final email = _emailCtrl.text.trim();
       await ref.read(authRepositoryProvider).register(
-        name: _nameCtrl.text.trim(),
-        email: _emailCtrl.text.trim(),
+        name: email.split('@')[0],
+        email: email,
         password: _passCtrl.text,
-        birthDate:
-            '${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}',
+        birthDate: '2000-01-01',
         gender: _gender,
       );
       if (mounted) context.go('/onboarding');
@@ -240,19 +221,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                         color: Colors.white.withValues(alpha:0.7))),
                                 const SizedBox(height: 24),
 
-                                // 昵称
-                                TextFormField(
-                                  key: const Key('name'),
-                                  controller: _nameCtrl,
-                                  decoration: _frostInputDeco('昵称', Icons.person_outline),
-                                  textInputAction: TextInputAction.next,
-                                  style: const TextStyle(color: Colors.white, fontSize: 15),
-                                  validator: (v) => v == null || v.trim().isEmpty
-                                      ? '请输入昵称'
-                                      : null,
-                                ),
-                                const SizedBox(height: 14),
-
                                 // 邮箱
                                 TextFormField(
                                   key: const Key('email'),
@@ -293,45 +261,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                   validator: (v) => v == null || v.length < 6
                                       ? '密码至少6位'
                                       : null,
-                                ),
-                                const SizedBox(height: 18),
-
-                                // 生日选择器 - 底部弹出
-                                GestureDetector(
-                                  key: const Key('birth_date'),
-                                  onTap: _pickDate,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 16),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha:0.12),
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: Colors.white.withValues(alpha:0.25),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        const Icon(Icons.cake_outlined,
-                                            color: Colors.white70, size: 20),
-                                        const SizedBox(width: 12),
-                                        Text(
-                                          _birthDate == null
-                                              ? '选择生日'
-                                              : '${_birthDate!.year}年${_birthDate!.month}月${_birthDate!.day}日',
-                                          style: TextStyle(
-                                            color: _birthDate == null
-                                                ? Colors.white60
-                                                : Colors.white,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        Icon(Icons.arrow_drop_down,
-                                            color: Colors.white.withValues(alpha:0.5)),
-                                      ],
-                                    ),
-                                  ),
                                 ),
                                 const SizedBox(height: 18),
 
@@ -529,91 +458,6 @@ class _GenderCard extends StatelessWidget {
             ],
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// 底部弹出日期选择器
-class _DatePickerSheet extends StatefulWidget {
-  final DateTime initialDate;
-  const _DatePickerSheet({required this.initialDate});
-
-  @override
-  State<_DatePickerSheet> createState() => _DatePickerSheetState();
-}
-
-class _DatePickerSheetState extends State<_DatePickerSheet> {
-  late DateTime _selected;
-
-  @override
-  void initState() {
-    super.initState();
-    _selected = widget.initialDate;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 拖拽指示条
-          const SizedBox(height: 12),
-          Container(
-            width: 40, height: 4,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.outlineVariant,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          // 标题栏
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text('取消',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16)),
-                ),
-                const Text('选择生日',
-                    style: TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.w700)),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, _selected),
-                  child: const Text('确定',
-                      style: TextStyle(
-                          color: Color(0xFFFF4D88),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600)),
-                ),
-              ],
-            ),
-          ),
-          // 日期选择器
-          SizedBox(
-            height: 220,
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                colorScheme: const ColorScheme.light(
-                    primary: Color(0xFFFF4D88)),
-              ),
-              child: CalendarDatePicker(
-                initialDate: _selected,
-                firstDate: DateTime(1950),
-                lastDate: DateTime(DateTime.now().year - 18, DateTime.now().month, DateTime.now().day),
-                onDateChanged: (date) => setState(() => _selected = date),
-              ),
-            ),
-          ),
-          SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
-        ],
       ),
     );
   }
