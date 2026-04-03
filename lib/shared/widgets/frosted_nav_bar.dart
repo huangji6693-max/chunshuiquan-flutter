@@ -41,7 +41,7 @@ class FrostedNavBar extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.15),
+                color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.08),
                 blurRadius: 12,
                 offset: const Offset(0, -2),
               ),

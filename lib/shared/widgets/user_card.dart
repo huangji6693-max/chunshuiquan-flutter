@@ -24,9 +24,9 @@ class _UserCardState extends State<UserCard> {
     final hasMultiplePhotos = photos.length > 1;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.12),
           width: 0.5,
@@ -50,7 +50,7 @@ class _UserCardState extends State<UserCard> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         child: Stack(
           fit: StackFit.expand,
           children: [

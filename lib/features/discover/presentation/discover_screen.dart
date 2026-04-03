@@ -347,26 +347,20 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 品牌icon——类似Tinder火焰
+            // 品牌icon——Tinder风格火焰圆形
             Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+              width: 36,
+              height: 36,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(8),
+                shape: BoxShape.circle,
               ),
-              child: const Center(
-                child: Text('春', style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  height: 1.2,
-                )),
-              ),
+              child: const Icon(Icons.local_fire_department_rounded,
+                  color: Colors.white, size: 22),
             ),
           ],
         ),
@@ -531,47 +525,45 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                       ),
                     ),
 
-                    // 底部动作按钮 + Boost（避开底部导航栏）
+                    // 底部动作按钮 - Tinder风格：小-大-小-大 节奏
                     Padding(
-                      padding: EdgeInsets.fromLTRB(16, 8, 16,
+                      padding: EdgeInsets.fromLTRB(24, 8, 24,
                           MediaQuery.of(context).padding.bottom + 70),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Boost 曝光加速
+                          // Boost 小按钮 44px 紫色
                           const BoostButton(),
+                          const SizedBox(width: 16),
 
-                          // 不喜欢
+                          // NOPE 大按钮 56px 红色
                           _ActionButton(
                             icon: Icons.close_rounded,
                             color: const Color(0xFFFF5A5A),
-                            label: '不喜欢',
-                            size: 62,
+                            size: 56,
                             onTap: () {
                               HapticFeedback.mediumImpact();
                               _swiperCtrl.swipe(CardSwiperDirection.left);
                             },
                           ),
+                          const SizedBox(width: 16),
 
-                          // 超级喜欢按钮 - 蓝色脉冲
-                          Transform.translate(
-                            offset: const Offset(0, -6),
-                            child: _SuperLikeBtn(
-                              onTap: () {
-                                HapticFeedback.heavyImpact();
-                                _playSuperLikeAnimation();
-                                _swiperCtrl.swipe(CardSwiperDirection.top);
-                              },
-                            ),
+                          // SuperLike 小按钮 44px 蓝色
+                          _SuperLikeBtn(
+                            onTap: () {
+                              HapticFeedback.heavyImpact();
+                              _playSuperLikeAnimation();
+                              _swiperCtrl.swipe(CardSwiperDirection.top);
+                            },
                           ),
+                          const SizedBox(width: 16),
 
-                          // 喜欢
+                          // LIKE 大按钮 56px 绿色
                           _ActionButton(
                             icon: Icons.favorite_rounded,
                             color: const Color(0xFF4CAF50),
-                            label: '喜欢',
-                            size: 62,
+                            size: 56,
                             onTap: () {
                               HapticFeedback.mediumImpact();
                               _swiperCtrl.swipe(CardSwiperDirection.right);
@@ -665,18 +657,16 @@ class _SwipeLabel extends StatelessWidget {
   }
 }
 
-/// 动作按钮 - 带阴影和按压效果
+/// 动作按钮 - Tinder风格纯icon圆形按钮
 class _ActionButton extends StatefulWidget {
   final IconData icon;
   final Color color;
-  final String label;
   final double size;
   final VoidCallback onTap;
 
   const _ActionButton({
     required this.icon,
     required this.color,
-    required this.label,
     required this.size,
     required this.onTap,
   });
@@ -711,7 +701,6 @@ class _ActionButtonState extends State<_ActionButton>
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: widget.label,
       button: true,
       child: GestureDetector(
         onTapDown: (_) => _ctrl.forward(),
@@ -726,45 +715,32 @@ class _ActionButtonState extends State<_ActionButton>
             scale: _scale.value,
             child: child,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: widget.size,
-                height: widget.size,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: widget.color.withValues(alpha:0.35),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                    BoxShadow(
-                      color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.06),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                  border: Border.all(
-                    color: widget.color.withValues(alpha:0.15),
-                    width: 2,
-                  ),
+          child: Container(
+            width: widget.size,
+            height: widget.size,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.95),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: widget.color.withValues(alpha: 0.30),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
                 ),
-                child: Icon(widget.icon,
-                    color: widget.color,
-                    size: widget.size * 0.44),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+              border: Border.all(
+                color: widget.color.withValues(alpha: 0.25),
+                width: 2,
               ),
-              const SizedBox(height: 6),
-              Text(widget.label,
-                  style: TextStyle(
-                    color: widget.color,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
-                  )),
-            ],
+            ),
+            child: Icon(widget.icon,
+                color: widget.color,
+                size: widget.size * 0.46),
           ),
         ),
       ),
@@ -786,7 +762,7 @@ class _SuperLikeBtnState extends State<_SuperLikeBtn>
   late AnimationController _pulseCtrl;
   late Animation<double> _pulseAnim;
 
-  static const double _size = 58;
+  static const double _size = 44;
   static const Color _blue = Color(0xFF5B9AFF);
   static const Color _blueLight = Color(0xFF82B4FF);
 
@@ -821,43 +797,31 @@ class _SuperLikeBtnState extends State<_SuperLikeBtn>
         ),
         child: GestureDetector(
           onTap: widget.onTap,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: _size,
-                height: _size,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [_blue, _blueLight],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _blue.withValues(alpha:0.45),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                    BoxShadow(
-                      color: _blue.withValues(alpha:0.20),
-                      blurRadius: 40,
-                      spreadRadius: 4,
-                    ),
-                  ],
+          child: Container(
+            width: _size,
+            height: _size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.95),
+              boxShadow: [
+                BoxShadow(
+                  color: _blue.withValues(alpha: 0.35),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
                 ),
-                child: const Icon(Icons.star_rounded,
-                    color: Colors.white, size: 28),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+              border: Border.all(
+                color: _blue.withValues(alpha: 0.25),
+                width: 2,
               ),
-              const SizedBox(height: 6),
-              const Text('超级喜欢',
-                  style: TextStyle(
-                    color: _blue,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                  )),
-            ],
+            ),
+            child: const Icon(Icons.star_rounded,
+                color: _blue, size: 22),
           ),
         ),
       ),
