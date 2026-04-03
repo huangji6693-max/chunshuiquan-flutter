@@ -45,9 +45,9 @@ class AppTheme {
     surfaceTintColor: null,
     centerTitle: false,
     titleTextStyle: TextStyle(
-      fontSize: 20,
+      fontSize: 22,
       fontWeight: FontWeight.w700,
-      letterSpacing: 0.3,
+      letterSpacing: -0.3,
     ),
   );
 

@@ -26,12 +26,7 @@ class MatchesScreen extends ConsumerWidget {
         
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        title: Text('匹配', style: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
-          color: Theme.of(context).colorScheme.onSurface,
-        )),
+        title: const Text('匹配'),
       ),
       body: state.when(
         loading: () => const MatchesSkeleton(),

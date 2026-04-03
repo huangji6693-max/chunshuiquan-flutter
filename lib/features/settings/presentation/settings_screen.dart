@@ -24,12 +24,7 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       
       appBar: AppBar(
-        title: Text('设置', style: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
-          color: Theme.of(context).colorScheme.onSurface,
-        )),
+        title: const Text('设置'),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 12),

@@ -39,12 +39,7 @@ class _GiftHistoryScreenState extends ConsumerState<GiftHistoryScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('礼物记录', style: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
-          color: Theme.of(context).colorScheme.onSurface,
-        )),
+        title: const Text('礼物记录'),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: const Color(0xFFFF4D88),

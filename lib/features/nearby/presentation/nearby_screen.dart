@@ -54,12 +54,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
             floating: true,
             
             surfaceTintColor: Colors.transparent,
-            title: Text('附近的人', style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.3,
-              color: Theme.of(context).colorScheme.onSurface,
-            )),
+            title: const Text('附近的人'),
             actions: [
               // 切换视图
               IconButton(

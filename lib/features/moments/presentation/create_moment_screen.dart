@@ -38,12 +38,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
       appBar: AppBar(
         
         surfaceTintColor: Colors.transparent,
-        title: Text('发布动态', style: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
-          color: Theme.of(context).colorScheme.onSurface,
-        )),
+        title: const Text('发布动态'),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),

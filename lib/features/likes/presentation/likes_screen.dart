@@ -20,12 +20,7 @@ class LikesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('谁喜欢了我', style: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
-          color: Theme.of(context).colorScheme.onSurface,
-        )),
+        title: const Text('谁喜欢了我'),
         actions: [
           likesAsync.whenOrNull(
                 data: (r) => Padding(

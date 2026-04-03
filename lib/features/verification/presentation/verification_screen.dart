@@ -40,12 +40,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: Text('实名认证', style: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
-          color: Theme.of(context).colorScheme.onSurface,
-        )),
+        title: const Text('实名认证'),
         // backgroundColor从theme获取
         surfaceTintColor: Colors.transparent,
       ),

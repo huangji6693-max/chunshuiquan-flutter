@@ -110,12 +110,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
         // backgroundColor从theme获取
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        title: Text('通知', style: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
-          color: Theme.of(context).colorScheme.onSurface,
-        )),
+        title: const Text('通知'),
         actions: [
           if (notifications.isNotEmpty)
             TextButton(
