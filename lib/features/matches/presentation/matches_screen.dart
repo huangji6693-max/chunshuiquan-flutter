@@ -346,6 +346,8 @@ class _ConversationTile extends ConsumerWidget {
         ),
       ),
       child: InkWell(
+      splashColor: const Color(0xFFFF4D88).withValues(alpha: 0.06),
+      highlightColor: const Color(0xFFFF4D88).withValues(alpha: 0.03),
       borderRadius: BorderRadius.circular(14),
       onTap: () => context.go('/chat/${match.matchId}', extra: {
         'partnerName': match.otherName,

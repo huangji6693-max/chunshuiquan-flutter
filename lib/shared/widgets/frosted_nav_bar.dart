@@ -65,7 +65,7 @@ class FrostedNavBar extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           AnimatedScale(
-                            scale: selected ? 1.15 : 1.0,
+                            scale: selected ? 1.2 : 1.0,
                             duration: const Duration(milliseconds: 200),
                             curve: Curves.easeOutBack,
                             child: AnimatedSwitcher(
@@ -84,11 +84,14 @@ class FrostedNavBar extends StatelessWidget {
                                         color: Colors.white,
                                       ),
                                     )
-                                  : Icon(
-                                      key: const ValueKey(false),
-                                      _icons[i].$2,
-                                      size: 24,
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  : Opacity(
+                                      opacity: 0.6,
+                                      child: Icon(
+                                        key: const ValueKey(false),
+                                        _icons[i].$2,
+                                        size: 24,
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      ),
                                     ),
                             ),
                           ),

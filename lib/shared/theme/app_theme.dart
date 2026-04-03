@@ -105,7 +105,7 @@ class AppTheme {
       seedColor: _seed,
       brightness: Brightness.dark,
     ).copyWith(
-      surface: const Color(0xFF101014),
+      surface: const Color(0xFF121216),
       surfaceContainer: const Color(0xFF1A1A1E),
       surfaceContainerHigh: const Color(0xFF232328),
       surfaceContainerHighest: const Color(0xFF2C2C32),

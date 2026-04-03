@@ -417,9 +417,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
               child: CircularProgressIndicator(color: Color(0xFFFF4D88)))
           : discoverState.cards.isEmpty
               ? AnimatedEmptyState(
-                  icon: Icons.explore_off_rounded,
-                  title: '暂时没有更多人了',
-                  subtitle: '下拉刷新试试',
+                  icon: Icons.explore_rounded,
+                  title: '暂时看完了',
+                  subtitle: '扩大距离或调整筛选条件',
                   action: TextButton.icon(
                     onPressed: () => ref.read(_discoverNotifierProvider.notifier).refresh(),
                     icon: const Icon(Icons.refresh_rounded, size: 18),
@@ -684,10 +684,10 @@ class _ActionButtonState extends State<_ActionButton>
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-      duration: const Duration(milliseconds: 120),
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _scale = Tween<double>(begin: 1.0, end: 0.85).animate(
+    _scale = Tween<double>(begin: 1.0, end: 0.9).animate(
       CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
     );
   }
