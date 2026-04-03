@@ -5,23 +5,18 @@ import 'package:mesh_gradient/mesh_gradient.dart';
 import '../../../core/storage/token_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// 启动页 — 流体网格渐变 + 品牌Logo弹性动画
-/// 参考 Soul/探探 的沉浸式启动体验
+/// 启动页 — 对标 Tinder：巨大品牌Logo + 流体渐变 + 极简
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
-
   @override
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _logoCtrl;
-  late AnimationController _fadeCtrl;
-  late Animation<double> _logoScale;
-  late Animation<double> _logoOpacity;
-  late Animation<double> _textOpacity;
-  late Animation<Offset> _textSlide;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _scale;
+  late Animation<double> _opacity;
 
   @override
   void initState() {
@@ -33,41 +28,27 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       ),
     );
 
-    // Logo 弹性动画
-    _logoCtrl = AnimationController(
+    _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
-    );
-    _logoScale = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.15), weight: 40),
-      TweenSequenceItem(tween: Tween(begin: 1.15, end: 0.92), weight: 20),
-      TweenSequenceItem(tween: Tween(begin: 0.92, end: 1.03), weight: 20),
-      TweenSequenceItem(tween: Tween(begin: 1.03, end: 1.0), weight: 20),
-    ]).animate(CurvedAnimation(parent: _logoCtrl, curve: Curves.easeOut));
-    _logoOpacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _logoCtrl, curve: const Interval(0, 0.4)),
+      duration: const Duration(milliseconds: 1200),
     );
 
-    // 文字动画
-    _fadeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-    _textOpacity = Tween<double>(begin: 0, end: 1).animate(_fadeCtrl);
-    _textSlide = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut));
+    _scale = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.6, end: 1.08), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.08, end: 1.0), weight: 50),
+    ]).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutBack));
 
-    _startAnimation();
+    _opacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _ctrl, curve: const Interval(0, 0.5)),
+    );
+
+    _start();
   }
 
-  Future<void> _startAnimation() async {
-    await Future.delayed(const Duration(milliseconds: 400));
-    _logoCtrl.forward();
-    await Future.delayed(const Duration(milliseconds: 800));
-    _fadeCtrl.forward();
-    await Future.delayed(const Duration(milliseconds: 1600));
+  Future<void> _start() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    _ctrl.forward();
+    await Future.delayed(const Duration(milliseconds: 2200));
     _navigate();
   }
 
@@ -76,15 +57,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       final token = await ref.read(tokenManagerProvider).getAccessToken();
       if (!mounted) return;
       context.go(token != null && token.isNotEmpty ? '/discover' : '/welcome');
-    } catch (e) {
+    } catch (_) {
       if (mounted) context.go('/welcome');
     }
   }
 
   @override
   void dispose() {
-    _logoCtrl.dispose();
-    _fadeCtrl.dispose();
+    _ctrl.dispose();
     super.dispose();
   }
 
@@ -94,94 +74,72 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 流体网格渐变背景——核心视觉
+          // 流体渐变背景
           AnimatedMeshGradient(
             colors: const [
-              Color(0xFF1A0E2E), // 深紫
-              Color(0xFFFF4D88), // 品牌粉
-              Color(0xFF0F0A1A), // 深黑
-              Color(0xFF8B5CF6), // 紫色
+              Color(0xFF1A0A2E),
+              Color(0xFFFF4D88),
+              Color(0xFF0A0614),
+              Color(0xFF7C3AED),
             ],
             options: AnimatedMeshGradientOptions(
-              speed: 2,
-              frequency: 3,
-              amplitude: 40,
-              grain: 0.3,
+              speed: 3,
+              frequency: 2,
+              amplitude: 50,
+              grain: 0.35,
             ),
           ),
 
-          // 半透明暗层——让Logo更突出
-          Container(
-            color: Colors.black.withValues(alpha:0.25),
+          // 暗层
+          Container(color: Colors.black.withValues(alpha: 0.3)),
+
+          // Logo居中
+          Center(
+            child: AnimatedBuilder(
+              listenable: _ctrl,
+              builder: (_, __) => Opacity(
+                opacity: _opacity.value,
+                child: Transform.scale(
+                  scale: _scale.value,
+                  child: const _BrandLogo(),
+                ),
+              ),
+            ),
           ),
 
-          // 主内容
-          Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Logo 心形
-                AnimatedBuilder(
-                  listenable: _logoCtrl,
-                  builder: (_, __) => Opacity(
-                    opacity: _logoOpacity.value,
-                    child: Transform.scale(
-                      scale: _logoScale.value,
-                      child: Container(
-                        width: 96,
-                        height: 96,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha:0.15),
-                          borderRadius: BorderRadius.circular(28),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha:0.2),
-                            width: 0.5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFFF4D88).withValues(alpha:0.4),
-                              blurRadius: 40,
-                              spreadRadius: 8,
-                            ),
-                          ],
-                        ),
-                        child: const Center(
-                          child: Icon(Icons.favorite_rounded,
-                              color: Colors.white, size: 48),
-                        ),
-                      ),
+          // 底部品牌文字
+          Positioned(
+            bottom: MediaQuery.of(context).padding.bottom + 32,
+            left: 0,
+            right: 0,
+            child: AnimatedBuilder(
+              listenable: _ctrl,
+              builder: (_, child) => Opacity(
+                opacity: _opacity.value,
+                child: child,
+              ),
+              child: const Column(
+                children: [
+                  Text(
+                    '春水圈',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 6,
                     ),
                   ),
-                ),
-                const SizedBox(height: 32),
-
-                // 品牌名
-                SlideTransition(
-                  position: _textSlide,
-                  child: FadeTransition(
-                    opacity: _textOpacity,
-                    child: Column(
-                      children: [
-                        Text('春水圈',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 34,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 2,
-                            )),
-                        const SizedBox(height: 12),
-                        Text('遇见心动的 Ta',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha:0.7),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 4,
-                            )),
-                      ],
+                  SizedBox(height: 4),
+                  Text(
+                    '遇见心动',
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 12,
+                      letterSpacing: 4,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -190,12 +148,72 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 }
 
-class AnimatedBuilder extends AnimatedWidget {
-  final Widget Function(BuildContext, Widget?) builder;
-  final Widget? child;
-  const AnimatedBuilder({
-    super.key, required super.listenable, required this.builder, this.child,
-  });
+/// 品牌Logo——自定义绘制水滴形心形
+/// 不依赖Material Icons，有独特辨识度
+class _BrandLogo extends StatelessWidget {
+  const _BrandLogo();
+
   @override
-  Widget build(BuildContext context) => builder(context, child);
+  Widget build(BuildContext context) {
+    return Container(
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const RadialGradient(
+          colors: [
+            Color(0xFFFF6B9D),
+            Color(0xFFFF4D88),
+            Color(0xFFE8366D),
+          ],
+          stops: [0.0, 0.6, 1.0],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF4D88).withValues(alpha: 0.5),
+            blurRadius: 60,
+            spreadRadius: 20,
+          ),
+          BoxShadow(
+            color: const Color(0xFFFF4D88).withValues(alpha: 0.2),
+            blurRadius: 120,
+            spreadRadius: 40,
+          ),
+        ],
+      ),
+      child: Center(
+        child: CustomPaint(
+          size: const Size(52, 48),
+          painter: _HeartPainter(),
+        ),
+      ),
+    );
+  }
+}
+
+/// 自绘心形——比Material Icons更饱满更有品牌感
+class _HeartPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    final w = size.width;
+    final h = size.height;
+
+    // 饱满心形路径
+    path.moveTo(w * 0.5, h * 0.85);
+    path.cubicTo(w * 0.15, h * 0.55, -w * 0.05, h * 0.25, w * 0.25, h * 0.08);
+    path.cubicTo(w * 0.35, h * 0.0, w * 0.45, h * 0.05, w * 0.5, h * 0.2);
+    path.cubicTo(w * 0.55, h * 0.05, w * 0.65, h * 0.0, w * 0.75, h * 0.08);
+    path.cubicTo(w * 1.05, h * 0.25, w * 0.85, h * 0.55, w * 0.5, h * 0.85);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

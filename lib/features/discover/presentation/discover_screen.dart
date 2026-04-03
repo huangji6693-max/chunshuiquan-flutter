@@ -347,20 +347,31 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 品牌icon——Tinder风格火焰圆形
+            // 品牌Logo——自绘心形，和启动页一致
             Container(
-              width: 36,
-              height: 36,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFF6B9D), Color(0xFFFF4D88)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF4D88).withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: const Icon(Icons.local_fire_department_rounded,
-                  color: Colors.white, size: 22),
+              child: Center(
+                child: CustomPaint(
+                  size: const Size(16, 15),
+                  painter: _MiniHeartPainter(),
+                ),
+              ),
             ),
           ],
         ),
@@ -1065,4 +1076,27 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
       ),
     );
   }
+}
+
+/// 品牌心形小图标 Painter（AppBar用）
+class _MiniHeartPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    final path = Path();
+    final w = size.width;
+    final h = size.height;
+    path.moveTo(w * 0.5, h * 0.85);
+    path.cubicTo(w * 0.15, h * 0.55, -w * 0.05, h * 0.25, w * 0.25, h * 0.08);
+    path.cubicTo(w * 0.35, h * 0.0, w * 0.45, h * 0.05, w * 0.5, h * 0.2);
+    path.cubicTo(w * 0.55, h * 0.05, w * 0.65, h * 0.0, w * 0.75, h * 0.08);
+    path.cubicTo(w * 1.05, h * 0.25, w * 0.85, h * 0.55, w * 0.5, h * 0.85);
+    path.close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
