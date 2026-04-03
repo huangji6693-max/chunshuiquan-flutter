@@ -96,7 +96,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           // Logo居中
           Center(
             child: AnimatedBuilder(
-              listenable: _ctrl,
+              animation: _ctrl,
               builder: (_, __) => Opacity(
                 opacity: _opacity.value,
                 child: Transform.scale(
@@ -113,7 +113,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             left: 0,
             right: 0,
             child: AnimatedBuilder(
-              listenable: _ctrl,
+              animation: _ctrl,
               builder: (_, child) => Opacity(
                 opacity: _opacity.value,
                 child: child,
