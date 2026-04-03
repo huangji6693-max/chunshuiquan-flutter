@@ -124,7 +124,7 @@ class MatchesScreen extends ConsumerWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                       child: Center(
-                        child: Text('缘分正在路上，继续发现吧 💫',
+                        child: Text('去发现页多滑滑，好事即将发生 ✨',
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontSize: 14)),

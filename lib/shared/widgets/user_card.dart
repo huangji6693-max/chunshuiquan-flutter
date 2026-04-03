@@ -227,7 +227,7 @@ class _UserCardState extends State<UserCard> {
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 32,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w800,
                     letterSpacing: 0.8,
                     height: 1.1,
                   )),
@@ -361,6 +361,18 @@ class _UserCardState extends State<UserCard> {
               ),
             ],
           ] else ...[
+            // 未展开时，Bio 预览（最多1行）
+            if (user.bio != null && user.bio!.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(user.bio!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.65),
+                    fontSize: 14,
+                    height: 1.3,
+                  )),
+            ],
             // 未展开时，简短显示兴趣标签
             if (user.tags.isNotEmpty) ...[
               const SizedBox(height: 8),

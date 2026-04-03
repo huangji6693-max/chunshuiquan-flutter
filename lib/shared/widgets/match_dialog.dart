@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/discover/domain/swipe_result.dart';
 
@@ -109,6 +110,9 @@ class _MatchDialogState extends State<MatchDialog>
     )..repeat();
 
     _mainCtrl.forward();
+
+    // 震动反馈
+    HapticFeedback.heavyImpact();
   }
 
   @override
@@ -218,7 +222,7 @@ class _MatchDialogState extends State<MatchDialog>
                           children: [
                             // 主文字
                             const Text(
-                              '恭喜！你们互相喜欢',
+                              '心动了！💕',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 26,

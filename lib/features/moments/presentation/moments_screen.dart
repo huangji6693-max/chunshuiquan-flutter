@@ -92,8 +92,8 @@ class MomentsScreen extends ConsumerWidget {
             if (moments.isEmpty) {
               return AnimatedEmptyState(
                 icon: Icons.dynamic_feed,
-                title: '这里还很安静',
-                subtitle: '等你来写下第一个故事',
+                title: '分享你的故事',
+                subtitle: '一张照片、一句心情，让Ta看到真实的你',
                 action: TextButton(
                   onPressed: () => Navigator.push(context,
                       fadeSlideRoute(const CreateMomentScreen())),

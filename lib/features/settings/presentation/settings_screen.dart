@@ -199,20 +199,30 @@ class SettingsScreen extends ConsumerWidget {
             icon: Icons.visibility_off_outlined,
             title: '隐身模式',
             subtitle: '不出现在发现页',
-            trailing: Switch(
-              value: false,
-              onChanged: (_) => _showComingSoon(context),
-              activeColor: const Color(0xFFFF4D88),
+            trailing: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text('即将上线', style: TextStyle(
+                fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant,
+              )),
             ),
           ),
           _SettingsTile(
             icon: Icons.location_off_outlined,
             title: '隐藏距离',
             subtitle: '对方看不到你的距离',
-            trailing: Switch(
-              value: false,
-              onChanged: (_) => _showComingSoon(context),
-              activeColor: const Color(0xFFFF4D88),
+            trailing: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text('即将上线', style: TextStyle(
+                fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant,
+              )),
             ),
           ),
 

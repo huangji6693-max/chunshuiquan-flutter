@@ -75,6 +75,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             itemBuilder: (_, i) => _buildPage(_pages[i]),
           ),
 
+          // 右上角登录入口（每页都显示）
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 8,
+            right: 16,
+            child: TextButton(
+              onPressed: () => context.go('/auth/login'),
+              child: const Text('登录',
+                  style: TextStyle(
+                      color: Color(0xFFFF4D88),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600)),
+            ),
+          ),
+
           // 底部操作区
           Positioned(
             left: 28,
