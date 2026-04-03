@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../data/likes_repository.dart';
@@ -21,10 +20,10 @@ class LikesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('谁喜欢了我', style: GoogleFonts.notoSansSc(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.5,
+        title: Text('谁喜欢了我', style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
           color: Theme.of(context).colorScheme.onSurface,
         )),
         actions: [

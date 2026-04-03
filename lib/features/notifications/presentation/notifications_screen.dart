@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 /// 通知类型
@@ -111,10 +110,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
         // backgroundColor从theme获取
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        title: Text('通知', style: GoogleFonts.notoSansSc(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.5,
+        title: Text('通知', style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
           color: Theme.of(context).colorScheme.onSurface,
         )),
         actions: [

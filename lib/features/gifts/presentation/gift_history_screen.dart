@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../data/gift_repository.dart';
 import '../domain/gift_record.dart';
@@ -40,10 +39,10 @@ class _GiftHistoryScreenState extends ConsumerState<GiftHistoryScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('礼物记录', style: GoogleFonts.notoSansSc(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.5,
+        title: Text('礼物记录', style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
           color: Theme.of(context).colorScheme.onSurface,
         )),
         bottom: TabBar(

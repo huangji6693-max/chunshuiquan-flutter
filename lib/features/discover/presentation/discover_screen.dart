@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/discover_repository.dart';
@@ -343,16 +342,33 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
-        
         surfaceTintColor: Colors.transparent,
-        title: Text(
-          '春水圈',
-          style: GoogleFonts.notoSansSc(
-            fontSize: 24,
-            fontWeight: FontWeight.w900,
-            color: const Color(0xFFFF4D88),
-            letterSpacing: 1.5,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // 品牌icon——类似Tinder火焰
+            Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                child: Text('春', style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  height: 1.2,
+                )),
+              ),
+            ),
+          ],
         ),
         centerTitle: false,
         actions: [

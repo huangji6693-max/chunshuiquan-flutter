@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
@@ -164,12 +163,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     child: Column(
                       children: [
                         Text('春水圈',
-                            style: GoogleFonts.notoSansSc(
+                            style: TextStyle(
                               color: Colors.white,
-                              fontSize: 36,
-                              fontWeight: FontWeight.w900,
+                              fontSize: 34,
+                              fontWeight: FontWeight.w800,
                               letterSpacing: 2,
-                              height: 1.1,
                             )),
                         const SizedBox(height: 12),
                         Text('遇见心动的 Ta',

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../data/moment_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -39,10 +38,10 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
       appBar: AppBar(
         
         surfaceTintColor: Colors.transparent,
-        title: Text('发布动态', style: GoogleFonts.notoSansSc(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.5,
+        title: Text('发布动态', style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
           color: Theme.of(context).colorScheme.onSurface,
         )),
         actions: [
