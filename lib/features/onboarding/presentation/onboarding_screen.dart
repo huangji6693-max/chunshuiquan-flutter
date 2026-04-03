@@ -8,8 +8,8 @@ import '../../../core/providers/current_user_provider.dart';
 import '../../profile/data/profile_repository.dart';
 import '../../profile/data/upload_repository.dart';
 
-/// Onboarding流程页面
-/// 3步：照片上传 → 信息填写 → 偏好设置
+/// Onboarding — 沉浸式全屏引导
+/// 对标 Tinder/Bumble：大面积留白+渐变背景+极简交互
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -21,43 +21,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _pageCtrl = PageController();
   int _page = 0;
 
-  // 步骤1：照片
+  // Step 1
   final List<File> _photos = [];
-
-  // 步骤2：资料字段
+  // Step 2
   final _bioCtrl = TextEditingController();
   final _jobCtrl = TextEditingController();
   final _heightCtrl = TextEditingController();
-  final _cityCtrl = TextEditingController();
   String? _education;
-  String? _zodiac;
-
-  // 步骤3：偏好
+  // Step 3
   String _lookingFor = 'everyone';
 
   bool _uploading = false;
   String? _error;
 
-  // 步骤标题和副标题
-  static const _stepTitles = [
-    '展示你的魅力',
-    '让大家认识你',
-    '你想遇见谁',
-  ];
-  static const _stepSubtitles = [
-    '上传至少1张照片，最多6张',
-    '完善个人信息',
-    '设置你的偏好',
-  ];
-
-  // 学历选项
   static const _educationOptions = ['高中', '本科', '硕士', '博士'];
-
-  // 星座选项
-  static const _zodiacOptions = [
-    '白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座',
-    '天秤座', '天蝎座', '射手座', '摩羯座', '水瓶座', '双鱼座',
-  ];
 
   @override
   void dispose() {
@@ -65,64 +42,35 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     _bioCtrl.dispose();
     _jobCtrl.dispose();
     _heightCtrl.dispose();
-    _cityCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _pickPhoto() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 1080,
-      imageQuality: 85,
-    );
-    if (picked != null) {
+        source: ImageSource.gallery, maxWidth: 1080, imageQuality: 85);
+    if (picked != null && mounted) {
       setState(() => _photos.add(File(picked.path)));
-    }
-  }
-
-  Future<void> _uploadPhotos() async {
-    int failCount = 0;
-    for (final photo in _photos) {
-      try {
-        await ref.read(uploadRepositoryProvider).uploadAvatar(photo);
-      } catch (_) {
-        failCount++;
-      }
-    }
-    if (failCount > 0 && mounted) {
-      setState(() => _error = '$failCount张照片上传失败，可稍后在资料页重新上传');
     }
   }
 
   Future<void> _finish() async {
     setState(() { _uploading = true; _error = null; });
     try {
-      await _uploadPhotos();
-
-      // 解析身高
-      int? height;
-      if (_heightCtrl.text.trim().isNotEmpty) {
-        height = int.tryParse(_heightCtrl.text.trim());
+      // 上传照片
+      for (final photo in _photos) {
+        try { await ref.read(uploadRepositoryProvider).uploadAvatar(photo); } catch (_) {}
       }
-
-      // 更新用户资料
+      // 更新资料
       await ref.read(profileRepositoryProvider).updateProfile(
         bio: _bioCtrl.text.trim(),
         jobTitle: _jobCtrl.text.trim(),
         lookingFor: _lookingFor,
-        height: height,
+        height: int.tryParse(_heightCtrl.text.trim()),
         education: _education,
-        zodiac: _zodiac,
-        city: _cityCtrl.text.trim().isNotEmpty ? _cityCtrl.text.trim() : null,
       );
-
-      // 调用完成onboarding接口
       await ref.read(profileRepositoryProvider).completeOnboarding();
-
-      // 刷新用户信息
       ref.invalidate(currentUserProvider);
-
       if (mounted) context.go('/discover');
     } on AppException catch (e) {
       if (!mounted) return;
@@ -135,492 +83,447 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
   }
 
+  void _next() {
+    if (_page == 0 && _photos.isEmpty) {
+      setState(() => _error = '请至少上传一张照片');
+      return;
+    }
+    setState(() => _error = null);
+    if (_page < 2) {
+      setState(() => _page++);
+      _pageCtrl.nextPage(duration: const Duration(milliseconds: 400), curve: Curves.easeOutCubic);
+    } else {
+      _finish();
+    }
+  }
+
+  void _back() {
+    if (_page > 0) {
+      setState(() { _page--; _error = null; });
+      _pageCtrl.previousPage(duration: const Duration(milliseconds: 400), curve: Curves.easeOutCubic);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    const pink = Color(0xFFFF4D88);
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 分段式彩色进度条
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Row(
-                children: List.generate(3, (i) => Expanded(
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    height: 5,
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(3),
-                      gradient: i <= _page
-                          ? const LinearGradient(
-                              colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
-                            )
-                          : null,
-                      color: i <= _page ? null : Theme.of(context).colorScheme.outlineVariant,
-                    ),
-                  ),
-                )),
-              ),
-            ),
-
-            // 步骤标题和副标题
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _stepTitles[_page],
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    _stepSubtitles[_page],
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // 页面内容
-            Expanded(
-              child: PageView(
-                controller: _pageCtrl,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  _PhotoPage(
-                    photos: _photos,
-                    onAdd: _pickPhoto,
-                    onRemove: (i) => setState(() => _photos.removeAt(i)),
-                  ),
-                  _BioPage(
-                    bioCtrl: _bioCtrl,
-                    jobCtrl: _jobCtrl,
-                    heightCtrl: _heightCtrl,
-                    cityCtrl: _cityCtrl,
-                    education: _education,
-                    zodiac: _zodiac,
-                    educationOptions: _educationOptions,
-                    zodiacOptions: _zodiacOptions,
-                    onEducationChanged: (v) => setState(() => _education = v),
-                    onZodiacChanged: (v) => setState(() => _zodiac = v),
-                  ),
-                  _PreferencePage(
-                    lookingFor: _lookingFor,
-                    onChanged: (v) => setState(() => _lookingFor = v),
-                  ),
-                ],
-              ),
-            ),
-
-            // 错误提示
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.error.withValues(alpha:0.08),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    _error!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 14),
-                  ),
-                ),
-              ),
-
-            // 底部按钮
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-              child: Row(
-                children: [
-                  if (_page > 0) ...[
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: _uploading ? null : () {
-                          setState(() { _page--; _error = null; });
-                          _pageCtrl.previousPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: pink,
-                          side: const BorderSide(color: pink),
-                          minimumSize: const Size(0, 52),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        child: const Text('上一步'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                  ],
-                  Expanded(
-                    flex: _page > 0 ? 2 : 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFFF4D88).withValues(alpha:0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: ElevatedButton(
-                        onPressed: _uploading ? null : () {
-                          if (_page == 0 && _photos.isEmpty) {
-                            setState(() => _error = '请至少上传一张照片');
-                            return;
-                          }
-                          setState(() => _error = null);
-                          if (_page < 2) {
-                            setState(() => _page++);
-                            _pageCtrl.nextPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          } else {
-                            _finish();
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          minimumSize: const Size(double.infinity, 52),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        child: _uploading
-                            ? const SizedBox(
-                                height: 20, width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white,
-                                ),
-                              )
-                            : Text(
-                                _page < 2 ? '继续' : '开启春水圈',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
-                              ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              cs.surface,
+              cs.surface,
+              const Color(0xFFFF4D88).withValues(alpha: 0.03),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-}
-
-/// 步骤1：照片上传页面
-class _PhotoPage extends StatelessWidget {
-  final List<File> photos;
-  final VoidCallback onAdd;
-  final void Function(int) onRemove;
-  const _PhotoPage({required this.photos, required this.onAdd, required this.onRemove});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10,
-        ),
-        itemCount: photos.length < 6 ? photos.length + 1 : photos.length,
-        itemBuilder: (ctx, i) {
-          // 添加按钮
-          if (i == photos.length && photos.length < 6) {
-            return GestureDetector(
-              onTap: onAdd,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF4D88).withValues(alpha:0.1),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: const Color(0xFFFF4D88).withValues(alpha:0.3),
-                    width: 1.5,
-                    strokeAlign: BorderSide.strokeAlignInside,
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add_photo_alternate_rounded,
-                      size: 32,
-                      color: const Color(0xFFFF4D88).withValues(alpha:0.6),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '添加',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: const Color(0xFFFF4D88).withValues(alpha:0.6),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-          // 已选照片
-          return Stack(
-            fit: StackFit.expand,
+        child: SafeArea(
+          child: Column(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.file(photos[i], fit: BoxFit.cover),
+              // 顶部：返回 + 进度条
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 24, 0),
+                child: Row(
+                  children: [
+                    if (_page > 0)
+                      IconButton(
+                        onPressed: _back,
+                        icon: Icon(Icons.arrow_back_ios_rounded, size: 20, color: cs.onSurface),
+                      )
+                    else
+                      const SizedBox(width: 48),
+                    const SizedBox(width: 8),
+                    // 进度条
+                    ...List.generate(3, (i) => Expanded(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 400),
+                        height: 3,
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(2),
+                          color: i <= _page
+                              ? const Color(0xFFFF4D88)
+                              : cs.outlineVariant.withValues(alpha: 0.3),
+                        ),
+                      ),
+                    )),
+                  ],
+                ),
               ),
-              // 第一张标记为主照片
-              if (i == 0)
-                Positioned(
-                  bottom: 6, left: 6,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF4D88),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Text(
-                      '主照片',
-                      style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
+
+              const SizedBox(height: 32),
+
+              // 步骤标题——大字、居左、有力量
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: Text(
+                      ['展示你的魅力', '让大家认识你', '你想遇见谁'][_page],
+                      key: ValueKey(_page),
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: cs.onSurface,
+                        height: 1.2,
+                      ),
                     ),
                   ),
                 ),
-              // 删除按钮
-              Positioned(
-                top: 4, right: 4,
-                child: GestureDetector(
-                  onTap: () => onRemove(i),
-                  child: Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: const BoxDecoration(
-                      color: Colors.black54,
-                      shape: BoxShape.circle,
+              ),
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    ['上传至少1张照片', '完善你的个人档案', '选择你感兴趣的'][_page],
+                    style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant, height: 1.4),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // 内容区
+              Expanded(
+                child: PageView(
+                  controller: _pageCtrl,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _buildPhotoStep(cs),
+                    _buildBioStep(cs),
+                    _buildPreferenceStep(cs),
+                  ],
+                ),
+              ),
+
+              // 错误
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  child: Text(_error!, style: TextStyle(color: cs.error, fontSize: 13)),
+                ),
+
+              // 底部按钮
+              Padding(
+                padding: EdgeInsets.fromLTRB(28, 12, 28, MediaQuery.of(context).padding.bottom + 16),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFFF4D88).withValues(alpha: 0.3),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
-                    child: const Icon(Icons.close, size: 14, color: Colors.white),
+                    child: ElevatedButton(
+                      onPressed: _uploading ? null : _next,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      child: _uploading
+                          ? const SizedBox(width: 22, height: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
+                          : Text(
+                              _page < 2 ? '继续' : '开始探索',
+                              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white),
+                            ),
+                    ),
                   ),
                 ),
               ),
             ],
-          );
-        },
+          ),
+        ),
       ),
     );
   }
-}
 
-/// 步骤2：个人信息填写页面（含新增字段）
-class _BioPage extends StatelessWidget {
-  final TextEditingController bioCtrl, jobCtrl, heightCtrl, cityCtrl;
-  final String? education;
-  final String? zodiac;
-  final List<String> educationOptions;
-  final List<String> zodiacOptions;
-  final void Function(String?) onEducationChanged;
-  final void Function(String?) onZodiacChanged;
-
-  const _BioPage({
-    required this.bioCtrl,
-    required this.jobCtrl,
-    required this.heightCtrl,
-    required this.cityCtrl,
-    required this.education,
-    required this.zodiac,
-    required this.educationOptions,
-    required this.zodiacOptions,
-    required this.onEducationChanged,
-    required this.onZodiacChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+  // ====== Step 1: 照片 ======
+  Widget _buildPhotoStep(ColorScheme cs) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 个人简介
-          TextField(
-            controller: bioCtrl,
-            decoration: const InputDecoration(
-              labelText: '个人简介',
-              hintText: '用几句话描述自己...',
+          // 主照片（大）
+          Expanded(
+            flex: 3,
+            child: GestureDetector(
+              onTap: _photos.isEmpty ? _pickPhoto : null,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: cs.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: _photos.isEmpty
+                        ? const Color(0xFFFF4D88).withValues(alpha: 0.3)
+                        : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: _photos.isEmpty
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 72,
+                            height: 72,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
+                            ),
+                            child: const Icon(Icons.camera_alt_rounded,
+                                color: Color(0xFFFF4D88), size: 32),
+                          ),
+                          const SizedBox(height: 16),
+                          Text('点击添加主照片',
+                              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 15, fontWeight: FontWeight.w500)),
+                        ],
+                      )
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(22),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.file(_photos[0], fit: BoxFit.cover),
+                            // 删除按钮
+                            Positioned(
+                              top: 12, right: 12,
+                              child: GestureDetector(
+                                onTap: () => setState(() => _photos.removeAt(0)),
+                                child: Container(
+                                  width: 32, height: 32,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.5),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.close_rounded, color: Colors.white, size: 18),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
             ),
+          ),
+          const SizedBox(height: 12),
+          // 小照片（横排）
+          SizedBox(
+            height: 80,
+            child: Row(
+              children: List.generate(5, (i) {
+                final photoIdx = i + 1;
+                final hasPhoto = photoIdx < _photos.length;
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: hasPhoto
+                        ? () => setState(() => _photos.removeAt(photoIdx))
+                        : (photoIdx <= _photos.length ? _pickPhoto : null),
+                    child: Container(
+                      margin: EdgeInsets.only(right: i < 4 ? 8 : 0),
+                      decoration: BoxDecoration(
+                        color: cs.surfaceContainerHigh,
+                        borderRadius: BorderRadius.circular(14),
+                        border: photoIdx <= _photos.length
+                            ? Border.all(color: const Color(0xFFFF4D88).withValues(alpha: 0.2))
+                            : null,
+                      ),
+                      child: hasPhoto
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(13),
+                              child: Image.file(_photos[photoIdx], fit: BoxFit.cover),
+                            )
+                          : photoIdx <= _photos.length
+                              ? Icon(Icons.add_rounded, color: cs.onSurfaceVariant, size: 22)
+                              : null,
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ====== Step 2: 资料 ======
+  Widget _buildBioStep(ColorScheme cs) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
+      child: Column(
+        children: [
+          _inputField(
+            controller: _bioCtrl,
+            label: '关于你',
+            hint: '写几句介绍自己...',
             maxLines: 3,
             maxLength: 200,
           ),
-          const SizedBox(height: 12),
-
-          // 职业
-          TextField(
-            controller: jobCtrl,
-            decoration: const InputDecoration(
-              labelText: '职业（可选）',
-              hintText: '产品经理、设计师...',
-            ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(child: _inputField(controller: _jobCtrl, label: '职业', hint: '你的职业')),
+              const SizedBox(width: 12),
+              SizedBox(
+                width: 100,
+                child: _inputField(controller: _heightCtrl, label: '身高', hint: 'cm', keyboardType: TextInputType.number),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
-
-          // 身高
-          TextField(
-            controller: heightCtrl,
-            decoration: const InputDecoration(
-              labelText: '身高',
-              hintText: '身高(cm)',
-              suffixText: 'cm',
-            ),
-            keyboardType: TextInputType.number,
+          // 学历选择——用胶囊chips代替dropdown
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text('学历', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ),
-          const SizedBox(height: 16),
-
-          // 学历选择
-          DropdownButtonFormField<String>(
-            value: education,
-            decoration: const InputDecoration(
-              labelText: '学历',
-            ),
-            hint: const Text('选择学历'),
-            items: educationOptions.map((e) => DropdownMenuItem(
-              value: e,
-              child: Text(e),
-            )).toList(),
-            onChanged: onEducationChanged,
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _educationOptions.map((e) {
+              final selected = _education == e;
+              return GestureDetector(
+                onTap: () => setState(() => _education = selected ? null : e),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? const Color(0xFFFF4D88).withValues(alpha: 0.12)
+                        : Theme.of(context).colorScheme.surfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: selected ? const Color(0xFFFF4D88) : Theme.of(context).colorScheme.outlineVariant,
+                      width: selected ? 1.5 : 0.5,
+                    ),
+                  ),
+                  child: Text(e, style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                    color: selected ? const Color(0xFFFF4D88) : Theme.of(context).colorScheme.onSurface,
+                  )),
+                ),
+              );
+            }).toList(),
           ),
-          const SizedBox(height: 16),
-
-          // 星座选择
-          DropdownButtonFormField<String>(
-            value: zodiac,
-            decoration: const InputDecoration(
-              labelText: '星座',
-            ),
-            hint: const Text('选择星座'),
-            items: zodiacOptions.map((e) => DropdownMenuItem(
-              value: e,
-              child: Text(e),
-            )).toList(),
-            onChanged: onZodiacChanged,
-          ),
-          const SizedBox(height: 16),
-
-          // 城市
-          TextField(
-            controller: cityCtrl,
-            decoration: const InputDecoration(
-              labelText: '城市',
-              hintText: '你所在的城市',
-            ),
-          ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
         ],
       ),
     );
   }
-}
 
-/// 步骤3：偏好设置页面
-class _PreferencePage extends StatelessWidget {
-  final String lookingFor;
-  final void Function(String) onChanged;
-  const _PreferencePage({required this.lookingFor, required this.onChanged});
+  Widget _inputField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    int maxLines = 1,
+    int? maxLength,
+    TextInputType? keyboardType,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          maxLines: maxLines,
+          maxLength: maxLength,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            hintText: hint,
+            counterText: '',
+          ),
+        ),
+      ],
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    const pink = Color(0xFFFF4D88);
+  // ====== Step 3: 偏好 ======
+  Widget _buildPreferenceStep(ColorScheme cs) {
     final options = [
-      ('everyone', '所有人', Icons.people_rounded),
-      ('male', '男生', Icons.male_rounded),
-      ('female', '女生', Icons.female_rounded),
+      ('everyone', '所有人', '不限性别'),
+      ('female', '女生', '只看女生'),
+      ('male', '男生', '只看男生'),
     ];
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 28),
       child: Column(
-        children: [
-          const SizedBox(height: 8),
-          ...options.map((opt) => GestureDetector(
-            onTap: () => onChanged(opt.$1),
+        children: options.map((opt) {
+          final selected = _lookingFor == opt.$1;
+          return GestureDetector(
+            onTap: () => setState(() => _lookingFor = opt.$1),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.only(bottom: 14),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              duration: const Duration(milliseconds: 250),
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               decoration: BoxDecoration(
-                color: lookingFor == opt.$1
-                    ? const Color(0xFFFF4D88).withValues(alpha:0.1)
-                    : Theme.of(context).colorScheme.surface,
+                color: selected
+                    ? const Color(0xFFFF4D88).withValues(alpha: 0.08)
+                    : cs.surfaceContainerHigh,
+                borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: lookingFor == opt.$1 ? pink : Theme.of(context).colorScheme.outlineVariant,
-                  width: lookingFor == opt.$1 ? 2 : 1,
+                  color: selected ? const Color(0xFFFF4D88) : cs.outlineVariant.withValues(alpha: 0.3),
+                  width: selected ? 2 : 0.5,
                 ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: lookingFor == opt.$1
-                    ? [
-                        BoxShadow(
-                          color: pink.withValues(alpha:0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : null,
               ),
-              child: Row(children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: lookingFor == opt.$1
-                        ? pink.withValues(alpha:0.1)
-                        : Theme.of(context).colorScheme.surfaceContainerHighest,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(opt.$2, style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w700,
+                          color: selected ? const Color(0xFFFF4D88) : cs.onSurface,
+                        )),
+                        const SizedBox(height: 2),
+                        Text(opt.$3, style: TextStyle(
+                          fontSize: 13, color: cs.onSurfaceVariant,
+                        )),
+                      ],
+                    ),
                   ),
-                  child: Icon(
-                    opt.$3,
-                    color: lookingFor == opt.$1 ? pink : Theme.of(context).colorScheme.onSurfaceVariant,
-                    size: 24,
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 24, height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: selected ? const Color(0xFFFF4D88) : Colors.transparent,
+                      border: Border.all(
+                        color: selected ? const Color(0xFFFF4D88) : cs.outlineVariant,
+                        width: 2,
+                      ),
+                    ),
+                    child: selected
+                        ? const Icon(Icons.check_rounded, color: Colors.white, size: 16)
+                        : null,
                   ),
-                ),
-                const SizedBox(width: 16),
-                Text(opt.$2, style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: lookingFor == opt.$1 ? pink : Theme.of(context).colorScheme.onSurface,
-                )),
-                const Spacer(),
-                if (lookingFor == opt.$1)
-                  const Icon(Icons.check_circle_rounded, color: pink, size: 24),
-              ]),
+                ],
+              ),
             ),
-          )),
-        ],
+          );
+        }).toList(),
       ),
     );
   }
