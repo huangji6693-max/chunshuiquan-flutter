@@ -80,6 +80,14 @@ class AuthRepository {
     return UserProfile.fromJson(data);
   }
 
+  Future<void> deleteAccount() async {
+    try {
+      await _dio.delete('/api/users/me');
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   AppException _handleError(DioException e) {
     if (e.response?.statusCode == 401) return AppException.unauthorized();
     if (e.response?.statusCode == 400) {

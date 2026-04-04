@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../core/network/dio_client.dart';
+import '../data/call_repository.dart';
 
 class VoiceCallScreen extends ConsumerStatefulWidget {
   final String matchId;
@@ -55,20 +55,15 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
 
     try {
       // 发送通话邀请推送给对方
-      final dio = ref.read(dioProvider);
+      final callRepo = ref.read(callRepositoryProvider);
       try {
-        await dio.post('/api/agora/invite',
-            queryParameters: {'matchId': widget.matchId});
+        await callRepo.sendInvite(widget.matchId);
       } catch (_) {
         // 通话邀请推送失败不阻塞，对方可能仍能接听
       }
 
       // 从后端获取 Agora token
-      final resp = await dio.get(
-        '/api/agora/token',
-        queryParameters: {'channelName': widget.matchId},
-      );
-      final data = resp.data as Map<String, dynamic>;
+      final data = await callRepo.getAgoraToken(widget.matchId);
       final token = data['token'] as String;
       final appId = data['appId'] as String;
       final uid = (data['uid'] as num).toInt();

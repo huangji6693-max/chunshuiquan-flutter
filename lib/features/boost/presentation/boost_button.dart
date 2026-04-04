@@ -2,14 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
-import '../../../core/network/dio_client.dart';
+import '../data/boost_repository.dart';
+import '../../../core/errors/app_exception.dart';
 
 /// Boost 状态 Provider
 final boostStatusProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
-  final dio = ref.watch(dioProvider);
-  final res = await dio.get('/api/boost/status');
-  return res.data as Map<String, dynamic>;
+  return ref.watch(boostRepositoryProvider).getStatus();
 });
 
 /// 发现页的曝光加速按钮 — 火箭动画
@@ -109,8 +107,7 @@ class _BoostButtonState extends ConsumerState<BoostButton>
   Future<void> _handleBoost() async {
     HapticFeedback.heavyImpact();
     try {
-      final dio = ref.read(dioProvider);
-      await dio.post('/api/boost');
+      await ref.read(boostRepositoryProvider).activate();
       ref.invalidate(boostStatusProvider);
 
       if (mounted) {
@@ -130,10 +127,9 @@ class _BoostButtonState extends ConsumerState<BoostButton>
           ),
         );
       }
-    } on DioException catch (e) {
+    } catch (e) {
       if (mounted) {
-        final msg = (e.response?.data as Map<String, dynamic>?)?['error'] ??
-            '激活失败';
+        final msg = e is AppException ? e.message : '激活失败';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(msg), backgroundColor: Theme.of(context).colorScheme.error),
         );

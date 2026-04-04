@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
 import 'package:go_router/go_router.dart';
 import 'legal_page.dart';
 import '../../auth/data/auth_repository.dart';
@@ -9,7 +8,6 @@ import '../../coins/presentation/coin_shop_screen.dart';
 import '../../vip/presentation/vip_screen.dart';
 import '../../gifts/presentation/gift_history_screen.dart';
 import '../../verification/presentation/verification_screen.dart';
-import '../../../core/network/dio_client.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../shared/theme/theme_provider.dart';
 import '../../../shared/widgets/page_transitions.dart';
@@ -333,15 +331,9 @@ class SettingsScreen extends ConsumerWidget {
     if (confirmed != true || !context.mounted) return;
 
     try {
-      await ref.read(dioProvider).delete('/api/users/me');
+      await ref.read(authRepositoryProvider).deleteAccount();
       await ref.read(authRepositoryProvider).logout();
       if (context.mounted) context.go('/auth/login');
-    } on DioException catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('删除失败: ${e.message}')),
-        );
-      }
     } on AppException catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

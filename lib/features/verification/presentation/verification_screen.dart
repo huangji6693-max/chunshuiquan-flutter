@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:dio/dio.dart';
-import '../../../core/network/dio_client.dart';
+import '../data/verification_repository.dart';
+import '../../../core/errors/app_exception.dart';
 import '../../profile/data/upload_repository.dart';
 
 final verificationStatusProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
-  final dio = ref.watch(dioProvider);
-  final res = await dio.get('/api/verification/status');
-  return res.data as Map<String, dynamic>;
+  return ref.watch(verificationRepositoryProvider).getStatus();
 });
 
 class VerificationScreen extends ConsumerStatefulWidget {
@@ -312,17 +310,16 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
   Future<void> _submit() async {
     setState(() => _submitting = true);
     try {
-      final dio = ref.read(dioProvider);
-      await dio.post('/api/verification/submit', data: {
-        'realName': _nameCtrl.text.trim(),
-        'idPhotoUrl': _idPhotoUrl,
-        'selfieUrl': _selfieUrl,
-      });
+      await ref.read(verificationRepositoryProvider).submit(
+        realName: _nameCtrl.text.trim(),
+        idPhotoUrl: _idPhotoUrl!,
+        selfieUrl: _selfieUrl!,
+      );
       HapticFeedback.mediumImpact();
       ref.invalidate(verificationStatusProvider);
-    } on DioException catch (e) {
+    } catch (e) {
       if (mounted) {
-        final msg = (e.response?.data as Map<String, dynamic>?)?['error'] ?? '提交失败';
+        final msg = e is AppException ? e.message : '提交失败';
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(msg), backgroundColor: Theme.of(context).colorScheme.error));
       }
