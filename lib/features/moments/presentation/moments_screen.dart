@@ -3,52 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../data/moment_repository.dart';
-import 'create_moment_screen.dart';
+import '../providers/moments_provider.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import '../../../shared/widgets/animated_empty_state.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import '../../../shared/widgets/page_transitions.dart';
-
-final momentsTimelineProvider =
-    AutoDisposeAsyncNotifierProvider<MomentsNotifier, List<MomentItem>>(MomentsNotifier.new);
-
-class MomentsNotifier extends AutoDisposeAsyncNotifier<List<MomentItem>> {
-  int _page = 0;
-  bool _hasMore = true;
-  bool _loadingMore = false;
-
-  bool get hasMore => _hasMore;
-
-  @override
-  Future<List<MomentItem>> build() async {
-    _page = 0;
-    _hasMore = true;
-    return _fetch(0);
-  }
-
-  Future<List<MomentItem>> _fetch(int page) async {
-    final items = await ref.read(momentRepositoryProvider).getTimeline(page: page);
-    if (items.length < 20) _hasMore = false;
-    return items;
-  }
-
-  Future<void> loadMore() async {
-    if (_loadingMore || !_hasMore) return;
-    _loadingMore = true;
-    try {
-      _page++;
-      final older = await _fetch(_page);
-      final current = state.valueOrNull ?? [];
-      final existingIds = current.map((m) => m.id).toSet();
-      final newItems = older.where((m) => !existingIds.contains(m.id)).toList();
-      state = AsyncData([...current, ...newItems]);
-    } catch (_) {
-      _page--;
-    } finally {
-      _loadingMore = false;
-    }
-  }
-}
+import 'package:go_router/go_router.dart';
 
 class MomentsScreen extends ConsumerWidget {
   const MomentsScreen({super.key});
@@ -93,8 +52,7 @@ class MomentsScreen extends ConsumerWidget {
               child: const Icon(Icons.add, color: Colors.white, size: 20),
             ),
             onPressed: () async {
-              final created = await Navigator.push<bool>(context,
-                  fadeSlideRoute<bool>(const CreateMomentScreen()));
+              final created = await context.push<bool>('/moments/create');
               if (created == true) ref.invalidate(momentsTimelineProvider);
             },
           ),
@@ -112,8 +70,7 @@ class MomentsScreen extends ConsumerWidget {
                 title: '分享你的故事',
                 subtitle: '一张照片、一句心情，让Ta看到真实的你',
                 action: TextButton(
-                  onPressed: () => Navigator.push(context,
-                      fadeSlideRoute(const CreateMomentScreen())),
+                  onPressed: () => context.push('/moments/create'),
                   child: const Text('发布动态'),
                 ),
               );

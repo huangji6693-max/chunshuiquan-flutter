@@ -7,7 +7,8 @@ import '../shared/widgets/network_aware.dart';
 import '../core/network/dio_client.dart';
 import '../core/services/heartbeat_service.dart';
 import '../core/network/websocket_service.dart';
-import '../features/notifications/presentation/notifications_screen.dart';
+import '../features/notifications/providers/notifications_provider.dart';
+import '../features/notifications/domain/notification_item.dart';
 import 'router.dart';
 
 class ChunShuiQuanApp extends ConsumerStatefulWidget {

@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/gift_repository.dart';
 import '../domain/gift.dart';
+import 'package:go_router/go_router.dart';
 import '../../coins/presentation/coin_shop_screen.dart';
-import '../../../shared/widgets/page_transitions.dart';
 
 /// 礼物列表 Provider
 final giftsProvider = FutureProvider.autoDispose<List<Gift>>((ref) {
@@ -101,10 +101,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                 GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      fadeSlideRoute(const CoinShopScreen()),
-                    );
+                    context.push('/coins');
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(

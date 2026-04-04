@@ -4,8 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../data/likes_repository.dart';
-import '../../vip/presentation/vip_screen.dart';
-import '../../../shared/widgets/page_transitions.dart';
+import 'package:go_router/go_router.dart';
 
 final likesProvider = FutureProvider.autoDispose<LikesResult>((ref) {
   return ref.watch(likesRepositoryProvider).getWhoLikesMe();
@@ -85,8 +84,7 @@ class LikesScreen extends ConsumerWidget {
               // 非VIP提示
               if (!result.isVip)
                 GestureDetector(
-                  onTap: () => Navigator.push(context,
-                      fadeSlideRoute(const VipScreen())),
+                  onTap: () => context.push('/vip'),
                   child: Container(
                     margin: const EdgeInsets.all(16),
                     padding: const EdgeInsets.all(16),

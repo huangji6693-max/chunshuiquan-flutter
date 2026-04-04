@@ -2,15 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'legal_page.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../coins/presentation/coin_shop_screen.dart';
-import '../../vip/presentation/vip_screen.dart';
-import '../../gifts/presentation/gift_history_screen.dart';
-import '../../verification/presentation/verification_screen.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../shared/theme/theme_provider.dart';
-import '../../../shared/widgets/page_transitions.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -31,8 +26,7 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GestureDetector(
-              onTap: () => Navigator.push(context,
-                  fadeSlideRoute(const CoinShopScreen())),
+              onTap: () => context.push('/coins'),
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -127,8 +121,7 @@ class SettingsScreen extends ConsumerWidget {
                     icon: Icons.workspace_premium,
                     label: 'VIP会员',
                     gradient: const [Color(0xFFFFD700), Color(0xFFFFA000)],
-                    onTap: () => Navigator.push(context,
-                        fadeSlideRoute(const VipScreen())),
+                    onTap: () => context.push('/vip'),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -137,8 +130,7 @@ class SettingsScreen extends ConsumerWidget {
                     icon: Icons.card_giftcard,
                     label: '礼物记录',
                     gradient: const [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
-                    onTap: () => Navigator.push(context,
-                        fadeSlideRoute(const GiftHistoryScreen())),
+                    onTap: () => context.push('/gifts/history'),
                   ),
                 ),
               ],
@@ -158,8 +150,7 @@ class SettingsScreen extends ConsumerWidget {
             icon: Icons.verified_user,
             title: '实名认证',
             subtitle: '获取蓝色徽章，提升信任度',
-            onTap: () => Navigator.push(context,
-                fadeSlideRoute(const VerificationScreen())),
+            onTap: () => context.push('/verification'),
           ),
           _SettingsTile(
             icon: Icons.shield_outlined,
@@ -231,20 +222,12 @@ class SettingsScreen extends ConsumerWidget {
           _SettingsTile(
             icon: Icons.privacy_tip_outlined,
             title: '隐私政策',
-            onTap: () => Navigator.push(context,
-                fadeSlideRoute(const LegalPage(
-                  title: '隐私政策',
-                  content: PrivacyContent.privacy,
-                ))),
+            onTap: () => context.push('/legal/privacy'),
           ),
           _SettingsTile(
             icon: Icons.description_outlined,
             title: '用户协议',
-            onTap: () => Navigator.push(context,
-                fadeSlideRoute(const LegalPage(
-                  title: '用户协议',
-                  content: PrivacyContent.terms,
-                ))),
+            onTap: () => context.push('/legal/terms'),
           ),
           _SettingsTile(
             icon: Icons.info_outline,

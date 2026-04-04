@@ -1,65 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-
-/// 通知类型
-enum NotificationType {
-  match,   // 匹配通知
-  message, // 消息通知
-}
-
-/// 通知数据模型
-class NotificationItem {
-  final String id;
-  final NotificationType type;
-  final String title;        // 描述文字
-  final String? avatarUrl;   // 发送者头像
-  final String senderName;   // 发送者名字
-  final DateTime createdAt;  // 创建时间
-  final bool isRead;         // 是否已读
-
-  const NotificationItem({
-    required this.id,
-    required this.type,
-    required this.title,
-    this.avatarUrl,
-    required this.senderName,
-    required this.createdAt,
-    this.isRead = false,
-  });
-}
-
-/// 本地通知列表Provider（从FCM消息中收集）
-final notificationsProvider = StateNotifierProvider<NotificationsNotifier, List<NotificationItem>>(
-  (ref) => NotificationsNotifier(),
-);
-
-class NotificationsNotifier extends StateNotifier<List<NotificationItem>> {
-  NotificationsNotifier() : super([]);
-
-  /// 添加一条通知
-  void addNotification(NotificationItem item) {
-    state = [item, ...state];
-  }
-
-  /// 标记全部已读
-  void markAllRead() {
-    state = state.map((n) => NotificationItem(
-      id: n.id,
-      type: n.type,
-      title: n.title,
-      avatarUrl: n.avatarUrl,
-      senderName: n.senderName,
-      createdAt: n.createdAt,
-      isRead: true,
-    )).toList();
-  }
-
-  /// 清空所有通知
-  void clearAll() {
-    state = [];
-  }
-}
+import '../domain/notification_item.dart';
+import '../providers/notifications_provider.dart';
 
 /// 通知中心页面
 class NotificationsScreen extends ConsumerStatefulWidget {

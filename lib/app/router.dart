@@ -21,8 +21,34 @@ import '../features/likes/presentation/likes_screen.dart';
 import '../features/moments/presentation/moments_screen.dart';
 import '../features/moments/presentation/create_moment_screen.dart';
 import '../features/verification/presentation/verification_screen.dart';
+import '../features/settings/presentation/legal_page.dart';
+import '../features/profile/presentation/user_detail_screen.dart';
+import '../features/discover/domain/user_profile.dart';
 import '../core/storage/token_manager.dart';
 import '../shared/widgets/main_scaffold.dart';
+
+/// 统一 fadeSlide 过渡页面
+CustomTransitionPage<T> _fadeSlide<T>(GoRouterState state, Widget child) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 300),
+    reverseTransitionDuration: const Duration(milliseconds: 250),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+      return FadeTransition(
+        opacity: curved,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.04),
+            end: Offset.zero,
+          ).animate(curved),
+          child: child,
+        ),
+      );
+    },
+  );
+}
 
 final routerProvider = Provider<GoRouter>((ref) {
   final tokenManager = ref.watch(tokenManagerProvider);
@@ -111,35 +137,53 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/notifications', builder: (_, __) => const NotificationsScreen()),
           GoRoute(
             path: '/chat/:matchId',
-            builder: (_, state) {
+            pageBuilder: (_, state) {
               final matchId = state.pathParameters['matchId']!;
               final extra = state.extra as Map<String, String?>? ?? {};
-              return ChatScreen(
+              return _fadeSlide(state, ChatScreen(
                 matchId: matchId,
                 partnerName: extra['partnerName'],
                 partnerAvatarUrl: extra['partnerAvatarUrl'],
-              );
+              ));
             },
           ),
-          GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
-          GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
-          GoRoute(path: '/coins', builder: (_, __) => const CoinShopScreen()),
-          GoRoute(path: '/vip', builder: (_, __) => const VipScreen()),
-          GoRoute(path: '/gifts/history', builder: (_, __) => const GiftHistoryScreen()),
-          GoRoute(path: '/likes', builder: (_, __) => const LikesScreen()),
+          GoRoute(path: '/profile', pageBuilder: (_, state) => _fadeSlide(state, const ProfileScreen())),
+          GoRoute(path: '/settings', pageBuilder: (_, state) => _fadeSlide(state, const SettingsScreen())),
+          GoRoute(path: '/coins', pageBuilder: (_, state) => _fadeSlide(state, const CoinShopScreen())),
+          GoRoute(path: '/vip', pageBuilder: (_, state) => _fadeSlide(state, const VipScreen())),
+          GoRoute(path: '/gifts/history', pageBuilder: (_, state) => _fadeSlide(state, const GiftHistoryScreen())),
+          GoRoute(path: '/likes', pageBuilder: (_, state) => _fadeSlide(state, const LikesScreen())),
           GoRoute(path: '/moments', builder: (_, __) => const MomentsScreen()),
-          GoRoute(path: '/moments/create', builder: (_, __) => const CreateMomentScreen()),
-          GoRoute(path: '/verification', builder: (_, __) => const VerificationScreen()),
+          GoRoute(path: '/moments/create', pageBuilder: (_, state) => _fadeSlide(state, const CreateMomentScreen())),
+          GoRoute(path: '/verification', pageBuilder: (_, state) => _fadeSlide(state, const VerificationScreen())),
           GoRoute(
             path: '/call/:matchId',
-            builder: (_, state) {
+            pageBuilder: (_, state) {
               final matchId = state.pathParameters['matchId']!;
               final extra = state.extra as Map<String, String?>? ?? {};
-              return VoiceCallScreen(
+              return _fadeSlide(state, VoiceCallScreen(
                 matchId: matchId,
                 partnerName: extra['partnerName'] ?? '',
                 partnerAvatarUrl: extra['partnerAvatarUrl'],
-              );
+              ));
+            },
+          ),
+          GoRoute(
+            path: '/legal/:type',
+            pageBuilder: (_, state) {
+              final type = state.pathParameters['type']!;
+              final isPrivacy = type == 'privacy';
+              return _fadeSlide(state, LegalPage(
+                title: isPrivacy ? '隐私政策' : '用户协议',
+                content: isPrivacy ? PrivacyContent.privacy : PrivacyContent.terms,
+              ));
+            },
+          ),
+          GoRoute(
+            path: '/user-detail',
+            pageBuilder: (_, state) {
+              final user = state.extra as UserProfile;
+              return _fadeSlide(state, UserDetailScreen(user: user));
             },
           ),
         ],

@@ -7,8 +7,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../../discover/data/discover_repository.dart';
 import '../../discover/domain/user_profile.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
-import '../../profile/presentation/user_detail_screen.dart';
-import '../../../shared/widgets/page_transitions.dart';
+import 'package:go_router/go_router.dart';
 
 /// 附近用户列表 Provider
 final nearbyUsersProvider = FutureProvider.autoDispose.family<List<UserProfile>, double>(
@@ -403,10 +402,7 @@ class _NearbyCard extends StatelessWidget {
   }
 
   void _openProfile(BuildContext context) {
-    Navigator.push(
-      context,
-      fadeSlideRoute(UserDetailScreen(user: user)),
-    );
+    context.push('/user-detail', extra: user);
   }
 }
 
@@ -420,10 +416,7 @@ class _NearbyListTile extends StatelessWidget {
     final avatar = (user.avatarUrls.isNotEmpty) ? user.avatarUrls.first : null;
 
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        fadeSlideRoute(UserDetailScreen(user: user)),
-      ),
+      onTap: () => context.push('/user-detail', extra: user),
       child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(

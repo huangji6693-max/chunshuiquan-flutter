@@ -5,7 +5,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../../call/presentation/voice_call_screen.dart';
+import 'package:go_router/go_router.dart';
 import '../../gifts/presentation/gift_panel.dart';
 import '../../gifts/presentation/gift_animation_overlay.dart';
 import '../providers/messages_provider.dart';
@@ -14,7 +14,6 @@ import '../../../core/network/websocket_service.dart';
 import '../../profile/data/upload_repository.dart';
 import '../data/message_repository.dart';
 import '../../../core/network/dio_client.dart';
-import '../../../shared/widgets/page_transitions.dart';
 
 /// 聊天页 - 升级版UI
 /// 精致AppBar + 自定义气泡颜色 + 图片发送 + 在线状态
@@ -270,14 +269,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           color: Color(0xFFFF4D88), size: 20),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        fadeSlideRoute(VoiceCallScreen(
-                          matchId: widget.matchId,
-                          partnerName: widget.partnerName ?? '对方',
-                          partnerAvatarUrl: widget.partnerAvatarUrl,
-                        )),
-                      );
+                      context.push('/call/${widget.matchId}', extra: {
+                        'partnerName': widget.partnerName ?? '对方',
+                        'partnerAvatarUrl': widget.partnerAvatarUrl,
+                      });
                     },
                   ),
 
