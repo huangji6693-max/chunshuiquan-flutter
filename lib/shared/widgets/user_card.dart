@@ -25,7 +25,7 @@ class _UserCardState extends State<UserCard> {
     final hasMultiplePhotos = photos.length > 1;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -82,6 +82,22 @@ class _UserCardState extends State<UserCard> {
                 ),
               ),
 
+            // 顶部暗角——电影感vignette
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.center,
+                    radius: 0.85,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.15),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             // 顶部照片进度条指示器
             if (hasMultiplePhotos)
               Positioned(
@@ -132,22 +148,41 @@ class _UserCardState extends State<UserCard> {
   Widget _buildPhoto(List<String> photos) {
     final url = photos[_currentPhotoIndex.clamp(0, photos.length - 1)];
     if (url.isEmpty) {
+      // 无照片时——深色质感背景+居中首字母（不用彩色渐变避免塑料感）
       return Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+        color: const Color(0xFF1A1A20),
         child: Center(
-          child: Text(
-            widget.user.name.isNotEmpty ? widget.user.name[0] : '?',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 80,
-              fontWeight: FontWeight.w700,
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.08),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                ),
+                child: Center(
+                  child: Text(
+                    widget.user.name.isNotEmpty ? widget.user.name[0].toUpperCase() : '?',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.6),
+                      fontSize: 32,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                '暂无照片',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.3),
+                  fontSize: 13,
+                ),
+              ),
+            ],
           ),
         ),
       );
