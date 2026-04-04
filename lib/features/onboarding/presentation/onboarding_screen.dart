@@ -143,10 +143,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
+                      const ['\u{1F4F7}', '\u{2728}', '\u{1F495}'][_page],
+                      style: const TextStyle(fontSize: 32),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
                       const ['添加照片', '介绍自己', '想遇见谁？'][_page],
                       style: TextStyle(
-                          fontSize: 26, fontWeight: FontWeight.w800,
-                          color: cs.onSurface, height: 1.15),
+                          fontSize: 30, fontWeight: FontWeight.w800,
+                          color: cs.onSurface, letterSpacing: -0.5, height: 1.15),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -156,7 +161,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         '最后一步就完成了',
                       ][_page],
                       style: TextStyle(
-                          fontSize: 14, color: cs.onSurfaceVariant),
+                          fontSize: 15, color: cs.onSurfaceVariant),
                     ),
                   ],
                 ),

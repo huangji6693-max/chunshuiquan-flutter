@@ -54,7 +54,24 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
             floating: true,
             
             surfaceTintColor: Colors.transparent,
-            title: const Text('附近的人'),
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFF6B9D), Color(0xFFFF4D88)],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 14),
+                ),
+                const SizedBox(width: 10),
+                const Text('附近的人'),
+              ],
+            ),
             actions: [
               // 切换视图
               IconButton(

@@ -26,7 +26,24 @@ class MatchesScreen extends ConsumerWidget {
         
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        title: const Text('匹配'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFFF6B9D), Color(0xFFFF4D88)],
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 14),
+            ),
+            const SizedBox(width: 10),
+            const Text('匹配'),
+          ],
+        ),
       ),
       body: state.when(
         loading: () => const MatchesSkeleton(),
