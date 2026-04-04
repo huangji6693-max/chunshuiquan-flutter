@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
@@ -105,14 +106,20 @@ class _UserCardState extends State<UserCard> {
                 ),
               ),
 
-            // 底部渐变遮罩 + 信息
+            // 底部毛玻璃面板 + 信息
             Positioned(
-              bottom: 0,
               left: 0,
               right: 0,
+              bottom: 0,
               child: GestureDetector(
                 onTap: () => setState(() => _expanded = !_expanded),
-                child: _buildInfoOverlay(user),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                    child: _buildInfoOverlay(user),
+                  ),
+                ),
               ),
             ),
           ],
@@ -190,21 +197,15 @@ class _UserCardState extends State<UserCard> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            Colors.transparent,
-            Colors.black.withValues(alpha: 0.08),
-            Colors.black.withValues(alpha: 0.3),
-            Colors.black.withValues(alpha: 0.6),
-            Colors.black.withValues(alpha: _expanded ? 0.9 : 0.82),
-          ],
-          stops: const [0.0, 0.2, 0.35, 0.5, 0.7, 1.0],
+        color: Colors.black.withValues(alpha: 0.3),
+        border: Border(
+          top: BorderSide(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 0.5,
+          ),
         ),
       ),
-      padding: EdgeInsets.fromLTRB(20, _expanded ? 40 : 60, 20, 24),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

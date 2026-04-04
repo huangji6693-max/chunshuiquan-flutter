@@ -138,30 +138,57 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 250),
-                child: Column(
+                child: Row(
                   key: ValueKey(_page),
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      const ['\u{1F4F7}', '\u{2728}', '\u{1F495}'][_page],
-                      style: const TextStyle(fontSize: 32),
+                    // 步骤数字 -- 毛玻璃圆形
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: pink.withValues(alpha: 0.15),
+                        border: Border.all(
+                          color: pink.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${_page + 1}',
+                          style: const TextStyle(
+                            color: Color(0xFFFF4D88),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      const ['添加照片', '介绍自己', '想遇见谁？'][_page],
-                      style: TextStyle(
-                          fontSize: 30, fontWeight: FontWeight.w800,
-                          color: cs.onSurface, letterSpacing: -0.5, height: 1.15),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      const [
-                        '好照片让匹配率翻倍',
-                        '真实的你最有魅力',
-                        '最后一步就完成了',
-                      ][_page],
-                      style: TextStyle(
-                          fontSize: 15, color: cs.onSurfaceVariant),
+                    const SizedBox(width: 14),
+                    // 标题+副标题
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            const ['添加照片', '介绍自己', '想遇见谁？'][_page],
+                            style: TextStyle(
+                                fontSize: 28, fontWeight: FontWeight.w800,
+                                color: cs.onSurface, height: 1.15, letterSpacing: -0.5),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            const [
+                              '好照片让匹配率翻倍',
+                              '真实的你最有魅力',
+                              '最后一步就完成了',
+                            ][_page],
+                            style: TextStyle(
+                                fontSize: 15, color: cs.onSurfaceVariant),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

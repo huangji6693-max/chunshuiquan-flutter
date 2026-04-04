@@ -730,23 +730,18 @@ class _ActionButtonState extends State<_ActionButton>
             width: widget.size,
             height: widget.size,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.95),
+              color: Colors.white.withValues(alpha: 0.1),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: widget.color.withValues(alpha: 0.30),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+                  color: widget.color.withValues(alpha: 0.2),
+                  blurRadius: 20,
+                  spreadRadius: 2,
                 ),
               ],
               border: Border.all(
-                color: widget.color.withValues(alpha: 0.25),
-                width: 2,
+                color: Colors.white.withValues(alpha: 0.15),
+                width: 1,
               ),
             ),
             child: Icon(widget.icon,
@@ -813,22 +808,17 @@ class _SuperLikeBtnState extends State<_SuperLikeBtn>
             height: _size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.95),
+              color: Colors.white.withValues(alpha: 0.1),
               boxShadow: [
                 BoxShadow(
-                  color: _blue.withValues(alpha: 0.35),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+                  color: _blue.withValues(alpha: 0.2),
+                  blurRadius: 20,
+                  spreadRadius: 2,
                 ),
               ],
               border: Border.all(
-                color: _blue.withValues(alpha: 0.25),
-                width: 2,
+                color: Colors.white.withValues(alpha: 0.15),
+                width: 1,
               ),
             ),
             child: const Icon(Icons.star_rounded,

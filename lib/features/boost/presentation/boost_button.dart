@@ -81,25 +81,17 @@ class _BoostButtonState extends ConsumerState<BoostButton>
               height: 44,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.95),
+                color: Colors.white.withValues(alpha: 0.1),
                 boxShadow: [
                   BoxShadow(
-                    color: (_active
-                            ? const Color(0xFF7C4DFF)
-                            : const Color(0xFF7C4DFF))
-                        .withValues(alpha: 0.35),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
+                    color: const Color(0xFF7C4DFF).withValues(alpha: 0.2),
+                    blurRadius: 20,
+                    spreadRadius: 2,
                   ),
                 ],
                 border: Border.all(
-                  color: const Color(0xFF7C4DFF).withValues(alpha: 0.25),
-                  width: 2,
+                  color: Colors.white.withValues(alpha: 0.15),
+                  width: 1,
                 ),
               ),
               child: Icon(
