@@ -9,7 +9,9 @@ import 'core/network/session_provider.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
     await Firebase.initializeApp();
-  } catch (_) {}
+  } catch (_) {
+    // 后台handler中Firebase初始化失败静默，不影响主进程
+  }
 }
 
 void main() async {

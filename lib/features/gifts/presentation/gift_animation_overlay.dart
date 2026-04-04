@@ -109,6 +109,7 @@ class _GiftAnimationWidgetState extends State<_GiftAnimationWidget>
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
     return _AnimBuilder(
       listenable: _mainController,
       builder: (context, _) {
@@ -127,13 +128,13 @@ class _GiftAnimationWidgetState extends State<_GiftAnimationWidget>
                 listenable: _particleController,
                 builder: (context, _) {
                   return CustomPaint(
-                    size: MediaQuery.of(context).size,
+                    size: mq.size,
                     painter: _ParticlePainter(
                       particles: _particles,
                       progress: _particleController.value,
                       center: Offset(
-                        MediaQuery.of(context).size.width / 2,
-                        MediaQuery.of(context).size.height / 2,
+                        mq.size.width / 2,
+                        mq.size.height / 2,
                       ),
                     ),
                   );

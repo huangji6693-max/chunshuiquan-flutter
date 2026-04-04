@@ -422,11 +422,11 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                               ),
                             ),
                           ] else ...[
-                            if (user.city != null && user.city!.isNotEmpty)
+                            if (user.city?.isNotEmpty == true)
                               _DetailTag(
                                   icon: Icons.location_on_outlined,
                                   text: user.city!),
-                            if (user.jobTitle != null && user.jobTitle!.isNotEmpty)
+                            if (user.jobTitle?.isNotEmpty == true)
                               _DetailTag(
                                   icon: Icons.work_outline,
                                   text: user.jobTitle!),
@@ -582,16 +582,16 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
     if (user.height != null) {
       tags.add(_DetailTag(icon: Icons.straighten, text: '${user.height}cm'));
     }
-    if (user.education != null && user.education!.isNotEmpty) {
+    if (user.education?.isNotEmpty == true) {
       tags.add(_DetailTag(icon: Icons.school_outlined, text: user.education!));
     }
-    if (user.zodiac != null && user.zodiac!.isNotEmpty) {
+    if (user.zodiac?.isNotEmpty == true) {
       tags.add(_DetailTag(icon: Icons.auto_awesome, text: user.zodiac!));
     }
-    if (user.smoking != null && user.smoking!.isNotEmpty) {
+    if (user.smoking?.isNotEmpty == true) {
       tags.add(_DetailTag(icon: Icons.smoking_rooms, text: '吸烟: ${user.smoking!}'));
     }
-    if (user.drinking != null && user.drinking!.isNotEmpty) {
+    if (user.drinking?.isNotEmpty == true) {
       tags.add(_DetailTag(icon: Icons.local_bar, text: '饮酒: ${user.drinking!}'));
     }
     if (tags.isEmpty) {
@@ -952,6 +952,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
     final showAddBtn = widget.editing && _urls.length < 6;
     final itemCount = _urls.length + (showAddBtn ? 1 : 0);
 
@@ -964,8 +965,8 @@ class _PhotoGridState extends State<_PhotoGrid> {
           // 添加照片按钮
           if (index == _urls.length && showAddBtn) {
             return SizedBox(
-              width: (MediaQuery.of(context).size.width - 40 - 18 * 2 - 8 * 2) / 3,
-              height: (MediaQuery.of(context).size.width - 40 - 18 * 2 - 8 * 2) / 3 / 0.75,
+              width: (mq.size.width - 40 - 18 * 2 - 8 * 2) / 3,
+              height: (mq.size.width - 40 - 18 * 2 - 8 * 2) / 3 / 0.75,
               child: GestureDetector(
                 onTap: widget.uploading ? null : widget.onAdd,
                 child: Container(
@@ -1005,7 +1006,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
           }
 
           final url = _urls[index];
-          final cardWidth = (MediaQuery.of(context).size.width - 40 - 18 * 2 - 8 * 2) / 3;
+          final cardWidth = (mq.size.width - 40 - 18 * 2 - 8 * 2) / 3;
           final cardHeight = cardWidth / 0.75;
 
           return DragTarget<int>(

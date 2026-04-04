@@ -57,7 +57,9 @@ final dioProvider = Provider<Dio>((ref) {
         try {
           final res = await dio.fetch(opts);
           return handler.resolve(res);
-        } catch (_) {}
+        } catch (_) {
+          // 重试也失败，走下方handler.next交给调用方处理
+        }
       }
       handler.next(error);
     },

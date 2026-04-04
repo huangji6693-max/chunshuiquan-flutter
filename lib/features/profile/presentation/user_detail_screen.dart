@@ -36,7 +36,8 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final mq = MediaQuery.of(context);
+    final screenHeight = mq.size.height;
 
     return Scaffold(
       // backgroundColor从theme获取
@@ -91,7 +92,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                       // 照片指示器（顶部白线）
                       if (user.avatarUrls.length > 1)
                         Positioned(
-                          top: MediaQuery.of(context).padding.top + 56,
+                          top: mq.padding.top + 56,
                           left: 8,
                           right: 8,
                           child: Row(
@@ -242,7 +243,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Bio
-                      if (user.bio != null && user.bio!.isNotEmpty) ...[
+                      if (user.bio?.isNotEmpty == true) ...[
                         Text('关于我',
                             style: TextStyle(
                                 fontSize: 18,
@@ -332,7 +333,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
             bottom: 0,
             child: Container(
               padding: EdgeInsets.fromLTRB(
-                  20, 16, 20, MediaQuery.of(context).padding.bottom + 16),
+                  20, 16, 20, mq.padding.bottom + 16),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainer,
                 boxShadow: [

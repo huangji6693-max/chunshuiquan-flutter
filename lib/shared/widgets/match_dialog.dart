@@ -353,12 +353,12 @@ class _AnimatedAvatar extends StatelessWidget {
             spreadRadius: 1,
           ),
         ],
-        image: url != null && url!.isNotEmpty
+        image: url?.isNotEmpty == true
             ? DecorationImage(image: NetworkImage(url!), fit: BoxFit.cover)
             : null,
         color: Colors.white24,
       ),
-      child: url == null || url!.isEmpty
+      child: url?.isNotEmpty != true
           ? const Icon(Icons.person, color: Colors.white, size: 44)
           : null,
     );

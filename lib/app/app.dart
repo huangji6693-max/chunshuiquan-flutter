@@ -50,14 +50,18 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
         try {
           await ref.read(dioProvider).put('/api/users/fcm-token',
               data: {'token': token});
-        } catch (_) {}
+        } catch (_) {
+          // FCM token上报失败不阻塞，下次启动会重试
+        }
       }
 
       messaging.onTokenRefresh.listen((token) async {
         try {
           await ref.read(dioProvider).put('/api/users/fcm-token',
               data: {'token': token});
-        } catch (_) {}
+        } catch (_) {
+          // token刷新上报失败静默，下次刷新会重试
+        }
       });
 
       FirebaseMessaging.onMessage.listen((message) {

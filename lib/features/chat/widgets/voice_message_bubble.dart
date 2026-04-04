@@ -62,10 +62,20 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble>
   }
 
   Future<void> _togglePlay() async {
-    if (_playing) {
-      await _player.pause();
-    } else {
-      await _player.play(UrlSource(widget.audioUrl));
+    try {
+      if (_playing) {
+        await _player.pause();
+      } else {
+        await _player.play(UrlSource(widget.audioUrl));
+      }
+    } catch (e) {
+      debugPrint('[VoiceMessageBubble] 播放失败: $e');
+      if (mounted) {
+        setState(() {
+          _playing = false;
+          _progress = 0;
+        });
+      }
     }
   }
 

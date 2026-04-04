@@ -59,7 +59,9 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
       try {
         await dio.post('/api/agora/invite',
             queryParameters: {'matchId': widget.matchId});
-      } catch (_) {}
+      } catch (_) {
+        // 通话邀请推送失败不阻塞，对方可能仍能接听
+      }
 
       // 从后端获取 Agora token
       final resp = await dio.get(
@@ -164,7 +166,7 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
         fit: StackFit.expand,
         children: [
           // 模糊背景
-          widget.partnerAvatarUrl != null && widget.partnerAvatarUrl!.isNotEmpty
+          widget.partnerAvatarUrl?.isNotEmpty == true
               ? ImageFiltered(
                   imageFilter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
                   child: CachedNetworkImage(

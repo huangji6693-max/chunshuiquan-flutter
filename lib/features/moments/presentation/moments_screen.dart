@@ -282,7 +282,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                           Text(_formatTime(m.createdAt),
                               style: TextStyle(
                                   fontSize: 12, letterSpacing: 0.3, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                          if (m.location != null && m.location!.isNotEmpty) ...[
+                          if (m.location?.isNotEmpty == true) ...[
                             const SizedBox(width: 6),
                             Icon(Icons.location_on,
                                 size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
@@ -300,7 +300,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
           ),
 
           // 文字内容
-          if (m.content != null && m.content!.isNotEmpty)
+          if (m.content?.isNotEmpty == true)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: Text(m.content!,
@@ -493,7 +493,9 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
       await ref.read(momentRepositoryProvider).addComment(widget.momentId, text);
       _ctrl.clear();
       _loadComments();
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('发送评论失败: $e');
+    }
     if (mounted) setState(() => _sending = false);
   }
 
@@ -505,8 +507,9 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
     return Container(
-      height: MediaQuery.of(context).size.height * 0.6,
+      height: mq.size.height * 0.6,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -588,7 +591,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
           // 输入框
           Container(
             padding: EdgeInsets.fromLTRB(
-                16, 8, 8, MediaQuery.of(context).padding.bottom + 8),
+                16, 8, 8, mq.padding.bottom + 8),
             decoration: BoxDecoration(
               
               border: Border(

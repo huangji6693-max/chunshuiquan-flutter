@@ -345,7 +345,7 @@ class _ConversationTile extends ConsumerWidget {
     final timeStr = _formatTime(displayTime);
 
     // 消息预览文本——图片消息显示📷，礼物显示🎁
-    var previewText = (match.lastMessage != null && match.lastMessage!.isNotEmpty)
+    var previewText = (match.lastMessage?.isNotEmpty == true)
         ? match.lastMessage!
         : '还没聊过，打个招呼？';
     if (previewText.startsWith('[图片]')) previewText = '📷 图片';

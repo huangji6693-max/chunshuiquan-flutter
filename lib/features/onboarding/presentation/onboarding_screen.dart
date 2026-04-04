@@ -71,7 +71,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     setState(() { _uploading = true; _error = null; });
     try {
       for (final p in _photos) {
-        try { await ref.read(uploadRepositoryProvider).uploadAvatar(p); } catch (_) {}
+        try { await ref.read(uploadRepositoryProvider).uploadAvatar(p); } catch (e) { debugPrint('头像上传失败: $e'); }
       }
       await ref.read(profileRepositoryProvider).updateProfile(
         bio: _bioCtrl.text.trim(),

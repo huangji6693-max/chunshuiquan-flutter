@@ -44,6 +44,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isLast = _current == _pages.length - 1;
+    final mq = MediaQuery.of(context);
 
     return Scaffold(
       body: Stack(
@@ -77,7 +78,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
           // 右上角登录入口（每页都显示）
           Positioned(
-            top: MediaQuery.of(context).padding.top + 8,
+            top: mq.padding.top + 8,
             right: 16,
             child: TextButton(
               onPressed: () => context.go('/auth/login'),
@@ -93,7 +94,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           Positioned(
             left: 28,
             right: 28,
-            bottom: MediaQuery.of(context).padding.bottom + 40,
+            bottom: mq.padding.bottom + 40,
             child: Column(
               children: [
                 // 指示点

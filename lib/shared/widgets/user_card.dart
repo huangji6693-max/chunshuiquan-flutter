@@ -284,7 +284,7 @@ class _UserCardState extends State<UserCard> {
           // 城市 + 职业（次要信息）
           Row(
             children: [
-              if (user.city != null && user.city!.isNotEmpty) ...[
+              if (user.city?.isNotEmpty == true) ...[
                 const Icon(Icons.location_on_outlined,
                     color: Colors.white70, size: 14),
                 const SizedBox(width: 3),
@@ -293,7 +293,7 @@ class _UserCardState extends State<UserCard> {
                         color: Color(0xB3FFFFFF), fontSize: 15)),
                 const SizedBox(width: 12),
               ],
-              if (user.jobTitle != null && user.jobTitle!.isNotEmpty) ...[
+              if (user.jobTitle?.isNotEmpty == true) ...[
                 const Icon(Icons.work_outline,
                     color: Colors.white70, size: 14),
                 const SizedBox(width: 3),
@@ -317,9 +317,9 @@ class _UserCardState extends State<UserCard> {
             children: [
               if (user.height != null)
                 _InfoTag(icon: Icons.straighten, text: '${user.height}cm'),
-              if (user.education != null && user.education!.isNotEmpty)
+              if (user.education?.isNotEmpty == true)
                 _InfoTag(icon: Icons.school_outlined, text: user.education!),
-              if (user.zodiac != null && user.zodiac!.isNotEmpty)
+              if (user.zodiac?.isNotEmpty == true)
                 _InfoTag(icon: Icons.auto_awesome, text: user.zodiac!),
             ],
           ),
@@ -329,7 +329,7 @@ class _UserCardState extends State<UserCard> {
             const SizedBox(height: 14),
 
             // Bio
-            if (user.bio != null && user.bio!.isNotEmpty) ...[
+            if (user.bio?.isNotEmpty == true) ...[
               const Text('关于我',
                   style: TextStyle(
                       color: Colors.white60,
@@ -347,16 +347,16 @@ class _UserCardState extends State<UserCard> {
             ],
 
             // 吸烟/饮酒标签
-            if ((user.smoking != null && user.smoking!.isNotEmpty) ||
-                (user.drinking != null && user.drinking!.isNotEmpty)) ...[
+            if ((user.smoking?.isNotEmpty == true) ||
+                (user.drinking?.isNotEmpty == true)) ...[
               const SizedBox(height: 10),
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
                 children: [
-                  if (user.smoking != null && user.smoking!.isNotEmpty)
+                  if (user.smoking?.isNotEmpty == true)
                     _InfoTag(icon: Icons.smoking_rooms, text: user.smoking!),
-                  if (user.drinking != null && user.drinking!.isNotEmpty)
+                  if (user.drinking?.isNotEmpty == true)
                     _InfoTag(icon: Icons.local_bar, text: user.drinking!),
                 ],
               ),
@@ -389,7 +389,7 @@ class _UserCardState extends State<UserCard> {
             ],
           ] else ...[
             // 未展开时，Bio 预览（最多1行）
-            if (user.bio != null && user.bio!.isNotEmpty) ...[
+            if (user.bio?.isNotEmpty == true) ...[
               const SizedBox(height: 6),
               Text(user.bio!,
                   maxLines: 1,

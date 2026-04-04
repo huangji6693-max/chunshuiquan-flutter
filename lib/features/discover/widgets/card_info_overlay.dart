@@ -50,12 +50,12 @@ class CardInfoOverlay extends StatelessWidget {
                     )),
             ],
           ),
-          if (user.city != null && user.city!.isNotEmpty ||
-              user.jobTitle != null && user.jobTitle!.isNotEmpty) ...[
+          if (user.city?.isNotEmpty == true ||
+              user.jobTitle?.isNotEmpty == true) ...[
             const SizedBox(height: 6),
             Row(
               children: [
-                if (user.city != null && user.city!.isNotEmpty) ...[
+                if (user.city?.isNotEmpty == true) ...[
                   const Icon(Icons.location_on_outlined,
                       color: Colors.white70, size: 14),
                   const SizedBox(width: 3),
@@ -64,7 +64,7 @@ class CardInfoOverlay extends StatelessWidget {
                           color: Color(0xB3FFFFFF), fontSize: 15)),
                   const SizedBox(width: 10),
                 ],
-                if (user.jobTitle != null && user.jobTitle!.isNotEmpty) ...[
+                if (user.jobTitle?.isNotEmpty == true) ...[
                   const Icon(Icons.work_outline,
                       color: Colors.white70, size: 14),
                   const SizedBox(width: 3),

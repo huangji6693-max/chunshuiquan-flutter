@@ -11,6 +11,17 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   static const _seed = Color(0xFFFF4D88);
 
+  // ====== 品牌色常量（散布在代码各处，统一定义） ======
+  static const Color brandPink = Color(0xFFFF4D88);
+  static const Color brandOrange = Color(0xFFFF8A5C);
+  static const Color brandPinkLight = Color(0xFFFF6B9D);
+  static const Color vipGold = Color(0xFFFFD700);
+  static const Color vipGoldDark = Color(0xFFFFA000);
+  static const Color superLikeBlue = Color(0xFF5B9AFF);
+  static const Color nopeRed = Color(0xFFFF5A5A);
+  static const Color likeGreen = Color(0xFF4CAF50);
+  static const Color boostPurple = Color(0xFF7C4DFF);
+
   // 品牌渐变（仅用于特殊装饰元素）
   static const primaryGradient = LinearGradient(
     colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],

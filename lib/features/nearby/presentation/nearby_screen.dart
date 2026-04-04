@@ -357,7 +357,7 @@ class _NearbyCard extends StatelessWidget {
                         ],
                       ],
                     ),
-                    if (user.city != null && user.city!.isNotEmpty)
+                    if (user.city?.isNotEmpty == true)
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
                         child: Row(
@@ -480,7 +480,7 @@ class _NearbyListTile extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (user.bio != null && user.bio!.isNotEmpty)
+            if (user.bio?.isNotEmpty == true)
               Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: Text(user.bio!,

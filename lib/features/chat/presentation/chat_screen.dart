@@ -43,14 +43,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     // 尝试订阅 WebSocket 频道
     try {
       ref.read(webSocketServiceProvider).subscribeChatChannel(widget.matchId);
-    } catch (_) {}
+    } catch (_) {
+      // WebSocket未连接时静默，不影响HTTP轮询
+    }
   }
 
   @override
   void dispose() {
     try {
       ref.read(webSocketServiceProvider).unsubscribeChatChannel(widget.matchId);
-    } catch (_) {}
+    } catch (_) {
+      // dispose时静默，资源即将释放
+    }
     super.dispose();
   }
 

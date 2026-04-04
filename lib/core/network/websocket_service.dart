@@ -74,6 +74,7 @@ class WebSocketService {
         },
       );
     } catch (e) {
+      // WebSocket连接失败，重连机制会处理
       _isConnected = false;
     }
   }
@@ -88,7 +89,7 @@ class WebSocketService {
         'destination:/topic/chat/$matchId\n'
         '\n'
         '\x00';
-    _channel!.sink.add(subFrame);
+    _channel?.sink.add(subFrame);
 
     // 订阅已读回执频道
     final readSubFrame = 'SUBSCRIBE\n'
@@ -96,7 +97,7 @@ class WebSocketService {
         'destination:/topic/chat/$matchId/read\n'
         '\n'
         '\x00';
-    _channel!.sink.add(readSubFrame);
+    _channel?.sink.add(readSubFrame);
   }
 
   /// 取消订阅指定 match 的聊天频道
@@ -107,13 +108,13 @@ class WebSocketService {
         'id:sub-chat-$matchId\n'
         '\n'
         '\x00';
-    _channel!.sink.add(unsubFrame);
+    _channel?.sink.add(unsubFrame);
 
     final readUnsubFrame = 'UNSUBSCRIBE\n'
         'id:sub-read-$matchId\n'
         '\n'
         '\x00';
-    _channel!.sink.add(readUnsubFrame);
+    _channel?.sink.add(readUnsubFrame);
   }
 
   /// 解析 STOMP 帧数据
@@ -157,7 +158,9 @@ class WebSocketService {
             } else {
               _messageController.add(json);
             }
-          } catch (_) {}
+          } catch (e) {
+            // STOMP MESSAGE body 解析失败，非法JSON静默跳过
+          }
         }
       }
     }
@@ -202,8 +205,10 @@ class WebSocketService {
           '\n'
           '\x00';
       try {
-        _channel!.sink.add(disconnectFrame);
-      } catch (_) {}
+        _channel?.sink.add(disconnectFrame);
+      } catch (_) {
+        // disconnect时网络可能已断开，静默处理
+      }
     }
 
     _subscription?.cancel();
