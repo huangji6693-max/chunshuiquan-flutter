@@ -377,7 +377,7 @@ class _ConversationTile extends ConsumerWidget {
                 Hero(
                   tag: 'avatar_${match.matchId}',
                   child: CircleAvatar(
-                  radius: 30,
+                    radius: 30,
                   backgroundImage: match.otherAvatarUrl != null
                       ? ResizeImage(
                           CachedNetworkImageProvider(match.otherAvatarUrl!),

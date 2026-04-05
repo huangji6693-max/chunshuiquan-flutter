@@ -64,7 +64,7 @@ class MatchItem {
       otherZodiac: other['zodiac'] as String?,
       otherVipTier: other['vipTier'] as String?,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime.now(),
-      isNew: json['isNew'] as bool?,
+      isNew: (json['isNew'] ?? json['new']) as bool?,
       lastMessage: json['lastMessage'] as String?,
       lastMessageAt: json['lastMessageAt'] != null
           ? DateTime.tryParse(json['lastMessageAt'] as String)
