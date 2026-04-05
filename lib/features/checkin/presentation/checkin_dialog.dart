@@ -70,7 +70,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: const Dt.pink.withValues(alpha: 0.15),
+              color: Dt.pink.withValues(alpha: 0.15),
               blurRadius: 30,
               offset: const Offset(0, 10),
             ),
@@ -144,12 +144,12 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                           color: checked ? null : Theme.of(context).colorScheme.outlineVariant,
                           border: isToday && !checked
                               ? Border.all(
-                                  color: const Dt.pink, width: 2)
+                                  color: Dt.pink, width: 2)
                               : null,
                           boxShadow: checked
                               ? [
                                   BoxShadow(
-                                    color: const Dt.pink
+                                    color: Dt.pink
                                         .withValues(alpha: 0.3),
                                     blurRadius: 6,
                                     offset: const Offset(0, 2),
@@ -166,7 +166,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                                   style: TextStyle(
                                     fontSize: 10,
                                     color: isToday
-                                        ? const Dt.pink
+                                        ? Dt.pink
                                         : Theme.of(context).colorScheme.onSurfaceVariant,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -209,7 +209,7 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Dt.pink,
+                      backgroundColor: Dt.pink,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14)),
                     ),
@@ -227,13 +227,13 @@ class _CheckInDialogState extends ConsumerState<CheckInDialog>
                         ? null
                         : _handleCheckIn,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Dt.pink,
+                      backgroundColor: Dt.pink,
                       disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14)),
                       elevation: status.checkedInToday ? 0 : 4,
                       shadowColor:
-                          const Dt.pink.withValues(alpha: 0.4),
+                          Dt.pink.withValues(alpha: 0.4),
                     ),
                     child: _checking
                         ? const SizedBox(

@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -201,7 +202,7 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
                       border: Border.all(color: Colors.white, width: 3),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFFF4D88).withValues(alpha: 0.5),
+                          color: Dt.pink.withValues(alpha: 0.5),
                           blurRadius: 30,
                           spreadRadius: 5,
                         ),
@@ -216,7 +217,7 @@ class _VoiceCallScreenState extends ConsumerState<VoiceCallScreen>
                               width: 200,
                             )
                           : null,
-                      backgroundColor: const Color(0xFFFF4D88),
+                      backgroundColor: Dt.pink,
                       child: widget.partnerAvatarUrl == null ||
                               widget.partnerAvatarUrl!.isEmpty
                           ? Text(
@@ -327,7 +328,7 @@ class _RoundButton extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              color: active ? const Color(0xFFFF4D88) : Colors.white,
+              color: active ? Dt.pink : Colors.white,
               size: 28,
             ),
           ),

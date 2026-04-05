@@ -1,3 +1,4 @@
+import '../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -60,7 +61,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: Color(0xFFFF4D88)),
+            const Icon(Icons.error_outline, size: 48, color: Dt.pink),
             const SizedBox(height: 12),
             const Text('页面走丢了', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),

@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
@@ -17,19 +18,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   static const _pages = [
     _WelcomePage(
       icon: Icons.local_fire_department_rounded,
-      iconColors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
+      iconColors: [Dt.pink, Dt.pinkLight],
       title: '心动\n就在下一次滑动',
       subtitle: '向右滑动，开启一段新故事',
     ),
     _WelcomePage(
       icon: Icons.chat_bubble_rounded,
-      iconColors: [Color(0xFF8B5CF6), Color(0xFFFF4D88)],
+      iconColors: [Color(0xFF8B5CF6), Dt.pink],
       title: '让心意\n不再沉默',
       subtitle: '文字、语音、礼物，用你喜欢的方式靠近',
     ),
     _WelcomePage(
       icon: Icons.shield_rounded,
-      iconColors: [Color(0xFFFF8A5C), Color(0xFFFF4D88)],
+      iconColors: [Dt.orange, Dt.pink],
       title: '每一次相遇\n都值得安心',
       subtitle: '实名认证 · AI审核 · 7×24守护',
     ),
@@ -55,7 +56,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             colors: const [
               Color(0xFF0F0A1A),
               Color(0xFF1A0E2E),
-              Color(0xFFFF4D88),
+              Dt.pink,
               Color(0xFF0F0A1A),
             ],
             options: AnimatedMeshGradientOptions(
@@ -84,7 +85,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               onPressed: () => context.go('/auth/login'),
               child: const Text('登录',
                   style: TextStyle(
-                      color: Color(0xFFFF4D88),
+                      color: Dt.pink,
                       fontSize: 14,
                       fontWeight: FontWeight.w600)),
             ),
@@ -110,7 +111,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       decoration: BoxDecoration(
                         gradient: i == _current
                             ? const LinearGradient(
-                                colors: [Color(0xFFFF4D88), Color(0xFF8B5CF6)])
+                                colors: [Dt.pink, Color(0xFF8B5CF6)])
                             : null,
                         color: i == _current
                             ? null
@@ -129,12 +130,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
+                        colors: [Dt.pink, Dt.pinkLight],
                       ),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFFF4D88).withValues(alpha: 0.4),
+                          color: Dt.pink.withValues(alpha: 0.4),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -173,7 +174,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         TextSpan(
                           text: '立即登录',
                           style: TextStyle(
-                            color: Color(0xFFFF4D88),
+                            color: Dt.pink,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

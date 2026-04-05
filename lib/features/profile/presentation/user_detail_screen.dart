@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -173,12 +174,12 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                                       gradient: LinearGradient(
                                         colors: user.vipTier == 'diamond'
                                             ? [
-                                                const Color(0xFF7C4DFF),
+                                                Dt.boost,
                                                 const Color(0xFFE040FB)
                                               ]
                                             : [
-                                                const Color(0xFFFFD700),
-                                                const Color(0xFFFFA000)
+                                                Dt.vipGold,
+                                                Dt.vipGoldDark
                                               ],
                                       ),
                                       borderRadius: BorderRadius.circular(8),
@@ -281,9 +282,9 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         colors: [
-                                          const Color(0xFFFF4D88)
+                                          Dt.pink
                                               .withValues(alpha:0.1),
-                                          const Color(0xFFFF8A5C)
+                                          Dt.orange
                                               .withValues(alpha:0.1),
                                         ],
                                       ),
@@ -291,7 +292,7 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                                     ),
                                     child: Text(tag,
                                         style: const TextStyle(
-                                          color: Color(0xFFFF4D88),
+                                          color: Dt.pink,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 13,
                                         )),
@@ -374,14 +375,14 @@ class _UserDetailScreenState extends ConsumerState<UserDetailScreen> {
                               borderRadius: BorderRadius.circular(16)),
                           elevation: 4,
                           shadowColor:
-                              const Color(0xFFFF4D88).withValues(alpha:0.4),
+                              Dt.pink.withValues(alpha:0.4),
                         ),
                         child: Ink(
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               colors: [
-                                Color(0xFFFF4D88),
-                                Color(0xFFFF8A5C)
+                                Dt.pink,
+                                Dt.orange
                               ],
                             ),
                             borderRadius: BorderRadius.circular(16),

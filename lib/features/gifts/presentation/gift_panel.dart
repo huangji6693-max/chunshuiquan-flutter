@@ -167,12 +167,12 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                 onPressed:
                     _selected != null && !_sending ? _handleSend : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Dt.pink,
+                  backgroundColor: Dt.pink,
                   disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                   elevation: _selected != null ? 3 : 0,
-                  shadowColor: const Dt.pink.withValues(alpha: 0.4),
+                  shadowColor: Dt.pink.withValues(alpha: 0.4),
                 ),
                 child: _sending
                     ? const SizedBox(
@@ -226,19 +226,19 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
           margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           decoration: BoxDecoration(
             color: isSelected
-                ? const Dt.pink.withValues(alpha: 0.1)
+                ? Dt.pink.withValues(alpha: 0.1)
                 : Theme.of(context).colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isSelected
-                  ? const Dt.pink
+                  ? Dt.pink
                   : Theme.of(context).colorScheme.outlineVariant,
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: const Dt.pink.withValues(alpha: 0.15),
+                      color: Dt.pink.withValues(alpha: 0.15),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
                     ),
@@ -256,7 +256,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: isSelected
-                      ? const Dt.pink
+                      ? Dt.pink
                       : Theme.of(context).colorScheme.onSurface,
                 ),
               ),

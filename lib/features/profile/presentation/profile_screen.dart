@@ -343,10 +343,10 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Dt.pink,
+                          color: Dt.pink,
                           boxShadow: [
                             BoxShadow(
-                              color: const Dt.pink.withValues(alpha:0.4),
+                              color: Dt.pink.withValues(alpha:0.4),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -508,7 +508,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: const Dt.pink.withValues(alpha:0.2),
+                              color: Dt.pink.withValues(alpha:0.2),
                               blurRadius: 6,
                               offset: const Offset(0, 2),
                             ),
@@ -538,7 +538,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                         borderRadius: BorderRadius.circular(27),
                         boxShadow: [
                           BoxShadow(
-                            color: const Dt.pink.withValues(alpha:0.3),
+                            color: Dt.pink.withValues(alpha:0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -692,7 +692,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   InputDecoration _tagInputDeco(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      prefixIcon: Icon(icon, size: 18, color: const Dt.pink),
+      prefixIcon: Icon(icon, size: 18, color: Dt.pink),
       filled: true,
       fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
       border: OutlineInputBorder(
@@ -716,7 +716,7 @@ class _EditRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: const Dt.pink),
+        Icon(icon, size: 18, color: Dt.pink),
         const SizedBox(width: 8),
         SizedBox(
           width: 48,
@@ -789,17 +789,17 @@ class _DetailTag extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Dt.pink.withValues(alpha:0.08),
-            const Dt.orange.withValues(alpha:0.06),
+            Dt.pink.withValues(alpha:0.08),
+            Dt.orange.withValues(alpha:0.06),
           ],
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Dt.pink.withValues(alpha:0.15)),
+        border: Border.all(color: Dt.pink.withValues(alpha:0.15)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 15, color: const Dt.pink),
+          Icon(icon, size: 15, color: Dt.pink),
           const SizedBox(width: 6),
           Text(text,
               style: const TextStyle(
@@ -901,7 +901,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Dt.pink.withValues(alpha:0.85),
+                  color: Dt.pink.withValues(alpha:0.85),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(12),
                     bottomRight: Radius.circular(12),
@@ -975,7 +975,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                     color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Dt.pink.withValues(alpha:0.4),
+                      color: Dt.pink.withValues(alpha:0.4),
                       width: 1.5,
                       strokeAlign: BorderSide.strokeAlignInside,
                     ),
@@ -1048,7 +1048,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                       color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Dt.pink.withValues(alpha:0.3),
+                        color: Dt.pink.withValues(alpha:0.3),
                         width: 1.5,
                         style: BorderStyle.solid,
                       ),
@@ -1062,7 +1062,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     border: isTarget
-                        ? Border.all(color: const Dt.pink, width: 2)
+                        ? Border.all(color: Dt.pink, width: 2)
                         : null,
                   ),
                   child: _buildPhotoCard(url, index,
@@ -1126,7 +1126,7 @@ class _SectionCard extends StatelessWidget {
                 width: 3,
                 height: 14,
                 decoration: BoxDecoration(
-                  color: const Dt.pink,
+                  color: Dt.pink,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

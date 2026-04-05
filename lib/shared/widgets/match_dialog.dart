@@ -186,7 +186,7 @@ class _MatchDialogState extends State<MatchDialog>
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Dt.pink.withValues(alpha:0.5),
+                                    color: Dt.pink.withValues(alpha:0.5),
                                     blurRadius: 20,
                                     spreadRadius: 4,
                                   ),
@@ -253,7 +253,7 @@ class _MatchDialogState extends State<MatchDialog>
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Dt.pink.withValues(alpha:0.4),
+                                    color: Dt.pink.withValues(alpha:0.4),
                                     blurRadius: 16,
                                     offset: const Offset(0, 6),
                                   ),
@@ -344,7 +344,7 @@ class _AnimatedAvatar extends StatelessWidget {
         border: Border.all(color: Colors.white, width: 3),
         boxShadow: [
           BoxShadow(
-            color: const Dt.pink.withValues(alpha:0.4),
+            color: Dt.pink.withValues(alpha:0.4),
             blurRadius: 20,
             spreadRadius: 4,
           ),
@@ -394,7 +394,7 @@ class _StarsPainter extends CustomPainter {
 
       paint.color = Color.lerp(
         Colors.white,
-        const Dt.pink,
+        Dt.pink,
         _random.nextDouble() * 0.3,
       )!.withValues(alpha:opacity);
 

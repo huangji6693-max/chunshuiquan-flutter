@@ -1,3 +1,4 @@
+import '../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -87,7 +88,7 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
                 label: '去看看',
                 onPressed: () => ref.read(routerProvider).go('/matches'),
               ),
-              backgroundColor: const Color(0xFFFF4D88),
+              backgroundColor: Dt.pink,
             ),
           );
         } else if (data['type'] == 'new_message') {
@@ -102,7 +103,7 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('$senderName给你发了消息'),
-              backgroundColor: const Color(0xFFFF4D88),
+              backgroundColor: Dt.pink,
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -118,7 +119,7 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('收到一份心意 🎁 来自$senderName'),
-              backgroundColor: const Color(0xFFFF4D88),
+              backgroundColor: Dt.pink,
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -133,7 +134,7 @@ class _ChunShuiQuanAppState extends ConsumerState<ChunShuiQuanApp> {
                   label: '接听',
                   onPressed: () => ref.read(routerProvider).go('/call/$matchId'),
                 ),
-                backgroundColor: const Color(0xFFFF4D88),
+                backgroundColor: Dt.pink,
                 duration: const Duration(seconds: 15),
               ),
             );

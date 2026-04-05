@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -27,9 +28,9 @@ class VoiceRecordButton extends StatelessWidget {
         height: 42,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: const Color(0xFFFF4D88).withValues(alpha:0.1),
+          color: Dt.pink.withValues(alpha:0.1),
         ),
-        child: const Icon(Icons.mic_none, color: Color(0xFFFF4D88), size: 22),
+        child: const Icon(Icons.mic_none, color: Dt.pink, size: 22),
       ),
     );
   }

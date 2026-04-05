@@ -43,9 +43,9 @@ class _GiftHistoryScreenState extends ConsumerState<GiftHistoryScreen>
         title: const Text('礼物记录'),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: const Dt.pink,
+          indicatorColor: Dt.pink,
           indicatorWeight: 3,
-          labelColor: const Dt.pink,
+          labelColor: Dt.pink,
           unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
           labelStyle:
               const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
@@ -96,7 +96,7 @@ class _GiftList extends ConsumerWidget {
                           width: 72,
                           height: 72,
                           decoration: BoxDecoration(
-                            color: const Dt.pink.withValues(alpha: 0.1),
+                            color: Dt.pink.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -104,7 +104,7 @@ class _GiftList extends ConsumerWidget {
                                 ? Icons.card_giftcard
                                 : Icons.volunteer_activism,
                             size: 36,
-                            color: const Dt.pink,
+                            color: Dt.pink,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -162,7 +162,7 @@ class _GiftList extends ConsumerWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: const Dt.pink.withValues(alpha: 0.1),
+                        color: Dt.pink.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(

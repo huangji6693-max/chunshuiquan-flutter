@@ -75,7 +75,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Dt.vipGold.withValues(alpha:0.4),
+                              color: Dt.vipGold.withValues(alpha:0.4),
                               blurRadius: 24,
                               spreadRadius: 4,
                             ),
@@ -102,8 +102,8 @@ class _VipScreenState extends ConsumerState<VipScreen>
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: status.isDiamond
-                                        ? [const Dt.boost, const Color(0xFFE040FB)]
-                                        : [const Dt.vipGold, const Dt.vipGoldDark],
+                                        ? [Dt.boost, const Color(0xFFE040FB)]
+                                        : [Dt.vipGold, Dt.vipGoldDark],
                                   ),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -138,7 +138,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                 color: const Color(0xFF252547),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                    color: const Dt.vipGold.withValues(alpha:0.2)),
+                    color: Dt.vipGold.withValues(alpha:0.2)),
               ),
               child: Column(
                 children: [
@@ -146,35 +146,35 @@ class _VipScreenState extends ConsumerState<VipScreen>
                     icon: Icons.visibility,
                     gold: '查看谁喜欢我',
                     diamond: '查看谁喜欢我',
-                    goldColor: const Dt.vipGold,
+                    goldColor: Dt.vipGold,
                     diamondColor: const Color(0xFFE040FB),
                   ),
                   _FeatureRow(
                     icon: Icons.swipe,
                     gold: '无限滑动',
                     diamond: '无限滑动',
-                    goldColor: const Dt.vipGold,
+                    goldColor: Dt.vipGold,
                     diamondColor: const Color(0xFFE040FB),
                   ),
                   _FeatureRow(
                     icon: Icons.star,
                     gold: '5次/天 Super Like',
                     diamond: '无限 Super Like',
-                    goldColor: const Dt.vipGold,
+                    goldColor: Dt.vipGold,
                     diamondColor: const Color(0xFFE040FB),
                   ),
                   _FeatureRow(
                     icon: Icons.flash_on,
                     gold: '每月1次曝光加速',
                     diamond: '每周1次曝光加速',
-                    goldColor: const Dt.vipGold,
+                    goldColor: Dt.vipGold,
                     diamondColor: const Color(0xFFE040FB),
                   ),
                   _FeatureRow(
                     icon: Icons.verified,
                     gold: '金色徽章',
                     diamond: '钻石徽章 + 置顶',
-                    goldColor: const Dt.vipGold,
+                    goldColor: Dt.vipGold,
                     diamondColor: const Color(0xFFE040FB),
                     isLast: true,
                   ),
@@ -221,7 +221,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildPlansRow(VipRepository.goldPlans, const Dt.vipGold),
+                  _buildPlansRow(VipRepository.goldPlans, Dt.vipGold),
                   _buildPlansRow(VipRepository.diamondPlans, const Color(0xFFE040FB)),
                 ],
               ),
@@ -243,7 +243,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)),
                     elevation: _selectedPlan != null ? 8 : 0,
-                    shadowColor: const Dt.vipGold.withValues(alpha:0.4),
+                    shadowColor: Dt.vipGold.withValues(alpha:0.4),
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
@@ -520,15 +520,15 @@ class _VipSuccessDialog extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: isDiamond
-                ? [const Dt.boost, const Color(0xFF3D1E8E)]
-                : [const Dt.vipGoldDark, const Color(0xFFE65100)],
+                ? [Dt.boost, const Color(0xFF3D1E8E)]
+                : [Dt.vipGoldDark, const Color(0xFFE65100)],
           ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
               color: (isDiamond
-                      ? const Dt.boost
-                      : const Dt.vipGold)
+                      ? Dt.boost
+                      : Dt.vipGold)
                   .withValues(alpha:0.4),
               blurRadius: 32,
             ),
@@ -564,7 +564,7 @@ class _VipSuccessDialog extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: isDiamond
-                      ? const Dt.boost
+                      ? Dt.boost
                       : const Color(0xFFE65100),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),

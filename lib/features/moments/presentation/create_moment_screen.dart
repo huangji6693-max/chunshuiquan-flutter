@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,7 +51,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
                 decoration: BoxDecoration(
                   gradient: _canPublish
                       ? const LinearGradient(
-                          colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)])
+                          colors: [Dt.pink, Dt.orange])
                       : null,
                   color: _canPublish ? null : Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(20),
@@ -166,7 +167,7 @@ class _CreateMomentScreenState extends ConsumerState<CreateMomentScreen> {
                             width: 24,
                             height: 24,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Color(0xFFFF4D88)),
+                                strokeWidth: 2, color: Dt.pink),
                           ),
                         )
                       : Row(

@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import '../providers/discover_provider.dart';
 
@@ -85,7 +86,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 },
                 child: const Text('重置',
                     style: TextStyle(
-                        color: Color(0xFFFF4D88),
+                        color: Dt.pink,
                         fontWeight: FontWeight.w600)),
               ),
             ],
@@ -105,15 +106,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFFFF4D88))),
+                      color: Dt.pink)),
             ],
           ),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              activeTrackColor: const Color(0xFFFF4D88),
-              inactiveTrackColor: const Color(0xFFFF4D88).withValues(alpha: 0.25),
-              thumbColor: const Color(0xFFFF4D88),
-              overlayColor: const Color(0xFFFF4D88).withValues(alpha: 0.1),
+              activeTrackColor: Dt.pink,
+              inactiveTrackColor: Dt.pink.withValues(alpha: 0.25),
+              thumbColor: Dt.pink,
+              overlayColor: Dt.pink.withValues(alpha: 0.1),
               rangeThumbShape: const RoundRangeSliderThumbShape(
                   enabledThumbRadius: 10),
             ),
@@ -140,15 +141,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFFFF4D88))),
+                      color: Dt.pink)),
             ],
           ),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              activeTrackColor: const Color(0xFFFF4D88),
-              inactiveTrackColor: const Color(0xFFFF4D88).withValues(alpha: 0.25),
-              thumbColor: const Color(0xFFFF4D88),
-              overlayColor: const Color(0xFFFF4D88).withValues(alpha: 0.1),
+              activeTrackColor: Dt.pink,
+              inactiveTrackColor: Dt.pink.withValues(alpha: 0.25),
+              thumbColor: Dt.pink,
+              overlayColor: Dt.pink.withValues(alpha: 0.1),
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
             ),
             child: Slider(
@@ -175,7 +176,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               return ChoiceChip(
                 label: Text(option['label']!),
                 selected: selected,
-                selectedColor: const Color(0xFFFF4D88),
+                selectedColor: Dt.pink,
                 backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 labelStyle: TextStyle(
                   color: selected ? Colors.white : Theme.of(context).colorScheme.onSurface,
@@ -198,12 +199,12 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                  colors: [Dt.pink, Dt.orange],
                 ),
                 borderRadius: BorderRadius.circular(26),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFF4D88).withValues(alpha: 0.3),
+                    color: Dt.pink.withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),

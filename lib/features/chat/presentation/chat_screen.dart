@@ -381,7 +381,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     gradient: LinearGradient(
                       colors: [
                         Dt.pink.withValues(alpha:0.1),
-                        const Dt.orange.withValues(alpha:0.1),
+                        Dt.orange.withValues(alpha:0.1),
                       ],
                     ),
                   ),
@@ -539,7 +539,7 @@ class _ChatInputState extends State<_ChatInput> {
                             gradient: LinearGradient(
                               colors: [
                                 Dt.pink.withValues(alpha: 0.15),
-                                const Dt.orange.withValues(alpha: 0.15),
+                                Dt.orange.withValues(alpha: 0.15),
                               ],
                             ),
                           ),

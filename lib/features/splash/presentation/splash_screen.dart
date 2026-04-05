@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -78,7 +79,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           AnimatedMeshGradient(
             colors: const [
               Color(0xFF1A0A2E),
-              Color(0xFFFF4D88),
+              Dt.pink,
               Color(0xFF0A0614),
               Color(0xFF7C3AED),
             ],
@@ -162,20 +163,20 @@ class _BrandLogo extends StatelessWidget {
         shape: BoxShape.circle,
         gradient: const RadialGradient(
           colors: [
-            Color(0xFFFF6B9D),
-            Color(0xFFFF4D88),
+            Dt.pinkLight,
+            Dt.pink,
             Color(0xFFE8366D),
           ],
           stops: [0.0, 0.6, 1.0],
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF4D88).withValues(alpha: 0.5),
+            color: Dt.pink.withValues(alpha: 0.5),
             blurRadius: 60,
             spreadRadius: 20,
           ),
           BoxShadow(
-            color: const Color(0xFFFF4D88).withValues(alpha: 0.2),
+            color: Dt.pink.withValues(alpha: 0.2),
             blurRadius: 120,
             spreadRadius: 40,
           ),

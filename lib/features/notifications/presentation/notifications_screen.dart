@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -45,7 +46,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
   @override
   Widget build(BuildContext context) {
     final notifications = ref.watch(notificationsProvider);
-    const pink = Color(0xFFFF4D88);
+    const pink = Dt.pink;
 
     return Scaffold(
       // backgroundColor从theme获取
@@ -154,7 +155,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
             child: Icon(
               icons[tabIndex],
               size: 40,
-              color: const Color(0xFFFF4D88).withValues(alpha: 0.4),
+              color: Dt.pink.withValues(alpha: 0.4),
             ),
           ),
           const SizedBox(height: 16),
@@ -179,7 +180,7 @@ class _NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const pink = Color(0xFFFF4D88);
+    const pink = Dt.pink;
 
     // 通知图标
     final iconData = item.type == NotificationType.match

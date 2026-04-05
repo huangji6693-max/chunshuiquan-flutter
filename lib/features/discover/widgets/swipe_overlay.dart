@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 
 /// 滑动 Overlay 标签
@@ -18,13 +19,13 @@ class SwipeOverlay extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           gradient: LinearGradient(
             colors: isLike
-                ? [const Color(0xFF4CAF50).withValues(alpha:0.15), Colors.transparent]
-                : [const Color(0xFFFF5A5A).withValues(alpha:0.15), Colors.transparent],
+                ? [Dt.like.withValues(alpha:0.15), Colors.transparent]
+                : [Dt.nope.withValues(alpha:0.15), Colors.transparent],
             begin: isLike ? Alignment.centerLeft : Alignment.centerRight,
             end: isLike ? Alignment.centerRight : Alignment.centerLeft,
           ),
           border: Border.all(
-            color: isLike ? const Color(0xFF4CAF50) : const Color(0xFFFF5A5A),
+            color: isLike ? Dt.like : Dt.nope,
             width: 3,
           ),
         ),
@@ -37,8 +38,8 @@ class SwipeOverlay extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border.all(
                 color: isLike
-                    ? const Color(0xFF4CAF50)
-                    : const Color(0xFFFF5A5A),
+                    ? Dt.like
+                    : Dt.nope,
                 width: 4,
               ),
               borderRadius: BorderRadius.circular(8),
@@ -47,8 +48,8 @@ class SwipeOverlay extends StatelessWidget {
               isLike ? 'LIKE' : 'NOPE',
               style: TextStyle(
                 color: isLike
-                    ? const Color(0xFF4CAF50)
-                    : const Color(0xFFFF5A5A),
+                    ? Dt.like
+                    : Dt.nope,
                 fontSize: 36,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 4,

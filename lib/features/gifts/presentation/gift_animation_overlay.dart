@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 
@@ -53,8 +54,8 @@ class _GiftAnimationWidgetState extends State<_GiftAnimationWidget>
         speed: 100 + _random.nextDouble() * 200,
         size: 4 + _random.nextDouble() * 8,
         color: [
-          const Color(0xFFFF4D88),
-          const Color(0xFFFF8A5C),
+          Dt.pink,
+          Dt.orange,
           Colors.amber,
           Colors.pink.shade200,
           Colors.white,
@@ -161,7 +162,7 @@ class _GiftAnimationWidgetState extends State<_GiftAnimationWidget>
                             borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF4D88).withValues(alpha: 0.3),
+                                color: Dt.pink.withValues(alpha: 0.3),
                                 blurRadius: 20,
                               ),
                             ],
@@ -171,7 +172,7 @@ class _GiftAnimationWidgetState extends State<_GiftAnimationWidget>
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFFFF4D88),
+                              color: Dt.pink,
                             ),
                           ),
                         ),

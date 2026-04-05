@@ -116,9 +116,9 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                 color: Theme.of(context).colorScheme.surface,
                 child: TabBar(
                   controller: _tabController,
-                  indicatorColor: const Dt.pink,
+                  indicatorColor: Dt.pink,
                   indicatorWeight: 3,
-                  labelColor: const Dt.pink,
+                  labelColor: Dt.pink,
                   unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   labelStyle: const TextStyle(
                       fontWeight: FontWeight.w600, fontSize: 15),
@@ -183,12 +183,12 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                   ? _handlePurchase
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Dt.pink,
+                backgroundColor: Dt.pink,
                 disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
                 elevation: _selectedPackage != null ? 4 : 0,
-                shadowColor: const Dt.pink.withValues(alpha:0.4),
+                shadowColor: Dt.pink.withValues(alpha:0.4),
               ),
               child: _purchasing
                   ? const SizedBox(
@@ -260,13 +260,13 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? const Dt.pink : Theme.of(context).colorScheme.outlineVariant,
+            color: isSelected ? Dt.pink : Theme.of(context).colorScheme.outlineVariant,
             width: isSelected ? 2.5 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: const Dt.pink.withValues(alpha:0.15),
+                    color: Dt.pink.withValues(alpha:0.15),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -313,7 +313,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                 children: [
                   Icon(Icons.monetization_on_rounded,
                       color: isSelected
-                          ? const Dt.pink
+                          ? Dt.pink
                           : Colors.amber.shade600,
                       size: 32),
                   const SizedBox(height: 6),
@@ -323,7 +323,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
                       color: isSelected
-                          ? const Dt.pink
+                          ? Dt.pink
                           : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),

@@ -30,7 +30,7 @@ class LikesScreen extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Dt.pink.withValues(alpha:0.1),
+                        color: Dt.pink.withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -59,7 +59,7 @@ class LikesScreen extends ConsumerWidget {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: const Dt.pink.withValues(alpha:0.1),
+                      color: Dt.pink.withValues(alpha:0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.favorite_border,
@@ -96,7 +96,7 @@ class LikesScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: const Dt.vipGold.withValues(alpha:0.3),
+                          color: Dt.vipGold.withValues(alpha:0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),

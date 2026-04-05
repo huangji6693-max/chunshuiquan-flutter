@@ -1,3 +1,4 @@
+import '../../../shared/theme/design_tokens.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -81,9 +82,9 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble>
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.isMe ? Colors.white : const Color(0xFFFF4D88);
+    final color = widget.isMe ? Colors.white : Dt.pink;
     final bgColor = widget.isMe
-        ? const Color(0xFFFF4D88)
+        ? Dt.pink
         : Colors.white;
     final width = 120.0 + widget.durationSeconds * 8.0;
 

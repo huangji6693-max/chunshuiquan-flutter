@@ -160,8 +160,8 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
-                const Dt.pink.withValues(alpha: 0.08),
-                const Dt.orange.withValues(alpha: 0.08),
+                Dt.pink.withValues(alpha: 0.08),
+                Dt.orange.withValues(alpha: 0.08),
               ]),
               borderRadius: BorderRadius.circular(14),
             ),
@@ -246,7 +246,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
             child: ElevatedButton(
               onPressed: _canSubmit ? _submit : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Dt.pink,
+                backgroundColor: Dt.pink,
                 disabledBackgroundColor: Theme.of(context).colorScheme.outlineVariant,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
@@ -356,7 +356,7 @@ class _PhotoUploadBox extends StatelessWidget {
           color: url != null ? null : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: url != null ? const Dt.pink : Theme.of(context).colorScheme.outlineVariant,
+            color: url != null ? Dt.pink : Theme.of(context).colorScheme.outlineVariant,
             width: url != null ? 2 : 1,
           ),
           image: url != null

@@ -1,3 +1,4 @@
+import '../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 
 /// 高级空状态组件 — 带呼吸动画的图标 + 文案
@@ -53,7 +54,7 @@ class _AnimatedEmptyStateState extends State<AnimatedEmptyState>
   @override
   Widget build(BuildContext context) {
     final colors = widget.gradientColors ??
-        [const Color(0xFFFF4D88), const Color(0xFFFF8A5C)];
+        [Dt.pink, Dt.orange];
 
     return Center(
       child: Padding(
