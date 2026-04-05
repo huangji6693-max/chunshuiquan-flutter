@@ -6,6 +6,7 @@ import '../../auth/data/auth_repository.dart';
 import '../../coins/presentation/coin_shop_screen.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../shared/theme/theme_provider.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -30,15 +31,11 @@ class SettingsScreen extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
-                  ),
+                  gradient: Dt.gradientAccent,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFF4D88).withValues(alpha: 0.3),
+                      color: Dt.pink.withValues(alpha: 0.3),
                       blurRadius: 16,
                       offset: const Offset(0, 6),
                     ),
@@ -51,7 +48,7 @@ class SettingsScreen extends ConsumerWidget {
                       height: 48,
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: Dt.rLg,
                       ),
                       child: const Icon(Icons.account_balance_wallet_rounded,
                           color: Colors.white, size: 26),
@@ -120,7 +117,7 @@ class SettingsScreen extends ConsumerWidget {
                   child: _QuickEntryCard(
                     icon: Icons.workspace_premium,
                     label: 'VIP会员',
-                    gradient: const [Color(0xFFFFD700), Color(0xFFFFA000)],
+                    gradient: [Dt.vipGold, Dt.vipGoldDark],
                     onTap: () => context.push('/vip'),
                   ),
                 ),
@@ -129,7 +126,7 @@ class SettingsScreen extends ConsumerWidget {
                   child: _QuickEntryCard(
                     icon: Icons.card_giftcard,
                     label: '礼物记录',
-                    gradient: const [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                    gradient: [Dt.pink, Dt.orange],
                     onTap: () => context.push('/gifts/history'),
                   ),
                 ),
@@ -181,7 +178,7 @@ class SettingsScreen extends ConsumerWidget {
             trailing: Switch(
               value: ref.watch(themeModeProvider) == ThemeMode.dark,
               onChanged: (_) => ref.read(themeModeProvider.notifier).toggle(),
-              activeColor: const Color(0xFFFF4D88),
+              activeColor: Dt.pink,
             ),
           ),
           _SettingsTile(
@@ -270,7 +267,7 @@ class SettingsScreen extends ConsumerWidget {
       SnackBar(
         content: const Text('功能即将上线'),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: Dt.rSm),
         duration: const Duration(seconds: 1),
       ),
     );
@@ -303,7 +300,7 @@ class SettingsScreen extends ConsumerWidget {
               backgroundColor: Theme.of(ctx).colorScheme.error,
               foregroundColor: Theme.of(ctx).colorScheme.onError,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+                  borderRadius: Dt.rSm),
             ),
             child: const Text('确认删除'),
           ),
@@ -436,10 +433,10 @@ class _SettingsTile extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: (iconColor ?? const Color(0xFFFF4D88)).withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
+            color: (iconColor ?? Dt.pink).withValues(alpha: 0.1),
+            borderRadius: Dt.rSm,
           ),
-          child: Icon(icon, color: iconColor ?? const Color(0xFFFF4D88), size: 20),
+          child: Icon(icon, color: iconColor ?? Dt.pink, size: 20),
         ),
         title: Text(title,
             style: TextStyle(

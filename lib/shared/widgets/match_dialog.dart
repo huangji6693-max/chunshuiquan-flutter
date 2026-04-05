@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/discover/domain/swipe_result.dart';
+import '../theme/design_tokens.dart';
 
 /// 匹配成功弹窗 - 升级版
 /// 深色半透明背景 + 星星粒子效果 + 双方头像从两侧飞入 + 爱心弹跳
@@ -181,11 +182,11 @@ class _MatchDialogState extends State<MatchDialog>
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+                                  colors: [Dt.pink, Color(0xFFFF7043)],
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFFF4D88).withValues(alpha:0.5),
+                                    color: const Dt.pink.withValues(alpha:0.5),
                                     blurRadius: 20,
                                     spreadRadius: 4,
                                   ),
@@ -248,11 +249,11 @@ class _MatchDialogState extends State<MatchDialog>
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(26),
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFFF4D88), Color(0xFFFF7043)],
+                                  colors: [Dt.pink, Color(0xFFFF7043)],
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFFF4D88).withValues(alpha:0.4),
+                                    color: const Dt.pink.withValues(alpha:0.4),
                                     blurRadius: 16,
                                     offset: const Offset(0, 6),
                                   ),
@@ -343,7 +344,7 @@ class _AnimatedAvatar extends StatelessWidget {
         border: Border.all(color: Colors.white, width: 3),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF4D88).withValues(alpha:0.4),
+            color: const Dt.pink.withValues(alpha:0.4),
             blurRadius: 20,
             spreadRadius: 4,
           ),
@@ -393,7 +394,7 @@ class _StarsPainter extends CustomPainter {
 
       paint.color = Color.lerp(
         Colors.white,
-        const Color(0xFFFF4D88),
+        const Dt.pink,
         _random.nextDouble() * 0.3,
       )!.withValues(alpha:opacity);
 

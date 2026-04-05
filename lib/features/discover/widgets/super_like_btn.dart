@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 /// Super Like 专用按钮 - 蓝色渐变 + 脉冲动画
 class SuperLikeBtn extends StatefulWidget {
@@ -15,7 +16,7 @@ class _SuperLikeBtnState extends State<SuperLikeBtn>
   late Animation<double> _pulseAnim;
 
   static const double _size = 44;
-  static const Color _blue = Color(0xFF5B9AFF);
+  static const Color _blue = Dt.superLike;
 
   @override
   void initState() {

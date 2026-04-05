@@ -8,6 +8,7 @@ import '../../../shared/widgets/skeleton_loading.dart';
 import '../../../shared/widgets/animated_empty_state.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:go_router/go_router.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 class MomentsScreen extends ConsumerWidget {
   const MomentsScreen({super.key});
@@ -27,7 +28,7 @@ class MomentsScreen extends ConsumerWidget {
               height: 28,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFFFF6B9D), Color(0xFFFF4D88)],
+                  colors: [Dt.pinkLight, Dt.pink],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -46,7 +47,7 @@ class MomentsScreen extends ConsumerWidget {
               height: 34,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                    colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)]),
+                    colors: [Dt.pink, Dt.orange]),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.add, color: Colors.white, size: 20),
@@ -173,7 +174,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2),
+          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.25),
         ),
         boxShadow: [
           BoxShadow(
@@ -209,7 +210,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                       ? Text(m.authorName[0],
                           style: const TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFFFF4D88)))
+                              color: Dt.pink))
                       : null,
                 ),
                 const SizedBox(width: 10),
@@ -229,7 +230,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                                 size: 15,
                                 color: m.authorVipTier == 'diamond'
                                     ? const Color(0xFFE040FB)
-                                    : const Color(0xFFFFD700)),
+                                    : Dt.vipGold),
                           ],
                         ],
                       ),
@@ -279,7 +280,7 @@ class _MomentCardState extends ConsumerState<_MomentCard> {
                 // 点赞
                 _InteractionBtn(
                   icon: _liked ? Icons.favorite : Icons.favorite_border,
-                  color: _liked ? const Color(0xFFFF4D88) : Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: _liked ? Dt.pink : Theme.of(context).colorScheme.onSurfaceVariant,
                   label: _likeCount > 0 ? '$_likeCount' : '赞',
                   onTap: _handleLike,
                 ),
@@ -584,7 +585,7 @@ class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
                     height: 38,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Color(0xFFFF4D88),
+                      color: Dt.pink,
                     ),
                     child: _sending
                         ? const Padding(

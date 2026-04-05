@@ -5,6 +5,7 @@ import '../data/gift_repository.dart';
 import '../domain/gift.dart';
 import 'package:go_router/go_router.dart';
 import '../../coins/presentation/coin_shop_screen.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 /// 礼物列表 Provider
 final giftsProvider = FutureProvider.autoDispose<List<Gift>>((ref) {
@@ -108,7 +109,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                         horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFFFFD700).withValues(alpha: 0.15), Color(0xFFFFA000).withValues(alpha: 0.1)],
+                        colors: [Dt.vipGold.withValues(alpha: 0.15), Dt.vipGoldDark.withValues(alpha: 0.1)],
                       ),
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -166,12 +167,12 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                 onPressed:
                     _selected != null && !_sending ? _handleSend : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF4D88),
+                  backgroundColor: const Dt.pink,
                   disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                   elevation: _selected != null ? 3 : 0,
-                  shadowColor: const Color(0xFFFF4D88).withValues(alpha: 0.4),
+                  shadowColor: const Dt.pink.withValues(alpha: 0.4),
                 ),
                 child: _sending
                     ? const SizedBox(
@@ -225,19 +226,19 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
           margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           decoration: BoxDecoration(
             color: isSelected
-                ? const Color(0xFFFF4D88).withValues(alpha: 0.1)
+                ? const Dt.pink.withValues(alpha: 0.1)
                 : Theme.of(context).colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isSelected
-                  ? const Color(0xFFFF4D88)
+                  ? const Dt.pink
                   : Theme.of(context).colorScheme.outlineVariant,
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: const Color(0xFFFF4D88).withValues(alpha: 0.15),
+                      color: const Dt.pink.withValues(alpha: 0.15),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
                     ),
@@ -255,7 +256,7 @@ class _GiftPanelState extends ConsumerState<GiftPanel>
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: isSelected
-                      ? const Color(0xFFFF4D88)
+                      ? const Dt.pink
                       : Theme.of(context).colorScheme.onSurface,
                 ),
               ),

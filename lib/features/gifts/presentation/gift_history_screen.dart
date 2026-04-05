@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../data/gift_repository.dart';
 import '../domain/gift_record.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 final receivedGiftsProvider = FutureProvider.autoDispose<List<GiftRecord>>((ref) {
   return ref.watch(giftRepositoryProvider).getReceived();
@@ -42,9 +43,9 @@ class _GiftHistoryScreenState extends ConsumerState<GiftHistoryScreen>
         title: const Text('礼物记录'),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: const Color(0xFFFF4D88),
+          indicatorColor: const Dt.pink,
           indicatorWeight: 3,
-          labelColor: const Color(0xFFFF4D88),
+          labelColor: const Dt.pink,
           unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
           labelStyle:
               const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
@@ -95,7 +96,7 @@ class _GiftList extends ConsumerWidget {
                           width: 72,
                           height: 72,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
+                            color: const Dt.pink.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -103,7 +104,7 @@ class _GiftList extends ConsumerWidget {
                                 ? Icons.card_giftcard
                                 : Icons.volunteer_activism,
                             size: 36,
-                            color: const Color(0xFFFF4D88),
+                            color: const Dt.pink,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -161,7 +162,7 @@ class _GiftList extends ConsumerWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
+                        color: const Dt.pink.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(
@@ -228,7 +229,7 @@ class _GiftList extends ConsumerWidget {
           );
         },
         loading: () => const Center(
-            child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
+            child: CircularProgressIndicator(color: Dt.pink)),
         error: (e, _) => CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [

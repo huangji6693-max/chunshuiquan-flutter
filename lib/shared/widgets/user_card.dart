@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../features/auth/domain/user_profile.dart';
+import '../theme/design_tokens.dart';
 
 /// 用户卡片 - Tinder级别的全屏卡片
 /// 支持多照片切换、照片进度条、点击展开详情
@@ -150,7 +151,7 @@ class _UserCardState extends State<UserCard> {
     if (url.isEmpty) {
       // 无照片时——深色质感背景+居中首字母（不用彩色渐变避免塑料感）
       return Container(
-        color: const Color(0xFF1A1A20),
+        color: Theme.of(context).colorScheme.surfaceContainer,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -205,12 +206,8 @@ class _UserCardState extends State<UserCard> {
           ),
         ),
         errorWidget: (_, __, ___) => Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+          decoration: BoxDecoration(
+            gradient: Dt.gradientAccent,
           ),
           child: Center(
             child: Text(
@@ -232,7 +229,7 @@ class _UserCardState extends State<UserCard> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.3),
+        color: Colors.black.withValues(alpha: 0.45),
         border: Border(
           top: BorderSide(
             color: Colors.white.withValues(alpha: 0.1),

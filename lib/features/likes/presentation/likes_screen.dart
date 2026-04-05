@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../data/likes_repository.dart';
 import 'package:go_router/go_router.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 final likesProvider = FutureProvider.autoDispose<LikesResult>((ref) {
   return ref.watch(likesRepositoryProvider).getWhoLikesMe();
@@ -29,13 +30,13 @@ class LikesScreen extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFF4D88).withValues(alpha:0.1),
+                        color: const Dt.pink.withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         '${r.count}人',
                         style: const TextStyle(
-                          color: Color(0xFFFF4D88),
+                          color: Dt.pink,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
                         ),
@@ -58,11 +59,11 @@ class LikesScreen extends ConsumerWidget {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFF4D88).withValues(alpha:0.1),
+                      color: const Dt.pink.withValues(alpha:0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.favorite_border,
-                        size: 40, color: Color(0xFFFF4D88)),
+                        size: 40, color: Dt.pink),
                   ),
                   const SizedBox(height: 16),
                   Text('你的故事还在等一个开始',
@@ -90,12 +91,12 @@ class LikesScreen extends ConsumerWidget {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                        colors: [Dt.vipGold, Dt.vipGoldDark],
                       ),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFFFD700).withValues(alpha:0.3),
+                          color: const Dt.vipGold.withValues(alpha:0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -166,7 +167,7 @@ class LikesScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(
-            child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
+            child: CircularProgressIndicator(color: Dt.pink)),
         error: (e, _) => Center(
           child: Padding(
             padding: const EdgeInsets.all(32),

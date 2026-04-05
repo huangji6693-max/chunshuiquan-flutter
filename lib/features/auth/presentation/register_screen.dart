@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../data/auth_repository.dart';
 import '../../../core/errors/app_exception.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 /// 注册页 - 步骤式注册，精致卡片选择器
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -126,7 +127,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                colors: [Dt.pink, Dt.orange],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -360,14 +361,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                                 width: 22,
                                                 child: CircularProgressIndicator(
                                                   strokeWidth: 2.5,
-                                                  color: Color(0xFFFF4D88),
+                                                  color: Dt.pink,
                                                 ),
                                               )
                                             : const Text('遇见心动 →',
                                                 style: TextStyle(
                                                   fontSize: 17,
                                                   fontWeight: FontWeight.w700,
-                                                  color: Color(0xFFFF4D88),
+                                                  color: Dt.pink,
                                                   letterSpacing: 2,
                                                 )),
                                       ),

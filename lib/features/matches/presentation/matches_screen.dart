@@ -7,6 +7,7 @@ import '../data/match_repository.dart';
 import '../../../core/services/heartbeat_service.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 final matchesProvider = FutureProvider.autoDispose<List<MatchItem>>((ref) {
   return ref.watch(matchRepositoryProvider).fetchMatches();
@@ -34,7 +35,7 @@ class MatchesScreen extends ConsumerWidget {
               height: 28,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFFFF6B9D), Color(0xFFFF4D88)],
+                  colors: [Dt.pinkLight, Dt.pink],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -225,13 +226,13 @@ class _EmptyState extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFFFF4D88).withValues(alpha:0.1),
-                  const Color(0xFFFF8A5C).withValues(alpha:0.1),
+                  Dt.pink.withValues(alpha:0.1),
+                  Dt.orange.withValues(alpha:0.1),
                 ],
               ),
             ),
             child: const Icon(Icons.favorite_outline,
-                size: 48, color: Color(0xFFFF4D88)),
+                size: 48, color: Dt.pink),
           ),
           const SizedBox(height: 20),
           Text('还没有匹配',
@@ -266,14 +267,10 @@ class _NewMatchAvatar extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              gradient: Dt.gradientAccent,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF4D88).withValues(alpha:0.35),
+                  color: Dt.pink.withValues(alpha:0.35),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -303,7 +300,7 @@ class _NewMatchAvatar extends StatelessWidget {
                         style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFFFF4D88)),
+                            color: Dt.pink),
                       )
                     : null,
               ),
@@ -356,16 +353,16 @@ class _ConversationTile extends ConsumerWidget {
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: Dt.rLg,
         border: Border.all(
           color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.08),
           width: 0.5,
         ),
       ),
       child: InkWell(
-      splashColor: const Color(0xFFFF4D88).withValues(alpha: 0.06),
-      highlightColor: const Color(0xFFFF4D88).withValues(alpha: 0.03),
-      borderRadius: BorderRadius.circular(14),
+      splashColor: Dt.pink.withValues(alpha: 0.06),
+      highlightColor: Dt.pink.withValues(alpha: 0.03),
+      borderRadius: Dt.rLg,
       onTap: () => context.go('/chat/${match.matchId}', extra: {
         'partnerName': match.otherName,
         'partnerAvatarUrl': match.otherAvatarUrl,
@@ -396,7 +393,7 @@ class _ConversationTile extends ConsumerWidget {
                           style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFFFF4D88)),
+                              color: Dt.pink),
                         )
                       : null,
                 ),
@@ -411,11 +408,11 @@ class _ConversationTile extends ConsumerWidget {
                       height: 14,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFF4CAF50),
+                        color: Dt.online,
                         border: Border.all(color: Colors.white, width: 2.5),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF4CAF50).withValues(alpha: 0.5),
+                            color: Dt.online.withValues(alpha: 0.5),
                             blurRadius: 6,
                             spreadRadius: 1,
                           ),
@@ -450,7 +447,7 @@ class _ConversationTile extends ConsumerWidget {
                             size: 16,
                             color: match.otherVipTier == 'diamond'
                                 ? const Color(0xFFE040FB)
-                                : const Color(0xFFFFD700)),
+                                : Dt.vipGold),
                       ],
                     ],
                   ),
@@ -481,7 +478,7 @@ class _ConversationTile extends ConsumerWidget {
                 Text(timeStr,
                     style: TextStyle(
                         color: hasUnread
-                            ? const Color(0xFFFF4D88)
+                            ? Dt.pink
                             : Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 12,
                         fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal)),
@@ -496,13 +493,11 @@ class _ConversationTile extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
-                          ),
-                          borderRadius: BorderRadius.circular(10),
+                          gradient: Dt.gradientPrimary,
+                          borderRadius: Dt.rSm,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFF4D88).withValues(alpha: 0.3),
+                              color: Dt.pink.withValues(alpha: 0.3),
                               blurRadius: 6,
                               offset: const Offset(0, 2),
                             ),
@@ -528,10 +523,10 @@ class _ConversationTile extends ConsumerWidget {
                         height: 32,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFFFF4D88).withValues(alpha:0.1),
+                          color: Dt.pink.withValues(alpha:0.1),
                         ),
                         child: const Icon(Icons.call,
-                            color: Color(0xFFFF4D88), size: 16),
+                            color: Dt.pink, size: 16),
                       ),
                     ),
                   ],

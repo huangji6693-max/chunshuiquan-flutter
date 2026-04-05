@@ -15,6 +15,7 @@ import '../widgets/super_like_btn.dart';
 import '../widgets/swipe_label.dart';
 import '../widgets/filter_sheet.dart';
 import '../../../shared/widgets/brand_logo.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 /// 发现页 - Tinder级别UI
 class DiscoverScreen extends ConsumerStatefulWidget {
@@ -156,15 +157,15 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
               width: 34,
               height: 34,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFF6B9D), Color(0xFFFF4D88)],
+                gradient: LinearGradient(
+                  colors: [Dt.pinkLight, Dt.pink],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFF4D88).withValues(alpha: 0.3),
+                    color: Dt.pink.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -192,7 +193,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
           IconButton(
             onPressed: () => context.push('/likes'),
             icon: const Icon(Icons.people_alt_rounded,
-                color: Color(0xFFFF4D88), size: 22),
+                color: Dt.pink, size: 22),
             tooltip: '谁喜欢我',
           ),
           // 筛选
@@ -217,7 +218,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                       height: 6,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color(0xFFFF4D88),
+                        color: Dt.pink,
                       ),
                     ),
                   ),
@@ -228,7 +229,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
       ),
       body: discoverState.isLoading && discoverState.cards.isEmpty
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFF4D88)))
+              child: CircularProgressIndicator(color: Dt.pink))
           : discoverState.cards.isEmpty
               ? AnimatedEmptyState(
                   icon: Icons.explore_rounded,
@@ -275,7 +276,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                                   if (percentX > 0)
                                     SwipeLabel(
                                       text: 'LIKE',
-                                      color: const Color(0xFF4CAF50),
+                                      color: Dt.like,
                                       opacity: (percentX / 100).clamp(0.0, 1.0),
                                       angle: -0.35,
                                       alignment: Alignment.topLeft,
@@ -284,7 +285,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                                   if (percentX < 0)
                                     SwipeLabel(
                                       text: 'NOPE',
-                                      color: const Color(0xFFFF5A5A),
+                                      color: Dt.nope,
                                       opacity: (-percentX / 100).clamp(0.0, 1.0),
                                       angle: 0.35,
                                       alignment: Alignment.topRight,
@@ -293,7 +294,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                                   if (percentY < 0)
                                     SwipeLabel(
                                       text: 'SUPER',
-                                      color: const Color(0xFF5B9AFF),
+                                      color: Dt.superLike,
                                       opacity: (-percentY / 100).clamp(0.0, 1.0),
                                       angle: 0,
                                       alignment: Alignment.center,
@@ -321,14 +322,14 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                                     child: Container(
                                       padding: const EdgeInsets.all(20),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF5B9AFF)
+                                        color: Dt.superLike
                                             .withValues(alpha: 0.15),
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(
                                         Icons.star_rounded,
                                         size: 100,
-                                        color: Color(0xFF5B9AFF),
+                                        color: Dt.superLike,
                                       ),
                                     ),
                                   ),
@@ -354,7 +355,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                           // NOPE 大按钮 56px 红色
                           ActionButton(
                             icon: Icons.close_rounded,
-                            color: const Color(0xFFFF5A5A),
+                            color: Dt.nope,
                             size: 56,
                             onTap: () {
                               HapticFeedback.mediumImpact();
@@ -376,7 +377,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
                           // LIKE 大按钮 56px 绿色
                           ActionButton(
                             icon: Icons.favorite_rounded,
-                            color: const Color(0xFF4CAF50),
+                            color: Dt.like,
                             size: 56,
                             onTap: () {
                               HapticFeedback.mediumImpact();

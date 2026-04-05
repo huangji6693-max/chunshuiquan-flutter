@@ -14,6 +14,7 @@ import '../../../core/network/websocket_service.dart';
 import '../../profile/data/upload_repository.dart';
 import '../data/message_repository.dart';
 import '../../../core/network/dio_client.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 /// 聊天页 - 升级版UI
 /// 精致AppBar + 自定义气泡颜色 + 图片发送 + 在线状态
@@ -241,14 +242,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               height: 8,
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Color(0xFF4CAF50),
+                                color: Dt.online,
                               ),
                             ),
                             const SizedBox(width: 4),
                             const Text('在线',
                                 style: TextStyle(
                                     fontSize: 12,
-                                    color: Color(0xFF4CAF50),
+                                    color: Dt.online,
                                     fontWeight: FontWeight.w500)),
                           ],
                         ),
@@ -263,10 +264,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       height: 38,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFFFF4D88).withValues(alpha:0.1),
+                        color: Dt.pink.withValues(alpha:0.1),
                       ),
                       child: const Icon(Icons.call_outlined,
-                          color: Color(0xFFFF4D88), size: 20),
+                          color: Dt.pink, size: 20),
                     ),
                     onPressed: () {
                       context.push('/call/${widget.matchId}', extra: {
@@ -283,10 +284,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       height: 38,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFFFF4D88).withValues(alpha:0.1),
+                        color: Dt.pink.withValues(alpha:0.1),
                       ),
                       child: const Icon(Icons.videocam_outlined,
-                          color: Color(0xFFFF4D88), size: 20),
+                          color: Dt.pink, size: 20),
                     ),
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -302,7 +303,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
       body: messagesAsync.when(
         loading: () => const Center(
-            child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
+            child: CircularProgressIndicator(color: Dt.pink)),
         error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Theme.of(context).colorScheme.error), const SizedBox(height: 12), Text('消息加载失败，下拉重试', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant))])),
         data: (messages) => Chat(
           messages: _toUiMessages(
@@ -317,7 +318,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           showUserNames: false,
           theme: DefaultChatTheme(
             // 自己的消息：品牌粉
-            primaryColor: const Color(0xFFFF4D88),
+            primaryColor: Dt.pink,
             // 对方的消息：暗色卡片
             secondaryColor: Theme.of(context).colorScheme.surfaceContainerHigh,
             backgroundColor: Theme.of(context).colorScheme.surface,
@@ -353,7 +354,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             sendButtonIcon: const Icon(
               Icons.send_rounded,
-              color: Color(0xFFFF4D88),
+              color: Dt.pink,
               size: 24,
             ),
             sendingIcon: Icon(
@@ -365,7 +366,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 15,
             ),
-            receivedMessageDocumentIconColor: const Color(0xFFFF4D88),
+            receivedMessageDocumentIconColor: Dt.pink,
             sentMessageDocumentIconColor: Colors.white,
           ),
           emptyState: Center(
@@ -379,13 +380,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFFFF4D88).withValues(alpha:0.1),
-                        const Color(0xFFFF8A5C).withValues(alpha:0.1),
+                        Dt.pink.withValues(alpha:0.1),
+                        const Dt.orange.withValues(alpha:0.1),
                       ],
                     ),
                   ),
                   child: const Icon(Icons.chat_bubble_outline,
-                      size: 36, color: Color(0xFFFF4D88)),
+                      size: 36, color: Dt.pink),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -418,7 +419,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFFFF4D88)),
+                          color: Dt.pink),
                     )
                   : null,
             ),
@@ -523,9 +524,9 @@ class _ChatInputState extends State<_ChatInput> {
                           width: 40, height: 40,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
+                            color: Dt.pink.withValues(alpha: 0.1),
                           ),
-                          child: const Icon(Icons.image_outlined, color: Color(0xFFFF4D88), size: 22),
+                          child: const Icon(Icons.image_outlined, color: Dt.pink, size: 22),
                         ),
                         title: const Text('图片'),
                         onTap: () { Navigator.pop(context); widget.onImageTap(); },
@@ -537,12 +538,12 @@ class _ChatInputState extends State<_ChatInput> {
                             shape: BoxShape.circle,
                             gradient: LinearGradient(
                               colors: [
-                                const Color(0xFFFF4D88).withValues(alpha: 0.15),
-                                const Color(0xFFFF8A5C).withValues(alpha: 0.15),
+                                Dt.pink.withValues(alpha: 0.15),
+                                const Dt.orange.withValues(alpha: 0.15),
                               ],
                             ),
                           ),
-                          child: const Icon(Icons.card_giftcard_rounded, color: Color(0xFFFF4D88), size: 22),
+                          child: const Icon(Icons.card_giftcard_rounded, color: Dt.pink, size: 22),
                         ),
                         title: const Text('礼物'),
                         onTap: () { Navigator.pop(context); widget.onGiftTap(); },
@@ -558,16 +559,16 @@ class _ChatInputState extends State<_ChatInput> {
               height: 42,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
+                color: Dt.pink.withValues(alpha: 0.1),
               ),
               child: widget.uploading
                   ? const Padding(
                       padding: EdgeInsets.all(10),
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Color(0xFFFF4D88)),
+                          strokeWidth: 2, color: Dt.pink),
                     )
                   : const Icon(Icons.add_circle_outline,
-                      color: Color(0xFFFF4D88), size: 24),
+                      color: Dt.pink, size: 24),
             ),
           ),
           const SizedBox(width: 8),
@@ -608,11 +609,11 @@ class _ChatInputState extends State<_ChatInput> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
+                        colors: [Dt.pink, Dt.pinkLight],
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFFF4D88).withValues(alpha:0.3),
+                          color: Dt.pink.withValues(alpha:0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -638,10 +639,10 @@ class _ChatInputState extends State<_ChatInput> {
                     height: 42,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: const Color(0xFFFF4D88).withValues(alpha:0.1),
+                      color: Dt.pink.withValues(alpha:0.1),
                     ),
                     child: const Icon(Icons.mic_none,
-                        color: Color(0xFFFF4D88), size: 22),
+                        color: Dt.pink, size: 22),
                   ),
                 ),
         ],

@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import '../data/verification_repository.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../profile/data/upload_repository.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 final verificationStatusProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
   return ref.watch(verificationRepositoryProvider).getStatus();
@@ -71,7 +72,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
             height: 88,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                  colors: [Color(0xFF4CAF50), Color(0xFF81C784)]),
+                  colors: [Dt.like, Color(0xFF81C784)]),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
@@ -87,7 +88,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF4CAF50))),
+                  color: Dt.like)),
           const SizedBox(height: 8),
           Text('你的身份已验证，享受更高的信任度',
               style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 15)),
@@ -106,7 +107,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
             height: 88,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                  colors: [Color(0xFFFFA000), Color(0xFFFFD54F)]),
+                  colors: [Dt.vipGoldDark, Color(0xFFFFD54F)]),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.hourglass_top, color: Colors.white, size: 44),
@@ -116,7 +117,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFFFFA000))),
+                  color: Dt.vipGoldDark)),
           const SizedBox(height: 8),
           Text('我们正在审核你的认证信息，通常需要1-3个工作日',
               textAlign: TextAlign.center,
@@ -159,14 +160,14 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
-                const Color(0xFFFF4D88).withValues(alpha: 0.08),
-                const Color(0xFFFF8A5C).withValues(alpha: 0.08),
+                const Dt.pink.withValues(alpha: 0.08),
+                const Dt.orange.withValues(alpha: 0.08),
               ]),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
               children: [
-                const Icon(Icons.shield, color: Color(0xFFFF4D88), size: 32),
+                const Icon(Icons.shield, color: Dt.pink, size: 32),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -245,7 +246,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
             child: ElevatedButton(
               onPressed: _canSubmit ? _submit : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF4D88),
+                backgroundColor: const Dt.pink,
                 disabledBackgroundColor: Theme.of(context).colorScheme.outlineVariant,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
@@ -355,7 +356,7 @@ class _PhotoUploadBox extends StatelessWidget {
           color: url != null ? null : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: url != null ? const Color(0xFFFF4D88) : Theme.of(context).colorScheme.outlineVariant,
+            color: url != null ? const Dt.pink : Theme.of(context).colorScheme.outlineVariant,
             width: url != null ? 2 : 1,
           ),
           image: url != null
@@ -368,7 +369,7 @@ class _PhotoUploadBox extends StatelessWidget {
                 children: [
                   if (uploading)
                     const CircularProgressIndicator(
-                        strokeWidth: 2, color: Color(0xFFFF4D88))
+                        strokeWidth: 2, color: Dt.pink)
                   else ...[
                     Icon(icon, size: 36, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(height: 8),
@@ -384,7 +385,7 @@ class _PhotoUploadBox extends StatelessWidget {
                   margin: const EdgeInsets.all(8),
                   padding: const EdgeInsets.all(4),
                   decoration: const BoxDecoration(
-                    color: Color(0xFFFF4D88),
+                    color: Dt.pink,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.check, color: Colors.white, size: 16),

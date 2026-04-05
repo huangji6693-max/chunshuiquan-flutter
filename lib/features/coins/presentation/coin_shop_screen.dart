@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/coin_repository.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 /// 金币余额Provider
 final coinBalanceProvider = FutureProvider.autoDispose<int>((ref) {
@@ -61,7 +62,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                    colors: [Dt.pink, Dt.orange],
                   ),
                 ),
                 child: SafeArea(
@@ -115,9 +116,9 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                 color: Theme.of(context).colorScheme.surface,
                 child: TabBar(
                   controller: _tabController,
-                  indicatorColor: const Color(0xFFFF4D88),
+                  indicatorColor: const Dt.pink,
                   indicatorWeight: 3,
-                  labelColor: const Color(0xFFFF4D88),
+                  labelColor: const Dt.pink,
                   unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   labelStyle: const TextStyle(
                       fontWeight: FontWeight.w600, fontSize: 15),
@@ -182,12 +183,12 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                   ? _handlePurchase
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF4D88),
+                backgroundColor: const Dt.pink,
                 disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
                 elevation: _selectedPackage != null ? 4 : 0,
-                shadowColor: const Color(0xFFFF4D88).withValues(alpha:0.4),
+                shadowColor: const Dt.pink.withValues(alpha:0.4),
               ),
               child: _purchasing
                   ? const SizedBox(
@@ -259,13 +260,13 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? const Color(0xFFFF4D88) : Theme.of(context).colorScheme.outlineVariant,
+            color: isSelected ? const Dt.pink : Theme.of(context).colorScheme.outlineVariant,
             width: isSelected ? 2.5 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: const Color(0xFFFF4D88).withValues(alpha:0.15),
+                    color: const Dt.pink.withValues(alpha:0.15),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -290,7 +291,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                      colors: [Dt.pink, Dt.orange],
                     ),
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(14),
@@ -312,7 +313,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                 children: [
                   Icon(Icons.monetization_on_rounded,
                       color: isSelected
-                          ? const Color(0xFFFF4D88)
+                          ? const Dt.pink
                           : Colors.amber.shade600,
                       size: 32),
                   const SizedBox(height: 6),
@@ -322,7 +323,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
                       color: isSelected
-                          ? const Color(0xFFFF4D88)
+                          ? const Dt.pink
                           : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
@@ -348,7 +349,7 @@ class _CoinShopScreenState extends ConsumerState<CoinShopScreen>
                   width: 22,
                   height: 22,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFFF4D88),
+                    color: Dt.pink,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.check, color: Colors.white, size: 14),

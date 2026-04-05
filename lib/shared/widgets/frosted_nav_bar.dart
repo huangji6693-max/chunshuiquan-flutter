@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../theme/design_tokens.dart';
 
 /// 毛玻璃底部导航栏
 /// 5个tab：发现 / 附近 / 匹配 / 通知 / 我的
@@ -74,7 +75,7 @@ class FrostedNavBar extends StatelessWidget {
                                   ? ShaderMask(
                                       key: const ValueKey(true),
                                       shaderCallback: (bounds) => const LinearGradient(
-                                        colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D), Color(0xFFFF8A5C)],
+                                        colors: [Dt.pink, Dt.pinkLight, Dt.orange],
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                       ).createShader(bounds),
@@ -103,7 +104,7 @@ class FrostedNavBar extends StatelessWidget {
                               fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
                               letterSpacing: selected ? 0.5 : 0.2,
                               color: selected
-                                  ? const Color(0xFFFF4D88)
+                                  ? Dt.pink
                                   : Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                             child: Text(_labels[i]),

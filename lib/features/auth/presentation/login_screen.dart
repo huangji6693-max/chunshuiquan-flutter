@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../data/auth_repository.dart';
 import '../../../core/errors/app_exception.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 /// 登录页 - 春水圈品牌风格
 /// 背景渐变 + 波浪动画 + 精致输入框
@@ -103,7 +104,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                colors: [Dt.pink, Dt.orange],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -296,14 +297,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                               width: 22,
                                               child: CircularProgressIndicator(
                                                 strokeWidth: 2.5,
-                                                color: Color(0xFFFF4D88),
+                                                color: Dt.pink,
                                               ),
                                             )
                                           : const Text('登录',
                                               style: TextStyle(
                                                 fontSize: 17,
                                                 fontWeight: FontWeight.w700,
-                                                color: Color(0xFFFF4D88),
+                                                color: Dt.pink,
                                                 letterSpacing: 2,
                                               )),
                                     ),

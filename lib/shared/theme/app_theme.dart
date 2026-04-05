@@ -11,24 +11,11 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   static const _seed = Color(0xFFFF4D88);
 
-  // ====== 品牌色常量（散布在代码各处，统一定义） ======
+  // 品牌色和渐变已迁移到 design_tokens.dart (Dt.pink / Dt.gradientPrimary)
+  // 保留旧引用以兼容，后续逐步删除
   static const Color brandPink = Color(0xFFFF4D88);
-  static const Color brandOrange = Color(0xFFFF8A5C);
-  static const Color brandPinkLight = Color(0xFFFF6B9D);
-  static const Color vipGold = Color(0xFFFFD700);
-  static const Color vipGoldDark = Color(0xFFFFA000);
-  static const Color superLikeBlue = Color(0xFF5B9AFF);
-  static const Color nopeRed = Color(0xFFFF5A5A);
-  static const Color likeGreen = Color(0xFF4CAF50);
-  static const Color boostPurple = Color(0xFF7C4DFF);
-
-  // 品牌渐变（仅用于特殊装饰元素）
-  static const primaryGradient = LinearGradient(
-    colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)],
-  );
-  static const accentGradient = LinearGradient(
-    colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
-  );
+  static const primaryGradient = LinearGradient(colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)]);
+  static const accentGradient = LinearGradient(colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)]);
 
   // ====== 基于 Poppins 的 TextTheme ======
 
@@ -65,14 +52,14 @@ class AppTheme {
   static final _buttonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       minimumSize: const Size(double.infinity, 52),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Dt.radiusLg
       textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.3),
     ),
   );
 
   static final _cardTheme = CardTheme(
-    elevation: 1,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    elevation: 0,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // 统一Dt.radiusLg
     clipBehavior: Clip.antiAlias,
     margin: EdgeInsets.zero,
   );

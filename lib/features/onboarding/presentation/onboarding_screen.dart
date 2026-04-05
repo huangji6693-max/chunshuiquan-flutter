@@ -8,6 +8,7 @@ import '../../../core/errors/app_exception.dart';
 import '../../../core/providers/current_user_provider.dart';
 import '../../profile/data/profile_repository.dart';
 import '../../profile/data/upload_repository.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -97,7 +98,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    const pink = Color(0xFFFF4D88);
+    const pink = Dt.pink;
 
     return Scaffold(
       backgroundColor: cs.surface,
@@ -158,7 +159,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         child: Text(
                           '${_page + 1}',
                           style: const TextStyle(
-                            color: Color(0xFFFF4D88),
+                            color: Dt.pink,
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                           ),

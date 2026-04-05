@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/boost_repository.dart';
 import '../../../core/errors/app_exception.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 /// Boost 状态 Provider
 final boostStatusProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
@@ -82,7 +83,7 @@ class _BoostButtonState extends ConsumerState<BoostButton>
                 color: Colors.white.withValues(alpha: 0.1),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF7C4DFF).withValues(alpha: 0.2),
+                    color: Dt.boost.withValues(alpha: 0.2),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),
@@ -94,7 +95,7 @@ class _BoostButtonState extends ConsumerState<BoostButton>
               ),
               child: Icon(
                 _active ? Icons.rocket_launch : Icons.bolt_rounded,
-                color: const Color(0xFF7C4DFF),
+                color: Dt.boost,
                 size: 20,
               ),
             ),
@@ -120,7 +121,7 @@ class _BoostButtonState extends ConsumerState<BoostButton>
                 Text('曝光加速已激活！30分钟内更多人会看到你'),
               ],
             ),
-            backgroundColor: const Color(0xFF7C4DFF),
+            backgroundColor: Dt.boost,
             behavior: SnackBarBehavior.floating,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

@@ -8,6 +8,7 @@ import '../../discover/data/discover_repository.dart';
 import '../../discover/domain/user_profile.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import 'package:go_router/go_router.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 /// 附近用户列表 Provider
 final nearbyUsersProvider = FutureProvider.autoDispose.family<List<UserProfile>, double>(
@@ -61,7 +62,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                   height: 28,
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFFFF6B9D), Color(0xFFFF4D88)],
+                      colors: [Dt.pinkLight, Dt.pink],
                     ),
                     shape: BoxShape.circle,
                   ),
@@ -76,7 +77,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
               IconButton(
                 icon: Icon(
                   _isGridView ? Icons.view_list_rounded : Icons.grid_view_rounded,
-                  color: const Color(0xFFFF4D88),
+                  color: Dt.pink,
                 ),
                 onPressed: () {
                   HapticFeedback.lightImpact();
@@ -91,13 +92,13 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.location_on,
-                        color: const Color(0xFFFF4D88), size: 18),
+                        color: Dt.pink, size: 18),
                     const SizedBox(width: 6),
                     Text('${_radius.toInt()} km',
                         style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
-                            color: Color(0xFFFF4D88))),
+                            color: Dt.pink)),
                     const SizedBox(width: 4),
                     Text('范围内',
                         style: const TextStyle(
@@ -106,12 +107,12 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                     Expanded(
                       child: SliderTheme(
                         data: SliderThemeData(
-                          activeTrackColor: const Color(0xFFFF4D88),
+                          activeTrackColor: Dt.pink,
                           inactiveTrackColor:
-                              const Color(0xFFFF4D88).withValues(alpha: 0.15),
-                          thumbColor: const Color(0xFFFF4D88),
+                              Dt.pink.withValues(alpha: 0.15),
+                          thumbColor: Dt.pink,
                           overlayColor:
-                              const Color(0xFFFF4D88).withValues(alpha: 0.1),
+                              Dt.pink.withValues(alpha: 0.1),
                           trackHeight: 3,
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 7),
@@ -151,11 +152,11 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                           width: 80,
                           height: 80,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
+                            color: Dt.pink.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(Icons.explore_off,
-                              size: 40, color: Color(0xFFFF4D88)),
+                              size: 40, color: Dt.pink),
                         ),
                         const SizedBox(height: 16),
                         Text('这片星空暂时只有你',
@@ -351,7 +352,7 @@ class _NearbyCard extends StatelessWidget {
                             size: 16,
                             color: user.vipTier == 'diamond'
                                 ? const Color(0xFFE040FB)
-                                : const Color(0xFFFFD700),
+                                : Dt.vipGold,
                           ),
                         ],
                       ],
@@ -383,7 +384,7 @@ class _NearbyCard extends StatelessWidget {
                 width: 10,
                 height: 10,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4CAF50),
+                  color: const Dt.online,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                   boxShadow: [
@@ -465,7 +466,7 @@ class _NearbyListTile extends StatelessWidget {
                 size: 16,
                 color: user.vipTier == 'diamond'
                     ? const Color(0xFFE040FB)
-                    : const Color(0xFFFFD700),
+                    : Dt.vipGold,
               ),
             ],
           ],
@@ -502,11 +503,11 @@ class _NearbyListTile extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: const Color(0xFFFF4D88).withValues(alpha: 0.1),
+            color: Dt.pink.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.favorite_border,
-              color: Color(0xFFFF4D88), size: 18),
+              color: Dt.pink, size: 18),
         ),
       ),
     ),

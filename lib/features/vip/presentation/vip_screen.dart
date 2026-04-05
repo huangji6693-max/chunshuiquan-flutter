@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/vip_repository.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 final vipStatusProvider = FutureProvider.autoDispose<VipStatus>((ref) {
   return ref.watch(vipRepositoryProvider).getStatus();
@@ -70,11 +71,11 @@ class _VipScreenState extends ConsumerState<VipScreen>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           gradient: const LinearGradient(
-                            colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                            colors: [Dt.vipGold, Dt.vipGoldDark],
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFFD700).withValues(alpha:0.4),
+                              color: const Dt.vipGold.withValues(alpha:0.4),
                               blurRadius: 24,
                               spreadRadius: 4,
                             ),
@@ -101,8 +102,8 @@ class _VipScreenState extends ConsumerState<VipScreen>
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: status.isDiamond
-                                        ? [const Color(0xFF7C4DFF), const Color(0xFFE040FB)]
-                                        : [const Color(0xFFFFD700), const Color(0xFFFFA000)],
+                                        ? [const Dt.boost, const Color(0xFFE040FB)]
+                                        : [const Dt.vipGold, const Dt.vipGoldDark],
                                   ),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -137,7 +138,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                 color: const Color(0xFF252547),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                    color: const Color(0xFFFFD700).withValues(alpha:0.2)),
+                    color: const Dt.vipGold.withValues(alpha:0.2)),
               ),
               child: Column(
                 children: [
@@ -145,35 +146,35 @@ class _VipScreenState extends ConsumerState<VipScreen>
                     icon: Icons.visibility,
                     gold: '查看谁喜欢我',
                     diamond: '查看谁喜欢我',
-                    goldColor: const Color(0xFFFFD700),
+                    goldColor: const Dt.vipGold,
                     diamondColor: const Color(0xFFE040FB),
                   ),
                   _FeatureRow(
                     icon: Icons.swipe,
                     gold: '无限滑动',
                     diamond: '无限滑动',
-                    goldColor: const Color(0xFFFFD700),
+                    goldColor: const Dt.vipGold,
                     diamondColor: const Color(0xFFE040FB),
                   ),
                   _FeatureRow(
                     icon: Icons.star,
                     gold: '5次/天 Super Like',
                     diamond: '无限 Super Like',
-                    goldColor: const Color(0xFFFFD700),
+                    goldColor: const Dt.vipGold,
                     diamondColor: const Color(0xFFE040FB),
                   ),
                   _FeatureRow(
                     icon: Icons.flash_on,
                     gold: '每月1次曝光加速',
                     diamond: '每周1次曝光加速',
-                    goldColor: const Color(0xFFFFD700),
+                    goldColor: const Dt.vipGold,
                     diamondColor: const Color(0xFFE040FB),
                   ),
                   _FeatureRow(
                     icon: Icons.verified,
                     gold: '金色徽章',
                     diamond: '钻石徽章 + 置顶',
-                    goldColor: const Color(0xFFFFD700),
+                    goldColor: const Dt.vipGold,
                     diamondColor: const Color(0xFFE040FB),
                     isLast: true,
                   ),
@@ -195,7 +196,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                 onTap: (_) => setState(() => _selectedPlan = null),
                 indicator: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                    colors: [Dt.vipGold, Dt.vipGoldDark],
                   ),
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -220,7 +221,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildPlansRow(VipRepository.goldPlans, const Color(0xFFFFD700)),
+                  _buildPlansRow(VipRepository.goldPlans, const Dt.vipGold),
                   _buildPlansRow(VipRepository.diamondPlans, const Color(0xFFE040FB)),
                 ],
               ),
@@ -242,13 +243,13 @@ class _VipScreenState extends ConsumerState<VipScreen>
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)),
                     elevation: _selectedPlan != null ? 8 : 0,
-                    shadowColor: const Color(0xFFFFD700).withValues(alpha:0.4),
+                    shadowColor: const Dt.vipGold.withValues(alpha:0.4),
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
                       gradient: _selectedPlan != null
                           ? const LinearGradient(
-                              colors: [Color(0xFFFFD700), Color(0xFFFFA000)])
+                              colors: [Dt.vipGold, Dt.vipGoldDark])
                           : null,
                       color: _selectedPlan == null
                           ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -519,15 +520,15 @@ class _VipSuccessDialog extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: isDiamond
-                ? [const Color(0xFF7C4DFF), const Color(0xFF3D1E8E)]
-                : [const Color(0xFFFFA000), const Color(0xFFE65100)],
+                ? [const Dt.boost, const Color(0xFF3D1E8E)]
+                : [const Dt.vipGoldDark, const Color(0xFFE65100)],
           ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
               color: (isDiamond
-                      ? const Color(0xFF7C4DFF)
-                      : const Color(0xFFFFD700))
+                      ? const Dt.boost
+                      : const Dt.vipGold)
                   .withValues(alpha:0.4),
               blurRadius: 32,
             ),
@@ -563,7 +564,7 @@ class _VipSuccessDialog extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: isDiamond
-                      ? const Color(0xFF7C4DFF)
+                      ? const Dt.boost
                       : const Color(0xFFE65100),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),

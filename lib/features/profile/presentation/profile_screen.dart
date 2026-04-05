@@ -7,6 +7,7 @@ import '../../profile/data/profile_repository.dart';
 import '../../profile/data/upload_repository.dart';
 import '../../../core/providers/current_user_provider.dart';
 import '../../../core/errors/app_exception.dart';
+import '../../../shared/theme/design_tokens.dart';
 
 /// 资料页 - 升级版UI
 /// SliverAppBar视差 + 照片滑动 + 新字段编辑
@@ -20,7 +21,7 @@ class ProfileScreen extends ConsumerWidget {
       
       body: profileState.when(
         loading: () => const Center(
-            child: CircularProgressIndicator(color: Color(0xFFFF4D88))),
+            child: CircularProgressIndicator(color: Dt.pink)),
         error: (e, _) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.wifi_off, size: 48, color: Theme.of(context).colorScheme.error), const SizedBox(height: 12), Text('网络开小差了', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant))])),
         data: (user) => _ProfileContent(user: user),
       ),
@@ -254,7 +255,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                       placeholder: (_, __) => Container(
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                            colors: [Dt.pink, Dt.orange],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -263,7 +264,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                       errorWidget: (_, __, ___) => Container(
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                            colors: [Dt.pink, Dt.orange],
                           ),
                         ),
                       ),
@@ -273,7 +274,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                   Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                        colors: [Dt.pink, Dt.orange],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -342,10 +343,10 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFFFF4D88),
+                          color: const Dt.pink,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFF4D88).withValues(alpha:0.4),
+                              color: const Dt.pink.withValues(alpha:0.4),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -502,12 +503,12 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                             horizontal: 14, vertical: 7),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                            colors: [Dt.pink, Dt.orange],
                           ),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFF4D88).withValues(alpha:0.2),
+                              color: const Dt.pink.withValues(alpha:0.2),
                               blurRadius: 6,
                               offset: const Offset(0, 2),
                             ),
@@ -532,12 +533,12 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)],
+                          colors: [Dt.pink, Dt.orange],
                         ),
                         borderRadius: BorderRadius.circular(27),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF4D88).withValues(alpha:0.3),
+                            color: const Dt.pink.withValues(alpha:0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -691,7 +692,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   InputDecoration _tagInputDeco(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      prefixIcon: Icon(icon, size: 18, color: const Color(0xFFFF4D88)),
+      prefixIcon: Icon(icon, size: 18, color: const Dt.pink),
       filled: true,
       fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
       border: OutlineInputBorder(
@@ -715,7 +716,7 @@ class _EditRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: const Color(0xFFFF4D88)),
+        Icon(icon, size: 18, color: const Dt.pink),
         const SizedBox(width: 8),
         SizedBox(
           width: 48,
@@ -788,23 +789,23 @@ class _DetailTag extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFFFF4D88).withValues(alpha:0.08),
-            const Color(0xFFFF8A5C).withValues(alpha:0.06),
+            const Dt.pink.withValues(alpha:0.08),
+            const Dt.orange.withValues(alpha:0.06),
           ],
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFFF4D88).withValues(alpha:0.15)),
+        border: Border.all(color: const Dt.pink.withValues(alpha:0.15)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 15, color: const Color(0xFFFF4D88)),
+          Icon(icon, size: 15, color: const Dt.pink),
           const SizedBox(width: 6),
           Text(text,
               style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFFFF4D88))),
+                  color: Dt.pink)),
         ],
       ),
     );
@@ -900,7 +901,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF4D88).withValues(alpha:0.85),
+                  color: const Dt.pink.withValues(alpha:0.85),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(12),
                     bottomRight: Radius.circular(12),
@@ -974,7 +975,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                     color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFFFF4D88).withValues(alpha:0.4),
+                      color: const Dt.pink.withValues(alpha:0.4),
                       width: 1.5,
                       strokeAlign: BorderSide.strokeAlignInside,
                     ),
@@ -985,7 +986,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                             width: 24, height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Color(0xFFFF4D88),
+                              color: Dt.pink,
                             ),
                           ),
                         )
@@ -993,11 +994,11 @@ class _PhotoGridState extends State<_PhotoGrid> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.add_a_photo_outlined,
-                                size: 28, color: Color(0xFFFF4D88)),
+                                size: 28, color: Dt.pink),
                             SizedBox(height: 4),
                             Text('添加照片',
                                 style: TextStyle(
-                                    fontSize: 11, color: Color(0xFFFF4D88))),
+                                    fontSize: 11, color: Dt.pink)),
                           ],
                         ),
                 ),
@@ -1047,7 +1048,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                       color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFFFF4D88).withValues(alpha:0.3),
+                        color: const Dt.pink.withValues(alpha:0.3),
                         width: 1.5,
                         style: BorderStyle.solid,
                       ),
@@ -1061,7 +1062,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     border: isTarget
-                        ? Border.all(color: const Color(0xFFFF4D88), width: 2)
+                        ? Border.all(color: const Dt.pink, width: 2)
                         : null,
                   ),
                   child: _buildPhotoCard(url, index,
@@ -1125,7 +1126,7 @@ class _SectionCard extends StatelessWidget {
                 width: 3,
                 height: 14,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF4D88),
+                  color: const Dt.pink,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -1134,7 +1135,7 @@ class _SectionCard extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFFFF4D88),
+                      color: Dt.pink,
                       letterSpacing: 0.5)),
             ],
           ),
