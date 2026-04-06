@@ -31,15 +31,9 @@ class SettingsScreen extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: Dt.gradientAccent,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Dt.pink.withValues(alpha: 0.3),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
+                  color: Dt.bgHighest,
+                  borderRadius: Dt.rXl,
+                  boxShadow: Dt.shadowMd,
                 ),
                 child: Row(
                   children: [
@@ -47,20 +41,20 @@ class SettingsScreen extends ConsumerWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: Dt.rLg,
+                        color: Dt.pink.withValues(alpha: 0.12),
+                        borderRadius: Dt.rMd,
                       ),
                       child: const Icon(Icons.account_balance_wallet_rounded,
-                          color: Colors.white, size: 26),
+                          color: Dt.pink, size: 24),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('我的钱包',
+                          Text('我的钱包',
                               style: TextStyle(
-                                  color: Colors.white70, fontSize: 13, letterSpacing: 0.3)),
+                                  color: Dt.textSecondary, fontSize: 13, letterSpacing: 0.3)),
                           const SizedBox(height: 4),
                           Row(
                             children: [
@@ -70,18 +64,18 @@ class SettingsScreen extends ConsumerWidget {
                               balanceAsync.when(
                                 data: (c) => Text('$c',
                                     style: const TextStyle(
-                                        color: Colors.white,
+                                        color: Dt.textPrimary,
                                         fontSize: 24,
                                         fontWeight: FontWeight.w800)),
                                 loading: () => const Text('...',
-                                    style: TextStyle(color: Colors.white70)),
+                                    style: TextStyle(color: Dt.textSecondary)),
                                 error: (_, __) => const Text('--',
-                                    style: TextStyle(color: Colors.white70)),
+                                    style: TextStyle(color: Dt.textSecondary)),
                               ),
                               const SizedBox(width: 4),
                               const Text('金币',
                                   style: TextStyle(
-                                      color: Colors.white70, fontSize: 13)),
+                                      color: Dt.textSecondary, fontSize: 13)),
                             ],
                           ),
                         ],
@@ -91,14 +85,14 @@ class SettingsScreen extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.25),
-                        borderRadius: BorderRadius.circular(20),
+                        color: Dt.pink,
+                        borderRadius: Dt.rPill,
                       ),
-                      child: const Text('充值 →',
+                      child: const Text('充值',
                           style: TextStyle(
                               color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14)),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13)),
                     ),
                   ],
                 ),
@@ -345,18 +339,9 @@ class _QuickEntryCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.08),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: Dt.bgElevated,
+          borderRadius: Dt.rLg,
+          boxShadow: Dt.shadowBorder,
         ),
         child: Column(
           children: [
@@ -364,10 +349,10 @@ class _QuickEntryCard extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                gradient: LinearGradient(colors: gradient),
-                borderRadius: BorderRadius.circular(12),
+                color: gradient.first.withValues(alpha: 0.12),
+                borderRadius: Dt.rMd,
               ),
-              child: Icon(icon, color: Colors.white, size: 24),
+              child: Icon(icon, color: gradient.first, size: 22),
             ),
             const SizedBox(height: 8),
             Text(label,

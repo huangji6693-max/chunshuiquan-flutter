@@ -33,20 +33,13 @@ class FrostedNavBar extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainer.withValues(alpha: 0.78),
-            border: Border(
+            color: Dt.bgPrimary.withValues(alpha: 0.85),
+            border: const Border(
               top: BorderSide(
-                color: Colors.white.withValues(alpha: 0.12),
+                color: Dt.borderSubtle,
                 width: 0.5,
               ),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.08),
-                blurRadius: 12,
-                offset: const Offset(0, -2),
-              ),
-            ],
           ),
           child: SafeArea(
             top: false,
@@ -66,46 +59,27 @@ class FrostedNavBar extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           AnimatedScale(
-                            scale: selected ? 1.2 : 1.0,
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeOutBack,
+                            scale: selected ? 1.1 : 1.0,
+                            duration: Dt.fast,
+                            curve: Dt.curveSpring,
                             child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              child: selected
-                                  ? ShaderMask(
-                                      key: const ValueKey(true),
-                                      shaderCallback: (bounds) => const LinearGradient(
-                                        colors: [Dt.pink, Dt.pinkLight, Dt.orange],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ).createShader(bounds),
-                                      child: Icon(
-                                        _icons[i].$1,
-                                        size: 24,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : Opacity(
-                                      opacity: 0.6,
-                                      child: Icon(
-                                        key: const ValueKey(false),
-                                        _icons[i].$2,
-                                        size: 24,
-                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                      ),
-                                    ),
+                              duration: Dt.fast,
+                              child: Icon(
+                                key: ValueKey(selected),
+                                selected ? _icons[i].$1 : _icons[i].$2,
+                                size: 24,
+                                color: selected ? Dt.pink : Dt.textTertiary,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 2),
                           AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 200),
+                            duration: Dt.fast,
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
                               letterSpacing: selected ? 0.5 : 0.2,
-                              color: selected
-                                  ? Dt.pink
-                                  : Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: selected ? Dt.pink : Dt.textTertiary,
                             ),
                             child: Text(_labels[i]),
                           ),

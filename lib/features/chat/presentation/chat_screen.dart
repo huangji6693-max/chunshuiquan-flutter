@@ -169,137 +169,103 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     return Scaffold(
       
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            border: Border(
-              bottom: BorderSide(
-                color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha:0.2),
+      appBar: AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios,
+              size: 20, color: Theme.of(context).colorScheme.onSurface),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        titleSpacing: 0,
+        title: Row(
+          children: [
+            // 对方头像 + Hero过渡
+            Hero(
+              tag: 'avatar_${widget.matchId}',
+              child: CircleAvatar(
+                radius: 18,
+                backgroundImage: widget.partnerAvatarUrl != null &&
+                        widget.partnerAvatarUrl!.isNotEmpty
+                    ? ResizeImage(
+                        CachedNetworkImageProvider(widget.partnerAvatarUrl!),
+                        width: 200,
+                      )
+                    : null,
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                child: widget.partnerAvatarUrl == null ||
+                        widget.partnerAvatarUrl!.isEmpty
+                    ? Icon(Icons.person,
+                        size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant)
+                    : null,
               ),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha:0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              child: Row(
+            const SizedBox(width: 10),
+
+            // 名字 + 在线状态
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // 返回按钮
-                  IconButton(
-                    icon: Icon(Icons.arrow_back_ios,
-                        size: 20, color: Theme.of(context).colorScheme.onSurface),
-                    onPressed: () => Navigator.of(context).pop(),
+                  Text(
+                    widget.partnerName ?? '聊天',
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.1,
+                        color: Dt.textPrimary),
                   ),
-
-                  // 对方头像 + Hero过渡
-                  Hero(
-                    tag: 'avatar_${widget.matchId}',
-                    child: CircleAvatar(
-                    radius: 22,
-                    backgroundImage: widget.partnerAvatarUrl != null &&
-                            widget.partnerAvatarUrl!.isNotEmpty
-                        ? ResizeImage(
-                            CachedNetworkImageProvider(widget.partnerAvatarUrl!),
-                            width: 200,
-                          )
-                        : null,
-                    backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-                    child: widget.partnerAvatarUrl == null ||
-                            widget.partnerAvatarUrl!.isEmpty
-                        ? Icon(Icons.person,
-                            size: 22, color: Theme.of(context).colorScheme.onSurfaceVariant)
-                        : null,
-                  ),
-                  ),
-                  const SizedBox(width: 12),
-
-                  // 名字 + 在线状态
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.partnerName ?? '聊天',
+                  const SizedBox(height: 1),
+                  Row(
+                    children: [
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Dt.online,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text('在线',
                           style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).colorScheme.onSurface),
-                        ),
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Dt.online,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            const Text('在线',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: Dt.online,
-                                    fontWeight: FontWeight.w500)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // 语音通话按钮
-                  IconButton(
-                    icon: Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Dt.pink.withValues(alpha:0.1),
-                      ),
-                      child: const Icon(Icons.call_outlined,
-                          color: Dt.pink, size: 20),
-                    ),
-                    onPressed: () {
-                      context.push('/call/${widget.matchId}', extra: {
-                        'partnerName': widget.partnerName ?? '对方',
-                        'partnerAvatarUrl': widget.partnerAvatarUrl,
-                      });
-                    },
-                  ),
-
-                  // 视频通话按钮（预留）
-                  IconButton(
-                    icon: Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Dt.pink.withValues(alpha:0.1),
-                      ),
-                      child: const Icon(Icons.videocam_outlined,
-                          color: Dt.pink, size: 20),
-                    ),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('视频通话功能即将上线')),
-                      );
-                    },
+                              fontSize: 12,
+                              color: Dt.textTertiary,
+                              fontWeight: FontWeight.w400)),
+                    ],
                   ),
                 ],
               ),
             ),
-          ),
+          ],
         ),
+        actions: [
+          // 语音通话按钮
+          IconButton(
+            icon: const Icon(Icons.call_outlined,
+                color: Dt.pink, size: 22),
+            onPressed: () {
+              context.push('/call/${widget.matchId}', extra: {
+                'partnerName': widget.partnerName ?? '对方',
+                'partnerAvatarUrl': widget.partnerAvatarUrl,
+              });
+            },
+          ),
+          // 视频通话按钮
+          IconButton(
+            icon: const Icon(Icons.videocam_outlined,
+                color: Dt.pink, size: 22),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('视频通话功能即将上线')),
+              );
+            },
+          ),
+          const SizedBox(width: 4),
+        ],
       ),
       body: messagesAsync.when(
         loading: () => const Center(

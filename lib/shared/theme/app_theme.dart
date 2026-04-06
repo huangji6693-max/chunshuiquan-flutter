@@ -1,45 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'design_tokens.dart';
 
-/// 春水圈主题 — Material 3 暗色 + 亮色双主题
-/// 使用 Poppins 英文字体 + 系统中文字体
-/// 核心原则：
-/// 1. Poppins 的几何感让数字和英文显得现代高端
-/// 2. 中文自动 fallback 到系统字体（iOS=苹方, Android=思源）
-/// 3. 不同层级的组件用不同 surface
-/// 4. 品牌色只用于装饰性渐变
+/// 春水圈主题 v3 — 基于56个世界顶级品牌设计系统
+///
+/// 参考标杆:
+/// - Raycast: 蓝着色黑 #07080a + 正字间距正文
+/// - Linear: 极致简洁暗色 + 半透明白色边框
+/// - Spotify: UI消失让内容闪耀 + 单一accent色
+/// - Superhuman: 极端行高对比(0.96 vs 1.5) + 非标准字重
+/// - Stripe: 精致排版 + 蓝色着色阴影
 class AppTheme {
-  static const _seed = Color(0xFFFF4D88);
+  static const _seed = Dt.pink;
 
-  // 品牌色和渐变已迁移到 design_tokens.dart (Dt.pink / Dt.gradientPrimary)
-  // 保留旧引用以兼容，后续逐步删除
-  static const Color brandPink = Color(0xFFFF4D88);
-  static const primaryGradient = LinearGradient(colors: [Color(0xFFFF4D88), Color(0xFFFF6B9D)]);
-  static const accentGradient = LinearGradient(colors: [Color(0xFFFF4D88), Color(0xFFFF8A5C)]);
+  // 兼容旧代码引用
+  static const Color brandPink = Dt.pink;
+  static const primaryGradient = Dt.gradientPrimary;
+  static const accentGradient = Dt.gradientAccent;
 
-  // ====== 基于 Poppins 的 TextTheme ======
+  // ====== Poppins TextTheme ======
 
   static final _textTheme = GoogleFonts.poppinsTextTheme(const TextTheme(
-    displayLarge: TextStyle(fontSize: 36, fontWeight: FontWeight.w800, letterSpacing: -0.5, height: 1.1),
-    headlineLarge: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, letterSpacing: -0.3, height: 1.15),
-    headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -0.2, height: 1.2),
-    headlineSmall: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: 0, height: 1.25),
-    titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, letterSpacing: 0.1, height: 1.3),
-    titleMedium: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 0.15, height: 1.4),
-    titleSmall: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.1, height: 1.4),
-    bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.08, height: 1.6),
-    bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, letterSpacing: 0.05, height: 1.55),
-    bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 0.3, height: 1.5),
-    labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.15, height: 1.4),
+    // 极端压缩标题 (Superhuman 0.96行高, Framer -5.5px字间距)
+    displayLarge: TextStyle(fontSize: 36, fontWeight: FontWeight.w700, letterSpacing: -1.2, height: 0.96),
+    // 大标题
+    headlineLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, letterSpacing: -0.6, height: 1.1),
+    headlineMedium: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -0.3, height: 1.2),
+    headlineSmall: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, letterSpacing: -0.1, height: 1.25),
+    // 标题
+    titleLarge: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, letterSpacing: 0, height: 1.3),
+    titleMedium: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, letterSpacing: 0.1, height: 1.4),
+    titleSmall: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, letterSpacing: 0.1, height: 1.4),
+    // 正文 (Raycast: +0.1正字间距, 500基线权重)
+    bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.1, height: 1.55),
+    bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, letterSpacing: 0.1, height: 1.5),
+    bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 0.2, height: 1.45),
+    // 标签 (正字间距 +0.4, Raycast风格)
+    labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.15, height: 1.4),
     labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.4, height: 1.33),
     labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.4, height: 1.45),
   ));
 
-  // ====== 共享组件样式 ======
+  // ====== AppBar ======
 
   static const _appBarTheme = AppBarTheme(
     elevation: 0,
-    scrolledUnderElevation: 1,
+    scrolledUnderElevation: 0.5,
     surfaceTintColor: null,
     centerTitle: false,
     titleTextStyle: TextStyle(
@@ -49,52 +55,82 @@ class AppTheme {
     ),
   );
 
+  // ====== 按钮 (Spotify药丸形状) ======
+
   static final _buttonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       minimumSize: const Size(double.infinity, 52),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Dt.radiusLg
-      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.3),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dt.radiusLg)),
+      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.2),
+      elevation: 0, // 扁平按钮, 阴影通过装饰添加
     ),
   );
 
+  // ====== 卡片 (elevation 0, 用shadow-border替代) ======
+
   static final _cardTheme = CardTheme(
     elevation: 0,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // 统一Dt.radiusLg
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dt.radiusLg)),
     clipBehavior: Clip.antiAlias,
     margin: EdgeInsets.zero,
   );
 
   static const _bottomSheetTheme = BottomSheetThemeData(
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(Dt.radiusXl)),
     ),
-    elevation: 3,
+    elevation: 0,
   );
 
-  static const _navigationBarTheme = NavigationBarThemeData(elevation: 2);
   static const _dividerTheme = DividerThemeData(thickness: 0.5, space: 0);
 
   static final _listTileTheme = ListTileThemeData(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dt.radiusMd)),
+    contentPadding: const EdgeInsets.symmetric(horizontal: Dt.s16, vertical: Dt.s4),
   );
 
   static final _dialogTheme = DialogTheme(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-    elevation: 6,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dt.radiusXl)),
+    elevation: 0,
   );
 
   static final _snackBarTheme = SnackBarThemeData(
     behavior: SnackBarBehavior.floating,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    elevation: 3,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dt.radiusMd)),
+    elevation: 0,
   );
 
   static final _chipTheme = ChipThemeData(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dt.radiusSm)),
   );
 
-  // ====== 暗色主题 ======
+  // ====== 输入框 ======
+
+  static InputDecorationTheme _inputTheme(Brightness brightness) => InputDecorationTheme(
+    filled: true,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Dt.radiusMd),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Dt.radiusMd),
+      borderSide: BorderSide(
+        color: brightness == Brightness.dark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Colors.black.withValues(alpha: 0.06),
+        width: 1,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Dt.radiusMd),
+      borderSide: const BorderSide(color: Dt.pink, width: 1.5),
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: Dt.s16, vertical: Dt.s16),
+  );
+
+  // ============================================================
+  //  暗色主题 (Raycast: #07080a蓝着色黑)
+  // ============================================================
 
   static final theme = ThemeData(
     useMaterial3: true,
@@ -103,41 +139,29 @@ class AppTheme {
       seedColor: _seed,
       brightness: Brightness.dark,
     ).copyWith(
-      surface: const Color(0xFF121216),
-      surfaceContainer: const Color(0xFF1A1A1E),
-      surfaceContainerHigh: const Color(0xFF232328),
-      surfaceContainerHighest: const Color(0xFF2C2C32),
+      surface: Dt.bgPrimary,
+      surfaceContainer: Dt.bgElevated,
+      surfaceContainerHigh: Dt.bgHighest,
+      surfaceContainerHighest: const Color(0xFF262729),
     ),
+    scaffoldBackgroundColor: Dt.bgPrimary,
     textTheme: _textTheme,
     appBarTheme: _appBarTheme,
     elevatedButtonTheme: _buttonTheme,
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08), width: 0.5),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: _seed, width: 2),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    ),
+    inputDecorationTheme: _inputTheme(Brightness.dark),
     cardTheme: _cardTheme,
     bottomSheetTheme: _bottomSheetTheme,
-    navigationBarTheme: _navigationBarTheme,
     dividerTheme: _dividerTheme,
     listTileTheme: _listTileTheme,
     dialogTheme: _dialogTheme,
     snackBarTheme: _snackBarTheme,
     chipTheme: _chipTheme,
+    navigationBarTheme: const NavigationBarThemeData(elevation: 0),
   );
 
-  // ====== 亮色主题 ======
+  // ============================================================
+  //  亮色主题
+  // ============================================================
 
   static final lightTheme = ThemeData(
     useMaterial3: true,
@@ -149,29 +173,14 @@ class AppTheme {
     textTheme: _textTheme,
     appBarTheme: _appBarTheme,
     elevatedButtonTheme: _buttonTheme,
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.08), width: 0.5),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: _seed, width: 2),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    ),
+    inputDecorationTheme: _inputTheme(Brightness.light),
     cardTheme: _cardTheme,
     bottomSheetTheme: _bottomSheetTheme,
-    navigationBarTheme: _navigationBarTheme,
     dividerTheme: _dividerTheme,
     listTileTheme: _listTileTheme,
     dialogTheme: _dialogTheme,
     snackBarTheme: _snackBarTheme,
     chipTheme: _chipTheme,
+    navigationBarTheme: const NavigationBarThemeData(elevation: 0),
   );
 }

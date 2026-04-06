@@ -350,193 +350,148 @@ class _ConversationTile extends ConsumerWidget {
     final hasUnread = match.unreadCount > 0;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
-        borderRadius: Dt.rLg,
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.08),
-          width: 0.5,
-        ),
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: InkWell(
-      splashColor: Dt.pink.withValues(alpha: 0.06),
-      highlightColor: Dt.pink.withValues(alpha: 0.03),
-      borderRadius: Dt.rLg,
-      onTap: () => context.go('/chat/${match.matchId}', extra: {
-        'partnerName': match.otherName,
-        'partnerAvatarUrl': match.otherAvatarUrl,
-      }),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: Row(
-          children: [
-            // 头像 + 在线绿点 + Hero过渡
-            Stack(
-              children: [
-                Hero(
-                  tag: 'avatar_${match.matchId}',
-                  child: CircleAvatar(
-                    radius: 30,
-                  backgroundImage: match.otherAvatarUrl != null
-                      ? ResizeImage(
-                          CachedNetworkImageProvider(match.otherAvatarUrl!),
-                          width: 200,
-                        )
-                      : null,
-                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-                  child: match.otherAvatarUrl == null
-                      ? Text(
-                          match.otherName.isNotEmpty
-                              ? match.otherName[0]
-                              : '?',
-                          style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Dt.pink),
-                        )
-                      : null,
-                ),
-                ),
-                // 在线绿点
-                if (isOnline)
-                  Positioned(
-                    bottom: 1,
-                    right: 1,
-                    child: Container(
-                      width: 14,
-                      height: 14,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Dt.online,
-                        border: Border.all(color: Colors.white, width: 2.5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Dt.online.withValues(alpha: 0.5),
-                            blurRadius: 6,
-                            spreadRadius: 1,
-                          ),
-                        ],
-                      ),
+        splashColor: Dt.pink.withValues(alpha: 0.06),
+        highlightColor: Dt.pink.withValues(alpha: 0.03),
+        borderRadius: Dt.rLg,
+        onTap: () => context.go('/chat/${match.matchId}', extra: {
+          'partnerName': match.otherName,
+          'partnerAvatarUrl': match.otherAvatarUrl,
+        }),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Row(
+            children: [
+              // 头像 + 在线绿点 + Hero过渡
+              Stack(
+                children: [
+                  Hero(
+                    tag: 'avatar_${match.matchId}',
+                    child: CircleAvatar(
+                      radius: 28,
+                      backgroundImage: match.otherAvatarUrl != null
+                          ? ResizeImage(
+                              CachedNetworkImageProvider(match.otherAvatarUrl!),
+                              width: 200,
+                            )
+                          : null,
+                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                      child: match.otherAvatarUrl == null
+                          ? Text(
+                              match.otherName.isNotEmpty
+                                  ? match.otherName[0]
+                                  : '?',
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Dt.pink),
+                            )
+                          : null,
                     ),
                   ),
-              ],
-            ),
-            const SizedBox(width: 14),
-
-            // 名字 + 消息预览
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(match.otherName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontWeight: hasUnread ? FontWeight.w800 : FontWeight.w700,
-                                fontSize: 16,
-                                letterSpacing: 0.1,
-                                color: Theme.of(context).colorScheme.onSurface)),
-                      ),
-                      if (match.otherVipTier != null && match.otherVipTier != 'none') ...[
-                        const SizedBox(width: 4),
-                        Icon(Icons.verified,
-                            size: 16,
-                            color: match.otherVipTier == 'diamond'
-                                ? const Color(0xFFE040FB)
-                                : Dt.vipGold),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    previewText,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: hasUnread
-                            ? Theme.of(context).colorScheme.onSurface
-                            : Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 13,
-                        fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w400,
-                        letterSpacing: 0.1,
-                        height: 1.3),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(width: 8),
-
-            // 时间 + 未读气泡 + 通话按钮
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(timeStr,
-                    style: TextStyle(
-                        color: hasUnread
-                            ? Dt.pink
-                            : Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 12,
-                        fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal)),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // 未读数红色气泡
-                    if (hasUnread)
-                      Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 7, vertical: 2),
-                        decoration: BoxDecoration(
-                          gradient: Dt.gradientPrimary,
-                          borderRadius: Dt.rSm,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Dt.pink.withValues(alpha: 0.3),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          match.unreadCount > 99
-                              ? '99+'
-                              : '${match.unreadCount}',
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                    GestureDetector(
-                      onTap: () => context.push('/call/${match.matchId}', extra: {
-                        'partnerName': match.otherName,
-                        'partnerAvatarUrl': match.otherAvatarUrl,
-                      }),
+                  // 在线绿点 (平面风格，无发光阴影)
+                  if (isOnline)
+                    Positioned(
+                      bottom: 1,
+                      right: 1,
                       child: Container(
-                        width: 32,
-                        height: 32,
+                        width: 12,
+                        height: 12,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Dt.pink.withValues(alpha:0.1),
+                          color: Dt.online,
+                          border: Border.all(color: Dt.bgPrimary, width: 2),
                         ),
-                        child: const Icon(Icons.call,
-                            color: Dt.pink, size: 16),
                       ),
+                    ),
+                ],
+              ),
+              const SizedBox(width: 14),
+
+              // 名字 + 消息预览
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(match.otherName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontWeight: hasUnread ? FontWeight.w700 : FontWeight.w600,
+                                  fontSize: 16,
+                                  letterSpacing: -0.1,
+                                  color: Dt.textPrimary)),
+                        ),
+                        if (match.otherVipTier != null && match.otherVipTier != 'none') ...[
+                          const SizedBox(width: 4),
+                          Icon(Icons.verified,
+                              size: 16,
+                              color: match.otherVipTier == 'diamond'
+                                  ? const Color(0xFFE040FB)
+                                  : Dt.vipGold),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      previewText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: hasUnread
+                              ? Dt.textPrimary
+                              : Dt.textSecondary,
+                          fontSize: 14,
+                          fontWeight: hasUnread ? FontWeight.w500 : FontWeight.w400,
+                          height: 1.3),
                     ),
                   ],
                 ),
-              ],
-            ),
-          ],
+              ),
+
+              const SizedBox(width: 8),
+
+              // 时间 + 未读气泡
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(timeStr,
+                      style: TextStyle(
+                          color: hasUnread
+                              ? Dt.pink
+                              : Dt.textTertiary,
+                          fontSize: 12,
+                          fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal)),
+                  const SizedBox(height: 6),
+                  // 未读数实心气泡 (无渐变/无阴影)
+                  if (hasUnread)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Dt.pink,
+                        borderRadius: Dt.rPill,
+                      ),
+                      child: Text(
+                        match.unreadCount > 99
+                            ? '99+'
+                            : '${match.unreadCount}',
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 

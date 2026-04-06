@@ -229,13 +229,7 @@ class _UserCardState extends State<UserCard> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.45),
-        border: Border(
-          top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
-            width: 0.5,
-          ),
-        ),
+        color: Colors.black.withValues(alpha: 0.5),
       ),
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
       child: Column(
@@ -249,19 +243,20 @@ class _UserCardState extends State<UserCard> {
             children: [
               Text(user.name,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.8,
+                    color: Dt.textPrimary,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.6,
                     height: 1.1,
                   )),
               const SizedBox(width: 10),
               if (user.age != null)
                 Text('${user.age}',
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
+                      color: Dt.textPrimary,
+                      fontSize: 24,
                       fontWeight: FontWeight.w300,
+                      letterSpacing: 0,
                       height: 1.1,
                     )),
               const Spacer(),
@@ -270,7 +265,7 @@ class _UserCardState extends State<UserCard> {
                 _expanded
                     ? Icons.keyboard_arrow_down
                     : Icons.keyboard_arrow_up,
-                color: Colors.white60,
+                color: Dt.textTertiary,
                 size: 24,
               ),
             ],
@@ -283,23 +278,23 @@ class _UserCardState extends State<UserCard> {
             children: [
               if (user.city?.isNotEmpty == true) ...[
                 const Icon(Icons.location_on_outlined,
-                    color: Colors.white70, size: 14),
+                    color: Dt.textSecondary, size: 14),
                 const SizedBox(width: 3),
                 Text(user.city!,
                     style: const TextStyle(
-                        color: Color(0xB3FFFFFF), fontSize: 15)),
+                        color: Dt.textSecondary, fontSize: 14)),
                 const SizedBox(width: 12),
               ],
               if (user.jobTitle?.isNotEmpty == true) ...[
                 const Icon(Icons.work_outline,
-                    color: Colors.white70, size: 14),
+                    color: Dt.textSecondary, size: 14),
                 const SizedBox(width: 3),
                 Expanded(
                   child: Text(user.jobTitle!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                          color: Color(0xB3FFFFFF), fontSize: 15)),
+                          color: Dt.textSecondary, fontSize: 14)),
                 ),
               ],
             ],
@@ -327,9 +322,9 @@ class _UserCardState extends State<UserCard> {
 
             // Bio
             if (user.bio?.isNotEmpty == true) ...[
-              const Text('关于我',
+              Text('关于我',
                   style: TextStyle(
-                      color: Colors.white60,
+                      color: Dt.textTertiary,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1)),
@@ -337,8 +332,8 @@ class _UserCardState extends State<UserCard> {
               Text(user.bio!,
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      color: Color(0xCCFFFFFF),
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                       height: 1.5)),
             ],
@@ -369,11 +364,8 @@ class _UserCardState extends State<UserCard> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        width: 0.8),
+                    color: Colors.white.withValues(alpha: 0.1),
+                    borderRadius: Dt.rSm,
                   ),
                   child: Text(tag,
                       style: const TextStyle(
@@ -392,7 +384,7 @@ class _UserCardState extends State<UserCard> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.65),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 14,
                     height: 1.3,
                   )),
@@ -410,11 +402,8 @@ class _UserCardState extends State<UserCard> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha:0.18),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color: Colors.white.withValues(alpha:0.3),
-                            width: 0.8),
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: Dt.rSm,
                       ),
                       child: Text(tag,
                           style: const TextStyle(
@@ -445,17 +434,13 @@ class _InfoTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha:0.15),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withValues(alpha:0.25),
-          width: 0.8,
-        ),
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: Dt.rSm,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: Colors.white70),
+          Icon(icon, size: 12, color: Dt.textSecondary),
           const SizedBox(width: 4),
           Text(text,
               style: const TextStyle(
