@@ -1,4 +1,5 @@
-import 'dart:math';
+import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +7,9 @@ import '../data/auth_repository.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../shared/theme/design_tokens.dart';
 
-/// 注册页 - 步骤式注册，精致卡片选择器
+/// 注册页 — Hinge 风格沉浸式大图 + 玻璃表单
+/// 上半部分人像大图 + 渐变蒙层, 下半部分 BackdropFilter 玻璃表单
+/// 删除: emoji 性别选择 / 白色 Material 卡片 / 白色按钮 / 波浪装饰
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
@@ -15,7 +18,10 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
+  static const _heroImage =
+      'https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=1600&q=90&fit=crop&auto=format';
+
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
@@ -28,13 +34,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   late final Animation<double> _fadeAnim;
   late final Animation<Offset> _slideAnim;
 
-  // 波浪动画
-  late final AnimationController _waveCtrl;
-
-  // 按钮缩放
-  late final AnimationController _btnCtrl;
-  late final Animation<double> _btnScale;
-
   @override
   void initState() {
     super.initState();
@@ -42,30 +41,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         vsync: this, duration: const Duration(milliseconds: 800));
     _fadeAnim = CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut);
     _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 0.15),
+      begin: const Offset(0, 0.10),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _animCtrl, curve: Curves.easeOutCubic));
     _animCtrl.forward();
-
-    _waveCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 4),
-    )..repeat();
-
-    _btnCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 150),
-    );
-    _btnScale = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _btnCtrl, curve: Curves.easeInOut),
-    );
   }
 
   @override
   void dispose() {
     _animCtrl.dispose();
-    _waveCtrl.dispose();
-    _btnCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
     super.dispose();
@@ -73,7 +57,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     final repo = ref.read(authRepositoryProvider);
     final email = _emailCtrl.text.trim();
     final password = _passCtrl.text;
@@ -87,22 +74,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       );
       if (mounted) context.go('/onboarding');
     } on AppException catch (e) {
-      // [fix] 邮箱已注册 → 自动用同密码尝试登录, 无缝救援
+      // 邮箱已注册 → 自动用同密码尝试登录, 无缝救援
       if (e.isEmailExists) {
         try {
           await repo.login(email: email, password: password);
           if (mounted) context.go('/discover');
           return;
-        } on AppException catch (loginErr) {
+        } on AppException catch (_) {
           if (!mounted) return;
-          // 登录也失败 → 提示用户去登录页手动处理
           setState(() => _error = '该邮箱已注册，密码不对。请直接登录');
-          // 1.5 秒后自动跳登录页, 预填邮箱
           Future.delayed(const Duration(milliseconds: 1500), () {
             if (mounted) context.go('/auth/login?email=$email');
           });
-          // 避免 loginErr 未使用警告
-          assert(loginErr.message.isNotEmpty || true);
           return;
         }
       }
@@ -113,296 +96,416 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     }
   }
 
-  /// 半透明输入框样式
-  InputDecoration _frostInputDeco(String label, IconData icon) => InputDecoration(
+  /// 玻璃输入框 — 半透明白 + 1.5px 边框 + 圆角胶囊
+  InputDecoration _glassInputDeco(String label, IconData icon) =>
+      InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, size: 20, color: Colors.white70),
+        prefixIcon: Icon(icon, size: 20, color: Colors.white.withValues(alpha: 0.85)),
         filled: true,
-        fillColor: Colors.white.withValues(alpha:0.12),
-        labelStyle: TextStyle(color: Colors.white.withValues(alpha:0.7), fontSize: 14),
+        fillColor: Colors.white.withValues(alpha: 0.12),
+        labelStyle: TextStyle(
+            color: Colors.white.withValues(alpha: 0.85),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.3),
+        floatingLabelStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.white.withValues(alpha:0.3))),
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.25)),
+        ),
         enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.white.withValues(alpha:0.25))),
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.22), width: 1.2),
+        ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white, width: 1.5),
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Dt.pink, width: 1.8),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.yellow.withValues(alpha:0.6)),
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: Dt.pink.withValues(alpha: 0.7), width: 1.2),
         ),
-        errorStyle: const TextStyle(color: Colors.yellowAccent, fontSize: 12),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Dt.pink, width: 1.8),
+        ),
+        errorStyle: const TextStyle(
+            color: Dt.pinkLight, fontSize: 12, fontWeight: FontWeight.w500),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       );
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
     return Scaffold(
+      backgroundColor: Dt.bgDeep,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          // 渐变背景
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Dt.pink, Dt.orange],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          // 全屏背景大图 (Hinge 风格)
+          CachedNetworkImage(
+            imageUrl: _heroImage,
+            fit: BoxFit.cover,
+            placeholder: (_, __) => const ColoredBox(color: Dt.bgDeep),
+            errorWidget: (_, __, ___) => const ColoredBox(color: Dt.bgDeep),
+          ),
+
+          // 三层渐变蒙层 — 上→透明 / 中→半暗 / 下→深暗 (让表单可读)
+          const Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0x80000000),  // 顶部 50% 黑
+                    Color(0x33000000),  // 上中 20% 黑
+                    Color(0xCC0A0614),  // 下中 80% 深紫黑
+                    Color(0xFF07080A),  // 底部 接近纯黑
+                  ],
+                  stops: [0.0, 0.3, 0.6, 1.0],
+                ),
               ),
             ),
           ),
 
-          // 波浪动画
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _waveCtrl,
-              builder: (context, _) => CustomPaint(
-                painter: _WavePainter(animation: _waveCtrl.value),
-              ),
+          // 顶部返回按钮 + 品牌 logo
+          Positioned(
+            top: mq.padding.top + 12,
+            left: 8,
+            right: 8,
+            child: Row(
+              children: [
+                _GlassIconBtn(
+                  icon: Icons.arrow_back_ios_rounded,
+                  onTap: () => context.pop(),
+                ),
+                const Spacer(),
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const RadialGradient(
+                      colors: [Dt.pinkLight, Dt.pink, Color(0xFFE8366D)],
+                      stops: [0.0, 0.6, 1.0],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Dt.pink.withValues(alpha: 0.5),
+                        blurRadius: 16,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: const Icon(Icons.favorite_rounded,
+                      color: Colors.white, size: 16),
+                ),
+                const SizedBox(width: 8),
+                const Text('春水圈',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      letterSpacing: 4,
+                      shadows: [
+                        Shadow(color: Color(0x80000000), blurRadius: 12),
+                      ],
+                    )),
+                const Spacer(),
+                const SizedBox(width: 44),
+              ],
             ),
           ),
 
-          // 主内容
-          SafeArea(
-            child: FadeTransition(
-              opacity: _fadeAnim,
-              child: SlideTransition(
-                position: _slideAnim,
-                child: Column(
-                  children: [
-                    // 顶部栏
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back_ios,
-                                color: Colors.white),
-                            onPressed: () => context.pop(),
+          // 主内容 — 底部 65% 玻璃表单
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            top: mq.size.height * 0.30,
+            child: SafeArea(
+              top: false,
+              child: FadeTransition(
+                opacity: _fadeAnim,
+                child: SlideTransition(
+                  position: _slideAnim,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(28, 24, 28, mq.padding.bottom + 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 大字标题 — Hinge 宣言
+                        const Text(
+                          '创建你的\n春水圈',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 40,
+                            fontWeight: FontWeight.w700,
+                            height: 1.05,
+                            letterSpacing: -1.0,
+                            shadows: [
+                              Shadow(color: Color(0xCC000000), blurRadius: 24),
+                            ],
                           ),
-                          const Spacer(),
-                          const Icon(Icons.favorite_rounded, color: Colors.white, size: 48),
-                          const SizedBox(width: 8),
-                          const Text('春水圈',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                letterSpacing: 2,
-                              )),
-                          const Spacer(),
-                          const SizedBox(width: 48), // 平衡返回按钮
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // 副标题
-                    Text(
-                      '创建你的专属档案',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withValues(alpha:0.75),
-                        letterSpacing: 2,
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
-                        child: Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha:0.15),
-                            borderRadius: BorderRadius.circular(28),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha:0.3),
-                              width: 1,
-                            ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '此刻，开启心动旅程',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.78),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0.5,
+                            shadows: const [
+                              Shadow(color: Color(0x99000000), blurRadius: 12),
+                            ],
                           ),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('几步就好',
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.white)),
-                                const SizedBox(height: 6),
-                                Text('三步开启你的心动之旅',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white.withValues(alpha:0.7))),
-                                const SizedBox(height: 24),
+                        ),
+                        const SizedBox(height: 28),
 
-                                // 邮箱
-                                TextFormField(
-                                  key: const Key('email'),
-                                  controller: _emailCtrl,
-                                  decoration: _frostInputDeco('邮箱', Icons.email_outlined),
-                                  keyboardType: TextInputType.emailAddress,
-                                  textInputAction: TextInputAction.next,
-                                  style: const TextStyle(color: Colors.white, fontSize: 15),
-                                  validator: (v) =>
-                                      v == null || !v.contains('@')
-                                          ? '请输入有效邮箱'
-                                          : null,
+                        // 玻璃表单容器 — BackdropFilter
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(28),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                            child: Container(
+                              padding: const EdgeInsets.all(22),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(28),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.18),
+                                  width: 1,
                                 ),
-                                const SizedBox(height: 14),
-
-                                // 密码
-                                TextFormField(
-                                  key: const Key('password'),
-                                  controller: _passCtrl,
-                                  decoration:
-                                      _frostInputDeco('密码', Icons.lock_outline)
-                                          .copyWith(
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        _obscure
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                        color: Colors.white60,
-                                        size: 20,
-                                      ),
-                                      onPressed: () => setState(
-                                          () => _obscure = !_obscure),
-                                    ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Dt.pink.withValues(alpha: 0.15),
+                                    blurRadius: 32,
+                                    spreadRadius: -4,
                                   ),
-                                  obscureText: _obscure,
-                                  textInputAction: TextInputAction.next,
-                                  style: const TextStyle(color: Colors.white, fontSize: 15),
-                                  validator: (v) => v == null || v.length < 6
-                                      ? '密码至少6位'
-                                      : null,
-                                ),
-                                const SizedBox(height: 18),
-
-                                // 性别选择 - 精致卡片选择器
-                                Text('性别',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white.withValues(alpha:0.7),
-                                        fontWeight: FontWeight.w500)),
-                                const SizedBox(height: 10),
-                                Row(
+                                ],
+                              ),
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: _GenderCard(
-                                        icon: Icons.male,
-                                        label: '男生',
-                                        emoji: '👨',
-                                        selected: _gender == 'male',
-                                        onTap: () =>
-                                            setState(() => _gender = 'male'),
-                                      ),
+                                    // 邮箱
+                                    TextFormField(
+                                      key: const Key('email'),
+                                      controller: _emailCtrl,
+                                      decoration: _glassInputDeco('邮箱', Icons.mail_outline_rounded),
+                                      keyboardType: TextInputType.emailAddress,
+                                      textInputAction: TextInputAction.next,
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500),
+                                      validator: (v) =>
+                                          v == null || !v.contains('@')
+                                              ? '请输入有效邮箱'
+                                              : null,
                                     ),
-                                    const SizedBox(width: 14),
-                                    Expanded(
-                                      child: _GenderCard(
-                                        icon: Icons.female,
-                                        label: '女生',
-                                        emoji: '👩',
-                                        selected: _gender == 'female',
-                                        onTap: () =>
-                                            setState(() => _gender = 'female'),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                    const SizedBox(height: 14),
 
-                                if (_error != null) ...[
-                                  const SizedBox(height: 14),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red.withValues(alpha:0.2),
-                                      borderRadius: BorderRadius.circular(8),
+                                    // 密码
+                                    TextFormField(
+                                      key: const Key('password'),
+                                      controller: _passCtrl,
+                                      decoration: _glassInputDeco('密码', Icons.lock_outline_rounded)
+                                          .copyWith(
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            _obscure
+                                                ? Icons.visibility_off_rounded
+                                                : Icons.visibility_rounded,
+                                            color: Colors.white.withValues(alpha: 0.6),
+                                            size: 20,
+                                          ),
+                                          onPressed: () => setState(
+                                              () => _obscure = !_obscure),
+                                        ),
+                                      ),
+                                      obscureText: _obscure,
+                                      textInputAction: TextInputAction.done,
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500),
+                                      validator: (v) => v == null || v.length < 6
+                                          ? '密码至少 6 位'
+                                          : null,
                                     ),
-                                    child: Row(
+                                    const SizedBox(height: 22),
+
+                                    // 性别选择 — 自绘 icon, 无 emoji
+                                    Text('我是',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white.withValues(alpha: 0.65),
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.5,
+                                        )),
+                                    const SizedBox(height: 12),
+                                    Row(
                                       children: [
-                                        const Icon(Icons.error_outline,
-                                            color: Colors.white, size: 16),
-                                        const SizedBox(width: 8),
                                         Expanded(
-                                          child: Text(_error!,
-                                              style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 13)),
+                                          child: _GenderPill(
+                                            icon: Icons.male_rounded,
+                                            label: '男生',
+                                            color: const Color(0xFF5B9AFF),
+                                            selected: _gender == 'male',
+                                            onTap: () => setState(() => _gender = 'male'),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: _GenderPill(
+                                            icon: Icons.female_rounded,
+                                            label: '女生',
+                                            color: Dt.pink,
+                                            selected: _gender == 'female',
+                                            onTap: () => setState(() => _gender = 'female'),
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
 
-                                const SizedBox(height: 24),
-
-                                // 注册按钮 - 白色按钮带缩放
-                                GestureDetector(
-                                  onTapDown: (_) => _btnCtrl.forward(),
-                                  onTapUp: (_) {
-                                    _btnCtrl.reverse();
-                                    if (!_loading) _register();
-                                  },
-                                  onTapCancel: () => _btnCtrl.reverse(),
-                                  child: AnimatedBuilder(
-                                    animation: _btnScale,
-                                    builder: (context, child) => Transform.scale(
-                                      scale: _btnScale.value,
-                                      child: child,
-                                    ),
-                                    child: Container(
-                                      key: const Key('register_btn'),
-                                      width: double.infinity,
-                                      height: 54,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(27),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withValues(alpha:0.15),
-                                            blurRadius: 15,
-                                            offset: const Offset(0, 6),
-                                          ),
-                                        ],
+                                    if (_error != null) ...[
+                                      const SizedBox(height: 16),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 14, vertical: 10),
+                                        decoration: BoxDecoration(
+                                          color: Dt.pink.withValues(alpha: 0.18),
+                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(
+                                              color: Dt.pink.withValues(alpha: 0.5),
+                                              width: 1),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.error_outline_rounded,
+                                                color: Dt.pinkLight, size: 16),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(_error!,
+                                                  style: const TextStyle(
+                                                    color: Dt.pinkLight,
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      child: Center(
-                                        child: _loading
-                                            ? const SizedBox(
-                                                height: 22,
-                                                width: 22,
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 2.5,
-                                                  color: Dt.pink,
-                                                ),
-                                              )
-                                            : const Text('遇见心动 →',
-                                                style: TextStyle(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Dt.pink,
-                                                  letterSpacing: 2,
-                                                )),
-                                      ),
-                                    ),
-                                  ),
+                                    ],
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
+
+                        const SizedBox(height: 24),
+
+                        // 渐变发光大 CTA — 与 welcome 一致
+                        SizedBox(
+                          width: double.infinity,
+                          height: 58,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Dt.pink, Dt.pinkLight, Dt.orange],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(29),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Dt.pink.withValues(alpha: 0.55),
+                                  blurRadius: 32,
+                                  offset: const Offset(0, 12),
+                                ),
+                                BoxShadow(
+                                  color: Dt.pink.withValues(alpha: 0.25),
+                                  blurRadius: 60,
+                                  spreadRadius: 4,
+                                ),
+                              ],
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                key: const Key('register_btn'),
+                                borderRadius: BorderRadius.circular(29),
+                                onTap: _loading ? null : _register,
+                                child: Center(
+                                  child: _loading
+                                      ? const SizedBox(
+                                          height: 22,
+                                          width: 22,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2.5,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '遇 见 心 动',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white,
+                                                letterSpacing: 2.5,
+                                              ),
+                                            ),
+                                            SizedBox(width: 10),
+                                            Icon(Icons.arrow_forward_rounded,
+                                                color: Colors.white, size: 20),
+                                          ],
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // 已有账号
+                        Center(
+                          child: TextButton(
+                            onPressed: () => context.go('/auth/login'),
+                            child: Text.rich(TextSpan(
+                              text: '已有账号？',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.6),
+                                fontSize: 13,
+                              ),
+                              children: const [
+                                TextSpan(
+                                  text: '立即登录',
+                                  style: TextStyle(
+                                    color: Dt.pink,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            )),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -413,18 +516,49 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   }
 }
 
-/// 性别选择卡片 - 精致设计
-class _GenderCard extends StatelessWidget {
+/// 玻璃圆形按钮 (返回键)
+class _GlassIconBtn extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  const _GlassIconBtn({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.black.withValues(alpha: 0.35),
+              border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.22), width: 1),
+            ),
+            child: Icon(icon, color: Colors.white, size: 18),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 性别选择胶囊 — 自绘风格, 无 emoji
+class _GenderPill extends StatelessWidget {
   final IconData icon;
   final String label;
-  final String emoji;
+  final Color color;
   final bool selected;
   final VoidCallback onTap;
 
-  const _GenderCard({
+  const _GenderPill({
     required this.icon,
     required this.label,
-    required this.emoji,
+    required this.color,
     required this.selected,
     required this.onTap,
   });
@@ -434,89 +568,50 @@ class _GenderCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: selected
-              ? Colors.white.withValues(alpha:0.3)
-              : Colors.white.withValues(alpha:0.08),
+              ? color.withValues(alpha: 0.22)
+              : Colors.white.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: selected ? Colors.white : Colors.white.withValues(alpha:0.2),
-            width: selected ? 2 : 1,
+            color: selected
+                ? color.withValues(alpha: 0.85)
+                : Colors.white.withValues(alpha: 0.18),
+            width: selected ? 1.8 : 1.0,
           ),
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: Colors.white.withValues(alpha:0.15),
-                    blurRadius: 12,
-                    spreadRadius: 1,
-                  )
+                    color: color.withValues(alpha: 0.4),
+                    blurRadius: 20,
+                    spreadRadius: -2,
+                  ),
                 ]
               : [],
         ),
         child: Column(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 32)),
+            Icon(
+              icon,
+              color: selected ? color : Colors.white.withValues(alpha: 0.55),
+              size: 28,
+            ),
             const SizedBox(height: 8),
             Text(
               label,
               style: TextStyle(
-                color: selected ? Colors.white : Colors.white70,
+                color: selected ? Colors.white : Colors.white.withValues(alpha: 0.65),
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                fontSize: 15,
+                fontSize: 14,
+                letterSpacing: 0.5,
               ),
             ),
-            if (selected) ...[
-              const SizedBox(height: 6),
-              Container(
-                width: 6, height: 6,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                ),
-              ),
-            ],
           ],
         ),
       ),
     );
   }
-}
-
-/// 波浪 Painter（与登录页一致）
-class _WavePainter extends CustomPainter {
-  final double animation;
-  _WavePainter({required this.animation});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    _drawWave(canvas, size,
-        amplitude: 18, wavelength: size.width * 0.8,
-        phase: animation * 2 * pi, yOffset: size.height * 0.84,
-        color: Colors.white.withValues(alpha:0.05));
-    _drawWave(canvas, size,
-        amplitude: 14, wavelength: size.width * 0.6,
-        phase: animation * 2 * pi + 1.5, yOffset: size.height * 0.88,
-        color: Colors.white.withValues(alpha:0.04));
-  }
-
-  void _drawWave(Canvas canvas, Size size, {
-    required double amplitude, required double wavelength,
-    required double phase, required double yOffset, required Color color,
-  }) {
-    final paint = Paint()..color = color..style = PaintingStyle.fill;
-    final path = Path()..moveTo(0, yOffset);
-    for (double x = 0; x <= size.width; x += 1) {
-      path.lineTo(x, yOffset + amplitude * sin((2 * pi * x / wavelength) + phase));
-    }
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _WavePainter old) => old.animation != animation;
 }

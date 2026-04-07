@@ -17,6 +17,8 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final _controller = PageController();
   int _current = 0;
+  double _pageOffset = 0;  // 滑动浮点 offset, 用于视差
+  bool _imagesPreloaded = false;
 
   // 沉浸式引导 — 顶级 Unsplash 摄影 (1600px 高分辨率, 时尚情侣/人像)
   // 精挑细选: 浪漫氛围 + 高对比度 + 适合暗色 UI
@@ -46,6 +48,34 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       subtitle: '每一段关系，都值得被温柔以待',
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // 监听滑动 offset, 用于背景视差
+    _controller.addListener(() {
+      if (mounted) {
+        setState(() {
+          _pageOffset = _controller.page ?? 0;
+        });
+      }
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 一次性预加载所有 4 张大图, 切换时不会再有空白
+    if (!_imagesPreloaded) {
+      _imagesPreloaded = true;
+      for (final p in _pages) {
+        precacheImage(
+          CachedNetworkImageProvider(p.imageUrl),
+          context,
+        );
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -78,12 +108,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ),
 
-          // 全屏大图轮播
+          // 视差背景层 — 在 PageView 之外, 根据 offset 自动平移
+          // 让滑动时背景图也跟着滑, 但速度更慢, 创造电影感视差
+          Positioned.fill(
+            child: Stack(
+              children: List.generate(_pages.length, (i) {
+                // 计算每张图与当前页的距离
+                final delta = (i - _pageOffset).clamp(-1.0, 1.0);
+                final opacity = (1 - delta.abs()).clamp(0.0, 1.0);
+                if (opacity == 0) return const SizedBox.shrink();
+                return Opacity(
+                  opacity: opacity,
+                  child: _ImmersivePage(
+                    page: _pages[i],
+                    parallaxOffset: delta,
+                  ),
+                );
+              }),
+            ),
+          ),
+
+          // 透明手势层 — 接管滑动事件给 _controller
           PageView.builder(
             controller: _controller,
             itemCount: _pages.length,
             onPageChanged: (i) => setState(() => _current = i),
-            itemBuilder: (_, i) => _ImmersivePage(page: _pages[i]),
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (_, __) => const SizedBox.expand(),
           ),
 
           // 顶部右侧"登录"
@@ -309,11 +360,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 }
 
-/// 沉浸式单页 — 全屏大图 + Ken Burns 缓慢缩放平移 + 三层暗角
-/// Hinge / Tinder 引导页核心动效: 让静态大图"活"起来, 制造电影感
+/// 沉浸式单页 — Ken Burns + 视差平移 + 三层暗角
+/// parallaxOffset: -1..1, 来自 PageController, 让背景图随手势平移
 class _ImmersivePage extends StatefulWidget {
   final _WelcomePage page;
-  const _ImmersivePage({required this.page});
+  final double parallaxOffset;
+  const _ImmersivePage({required this.page, this.parallaxOffset = 0});
 
   @override
   State<_ImmersivePage> createState() => _ImmersivePageState();
@@ -328,18 +380,18 @@ class _ImmersivePageState extends State<_ImmersivePage>
   @override
   void initState() {
     super.initState();
-    // Ken Burns: 14 秒缓慢循环, 每次方向不同制造"看不完"的感觉
+    // Ken Burns: 18 秒缓慢循环, 更柔和不抢戏
     _kbCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 14),
+      duration: const Duration(seconds: 18),
     )..repeat(reverse: true);
 
-    _scale = Tween<double>(begin: 1.0, end: 1.18).animate(
+    _scale = Tween<double>(begin: 1.05, end: 1.18).animate(
       CurvedAnimation(parent: _kbCtrl, curve: Curves.easeInOutSine),
     );
     _offset = Tween<Offset>(
-      begin: const Offset(-0.04, -0.03),
-      end: const Offset(0.04, 0.03),
+      begin: const Offset(-0.03, -0.02),
+      end: const Offset(0.03, 0.02),
     ).animate(
       CurvedAnimation(parent: _kbCtrl, curve: Curves.easeInOutSine),
     );
@@ -353,16 +405,19 @@ class _ImmersivePageState extends State<_ImmersivePage>
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    // 视差: 滑动时背景按 30% 速度反向平移, 创造"层次感"
+    final parallaxX = -widget.parallaxOffset * mq.size.width * 0.3;
     return Stack(
       fit: StackFit.expand,
       children: [
-        // Ken Burns 大图 — 缓慢缩放 + 平移 = 电影感
+        // Ken Burns + 视差大图
         AnimatedBuilder(
           animation: _kbCtrl,
           builder: (_, child) => Transform.translate(
             offset: Offset(
-              _offset.value.dx * MediaQuery.of(context).size.width,
-              _offset.value.dy * MediaQuery.of(context).size.height,
+              _offset.value.dx * mq.size.width + parallaxX,
+              _offset.value.dy * mq.size.height,
             ),
             child: Transform.scale(
               scale: _scale.value,
@@ -372,18 +427,18 @@ class _ImmersivePageState extends State<_ImmersivePage>
           child: CachedNetworkImage(
             imageUrl: widget.page.imageUrl,
             fit: BoxFit.cover,
-            fadeInDuration: const Duration(milliseconds: 600),
+            fadeInDuration: const Duration(milliseconds: 400),
             placeholder: (_, __) => const SizedBox.shrink(),
             errorWidget: (_, __, ___) => const SizedBox.shrink(),
           ),
         ),
 
-        // 顶部暗角 — 让"登录"按钮可读
+        // 顶部暗角
         Positioned(
           top: 0,
           left: 0,
           right: 0,
-          height: 200,
+          height: 220,
           child: DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -398,7 +453,7 @@ class _ImmersivePageState extends State<_ImmersivePage>
           ),
         ),
 
-        // 中部柔和 vignette — 电影感聚焦中心
+        // 中部 vignette
         Positioned.fill(
           child: DecoratedBox(
             decoration: BoxDecoration(
@@ -407,7 +462,7 @@ class _ImmersivePageState extends State<_ImmersivePage>
                 radius: 1.1,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.35),
+                  Colors.black.withValues(alpha: 0.32),
                 ],
               ),
             ),
