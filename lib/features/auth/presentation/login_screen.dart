@@ -364,10 +364,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         const SizedBox(height: 24),
 
                         // 渐变发光大 CTA
-                        SizedBox(
-                          width: double.infinity,
-                          height: 58,
-                          child: DecoratedBox(
+                        GestureDetector(
+                          key: const Key('login_btn'),
+                          onTap: _loading ? null : _login,
+                          behavior: HitTestBehavior.opaque,
+                          child: Container(
+                            width: double.infinity,
+                            height: 58,
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
                                 colors: [Dt.pink, Dt.pinkLight, Dt.orange],
@@ -388,41 +391,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 ),
                               ],
                             ),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                key: const Key('login_btn'),
-                                borderRadius: BorderRadius.circular(29),
-                                onTap: _loading ? null : _login,
-                                child: Center(
-                                  child: _loading
-                                      ? const SizedBox(
-                                          height: 22,
-                                          width: 22,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2.5,
+                            child: Center(
+                              child: _loading
+                                  ? const SizedBox(
+                                      height: 22,
+                                      width: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '登 录',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
                                             color: Colors.white,
+                                            letterSpacing: 4,
                                           ),
-                                        )
-                                      : const Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              '登 录',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white,
-                                                letterSpacing: 4,
-                                              ),
-                                            ),
-                                            SizedBox(width: 10),
-                                            Icon(Icons.arrow_forward_rounded,
-                                                color: Colors.white, size: 20),
-                                          ],
                                         ),
-                                ),
-                              ),
+                                        SizedBox(width: 10),
+                                        Icon(Icons.arrow_forward_rounded,
+                                            color: Colors.white, size: 20),
+                                      ],
+                                    ),
                             ),
                           ),
                         ),

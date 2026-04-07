@@ -17,7 +17,6 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final _controller = PageController();
   int _current = 0;
-  double _pageOffset = 0;  // 滑动浮点 offset, 用于视差
   bool _imagesPreloaded = false;
 
   // 沉浸式引导 — 顶级 Unsplash 摄影 (1600px 高分辨率, 时尚情侣/人像)
@@ -48,19 +47,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       subtitle: '每一段关系，都值得被温柔以待',
     ),
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    // 监听滑动 offset, 用于背景视差
-    _controller.addListener(() {
-      if (mounted) {
-        setState(() {
-          _pageOffset = _controller.page ?? 0;
-        });
-      }
-    });
-  }
 
   @override
   void didChangeDependencies() {
@@ -108,33 +94,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ),
 
-          // 视差背景层 — 在 PageView 之外, 根据 offset 自动平移
-          // 让滑动时背景图也跟着滑, 但速度更慢, 创造电影感视差
-          Positioned.fill(
-            child: Stack(
-              children: List.generate(_pages.length, (i) {
-                // 计算每张图与当前页的距离
-                final delta = (i - _pageOffset).clamp(-1.0, 1.0);
-                final opacity = (1 - delta.abs()).clamp(0.0, 1.0);
-                if (opacity == 0) return const SizedBox.shrink();
-                return Opacity(
-                  opacity: opacity,
-                  child: _ImmersivePage(
-                    page: _pages[i],
-                    parallaxOffset: delta,
-                  ),
-                );
-              }),
-            ),
-          ),
-
-          // 透明手势层 — 接管滑动事件给 _controller
+          // 标准 PageView.builder + 视差由内部 _ImmersivePage 监听 controller
           PageView.builder(
             controller: _controller,
             itemCount: _pages.length,
             onPageChanged: (i) => setState(() => _current = i),
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (_, __) => const SizedBox.expand(),
+            physics: const BouncingScrollPhysics(parent: ClampingScrollPhysics()),
+            itemBuilder: (_, i) => _ImmersivePage(
+              page: _pages[i],
+              pageIndex: i,
+              controller: _controller,
+            ),
           ),
 
           // 顶部右侧"登录"
@@ -265,10 +235,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   const SizedBox(height: 24),
 
                   // 主 CTA — 渐变 + 多层光晕，大按钮浮现
-                  SizedBox(
-                    width: double.infinity,
-                    height: 58,
-                    child: DecoratedBox(
+                  GestureDetector(
+                    onTap: isLast
+                        ? () => context.go('/auth/register')
+                        : () => _controller.nextPage(
+                              duration: const Duration(milliseconds: 400),
+                              curve: Curves.easeOutCubic,
+                            ),
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      width: double.infinity,
+                      height: 58,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [Dt.pink, Dt.pinkLight, Dt.orange],
@@ -289,37 +266,25 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           ),
                         ],
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(29),
-                          onTap: isLast
-                              ? () => context.go('/auth/register')
-                              : () => _controller.nextPage(
-                                    duration: const Duration(milliseconds: 400),
-                                    curve: Curves.easeOutCubic,
-                                  ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  isLast ? '开 始 遇 见' : '继 续',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 2,
-                                  ),
-                                ),
-                                if (!isLast) ...[
-                                  const SizedBox(width: 8),
-                                  const Icon(Icons.arrow_forward_rounded,
-                                      color: Colors.white, size: 20),
-                                ],
-                              ],
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              isLast ? '开 始 遇 见' : '继 续',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 2,
+                              ),
                             ),
-                          ),
+                            if (!isLast) ...[
+                              const SizedBox(width: 8),
+                              const Icon(Icons.arrow_forward_rounded,
+                                  color: Colors.white, size: 20),
+                            ],
+                          ],
                         ),
                       ),
                     ),
@@ -361,11 +326,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 }
 
 /// 沉浸式单页 — Ken Burns + 视差平移 + 三层暗角
-/// parallaxOffset: -1..1, 来自 PageController, 让背景图随手势平移
+/// 自己持有 controller listener, 视差跟手, 不依赖父 setState 重建
 class _ImmersivePage extends StatefulWidget {
   final _WelcomePage page;
-  final double parallaxOffset;
-  const _ImmersivePage({required this.page, this.parallaxOffset = 0});
+  final int pageIndex;
+  final PageController controller;
+  const _ImmersivePage({
+    required this.page,
+    required this.pageIndex,
+    required this.controller,
+  });
 
   @override
   State<_ImmersivePage> createState() => _ImmersivePageState();
@@ -374,27 +344,15 @@ class _ImmersivePage extends StatefulWidget {
 class _ImmersivePageState extends State<_ImmersivePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _kbCtrl;
-  late Animation<double> _scale;
-  late Animation<Offset> _offset;
 
   @override
   void initState() {
     super.initState();
-    // Ken Burns: 18 秒缓慢循环, 更柔和不抢戏
+    // Ken Burns: 20 秒非常缓慢循环, 几乎察觉不到但有层次
     _kbCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 18),
+      duration: const Duration(seconds: 20),
     )..repeat(reverse: true);
-
-    _scale = Tween<double>(begin: 1.05, end: 1.18).animate(
-      CurvedAnimation(parent: _kbCtrl, curve: Curves.easeInOutSine),
-    );
-    _offset = Tween<Offset>(
-      begin: const Offset(-0.03, -0.02),
-      end: const Offset(0.03, 0.02),
-    ).animate(
-      CurvedAnimation(parent: _kbCtrl, curve: Curves.easeInOutSine),
-    );
   }
 
   @override
@@ -403,72 +361,90 @@ class _ImmersivePageState extends State<_ImmersivePage>
     super.dispose();
   }
 
+  /// 计算当前页相对手势位置的偏移 (-1 = 完全在左, 0 = 居中, 1 = 完全在右)
+  double get _pageDelta {
+    if (!widget.controller.hasClients ||
+        widget.controller.position.haveDimensions == false) {
+      return 0;
+    }
+    final page = widget.controller.page ?? widget.pageIndex.toDouble();
+    return (widget.pageIndex - page).clamp(-1.0, 1.0);
+  }
+
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    // 视差: 滑动时背景按 30% 速度反向平移, 创造"层次感"
-    final parallaxX = -widget.parallaxOffset * mq.size.width * 0.3;
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // Ken Burns + 视差大图
-        AnimatedBuilder(
-          animation: _kbCtrl,
-          builder: (_, child) => Transform.translate(
-            offset: Offset(
-              _offset.value.dx * mq.size.width + parallaxX,
-              _offset.value.dy * mq.size.height,
-            ),
-            child: Transform.scale(
-              scale: _scale.value,
-              child: child,
-            ),
-          ),
-          child: CachedNetworkImage(
-            imageUrl: widget.page.imageUrl,
-            fit: BoxFit.cover,
-            fadeInDuration: const Duration(milliseconds: 400),
-            placeholder: (_, __) => const SizedBox.shrink(),
-            errorWidget: (_, __, ___) => const SizedBox.shrink(),
-          ),
-        ),
+    return RepaintBoundary(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Ken Burns + 视差: AnimatedBuilder 同时监听 KB ctrl + page controller
+          AnimatedBuilder(
+            animation: Listenable.merge([_kbCtrl, widget.controller]),
+            builder: (_, child) {
+              // Ken Burns 缓慢缩放 + 微平移
+              final t = Curves.easeInOutSine.transform(_kbCtrl.value);
+              final kbScale = 1.06 + t * 0.10;
+              final kbX = (-0.025 + t * 0.05) * mq.size.width;
+              final kbY = (-0.015 + t * 0.03) * mq.size.height;
 
-        // 顶部暗角
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 220,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.55),
-                  Colors.transparent,
-                ],
+              // 视差: 滑动时按 35% 速度反向平移
+              final parallaxX = -_pageDelta * mq.size.width * 0.35;
+
+              return Transform.translate(
+                offset: Offset(kbX + parallaxX, kbY),
+                child: Transform.scale(
+                  scale: kbScale,
+                  child: child,
+                ),
+              );
+            },
+            child: CachedNetworkImage(
+              imageUrl: widget.page.imageUrl,
+              fit: BoxFit.cover,
+              fadeInDuration: const Duration(milliseconds: 400),
+              placeholder: (_, __) => const ColoredBox(color: Color(0xFF0A0614)),
+              errorWidget: (_, __, ___) => const ColoredBox(color: Color(0xFF0A0614)),
+            ),
+          ),
+
+          // 顶部暗角
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 220,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.55),
+                    Colors.transparent,
+                  ],
+                ),
               ),
             ),
           ),
-        ),
 
-        // 中部 vignette
-        Positioned.fill(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.center,
-                radius: 1.1,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withValues(alpha: 0.32),
-                ],
+          // 中部 vignette
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.center,
+                  radius: 1.1,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.32),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

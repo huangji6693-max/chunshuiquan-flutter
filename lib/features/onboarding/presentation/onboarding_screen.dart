@@ -223,10 +223,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Padding(
               padding: EdgeInsets.fromLTRB(
                   24, 8, 24, MediaQuery.of(context).padding.bottom + 16),
-              child: SizedBox(
-                width: double.infinity,
-                height: 58,
-                child: DecoratedBox(
+              child: GestureDetector(
+                onTap: _uploading ? null : _next,
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  width: double.infinity,
+                  height: 58,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: _uploading
@@ -251,33 +253,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             ),
                           ],
                   ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(29),
-                      onTap: _uploading ? null : _next,
-                      child: Center(
-                        child: _uploading
-                            ? const SizedBox(
-                                width: 22, height: 22,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2.5, color: Colors.white))
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(_page < 2 ? '继 续' : '开 始 探 索',
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 3)),
-                                  const SizedBox(width: 10),
-                                  const Icon(Icons.arrow_forward_rounded,
-                                      color: Colors.white, size: 20),
-                                ],
-                              ),
-                      ),
-                    ),
+                  child: Center(
+                    child: _uploading
+                        ? const SizedBox(
+                            width: 22, height: 22,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2.5, color: Colors.white))
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(_page < 2 ? '继 续' : '开 始 探 索',
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 3)),
+                              const SizedBox(width: 10),
+                              const Icon(Icons.arrow_forward_rounded,
+                                  color: Colors.white, size: 20),
+                            ],
+                          ),
                   ),
                 ),
               ),
