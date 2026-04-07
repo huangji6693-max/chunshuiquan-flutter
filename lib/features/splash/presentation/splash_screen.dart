@@ -2,12 +2,13 @@ import '../../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mesh_gradient/mesh_gradient.dart';
 import '../../../core/storage/token_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// 启动页 — Dt v4 / Lambo + Sanity 风格
-/// 哲学：UI消失，人闪耀。删除流体渐变装饰，改为纯黑 + 单色径向光晕。
-/// "春水圈"作为宣言时刻 (Lambo 0.92 lh)。
+/// 启动页 — 高级荷尔蒙风格 (探探/Soul/Tinder 对标)
+/// 流体渐变 + 大 logo + 多层粉色光晕 + 宣言字
+/// 主人原则: "不要简约风, 我要高级荷尔蒙丰富的风格"
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
   @override
@@ -73,30 +74,30 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Dt.bgDeep,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // [v4] 单一径向光晕 — Sanity 启发，替代流体渐变装饰
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.center,
-                  radius: 0.8,
-                  colors: [
-                    Dt.pink.withValues(alpha: 0.18),
-                    Dt.bgDeep,
-                  ],
-                  stops: const [0.0, 0.7],
-                ),
-              ),
+          // 流体渐变背景 — 春水圈品牌色, 制造层次感
+          AnimatedMeshGradient(
+            colors: const [
+              Color(0xFF1A0A2E),
+              Dt.pink,
+              Color(0xFF0A0614),
+              Color(0xFF7C3AED),
+            ],
+            options: AnimatedMeshGradientOptions(
+              speed: 3,
+              frequency: 2,
+              amplitude: 50,
+              grain: 0.35,
             ),
           ),
 
-          // Logo 居中 (上 1/3 位置, 更接近 Lambo hero 节奏)
-          Align(
-            alignment: const Alignment(0, -0.25),
+          // 暗层加深氛围
+          Container(color: Colors.black.withValues(alpha: 0.3)),
+
+          // Logo 居中
+          Center(
             child: AnimatedBuilder(
               animation: _ctrl,
               builder: (_, __) => Opacity(
@@ -109,57 +110,46 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             ),
           ),
 
-          // [v4] 品牌宣言时刻 — displayHero 0.96 lh -1.8 ls
-          Align(
-            alignment: const Alignment(0, 0.35),
-            child: AnimatedBuilder(
-              animation: _ctrl,
-              builder: (_, child) => Opacity(opacity: _opacity.value, child: child),
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '春水圈',
-                    style: TextStyle(
-                      color: Dt.textPrimary,
-                      fontSize: 56,
-                      fontWeight: FontWeight.w600,
-                      height: 0.96,
-                      letterSpacing: -1.4,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    '遇 见 心 动',
-                    style: TextStyle(
-                      color: Dt.textTertiary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 6,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // [v4] 底部 1px 边界进度环, 隐式表达"加载中" (Vercel 影子即边框)
+          // 底部品牌名 — 大字宣言
           Positioned(
-            bottom: MediaQuery.of(context).padding.bottom + 48,
+            bottom: MediaQuery.of(context).padding.bottom + 80,
             left: 0,
             right: 0,
             child: AnimatedBuilder(
               animation: _ctrl,
-              builder: (_, child) => Opacity(opacity: _opacity.value * 0.6, child: child),
-              child: const Center(
-                child: SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    color: Dt.pink,
-                    strokeWidth: 1.5,
+              builder: (_, child) => Opacity(
+                opacity: _opacity.value,
+                child: child,
+              ),
+              child: const Column(
+                children: [
+                  Text(
+                    '春水圈',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 8,
+                      height: 1.0,
+                      shadows: [
+                        Shadow(
+                          color: Color(0x66000000),
+                          blurRadius: 24,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  SizedBox(height: 12),
+                  Text(
+                    '遇 见 心 动',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 6,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -169,30 +159,41 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 }
 
-/// 品牌Logo — Dt v4 极简版
-/// Lambo 启发: 单色 + 单层细微光晕, 删除 3 色径向 + 多层装饰
+/// 品牌Logo — 自绘心形 + 多层粉色光晕, 大尺寸有冲击力
 class _BrandLogo extends StatelessWidget {
   const _BrandLogo();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 96,
-      height: 96,
+      width: 124,
+      height: 124,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Dt.pink,
+        gradient: const RadialGradient(
+          colors: [
+            Dt.pinkLight,
+            Dt.pink,
+            Color(0xFFE8366D),
+          ],
+          stops: [0.0, 0.6, 1.0],
+        ),
         boxShadow: [
           BoxShadow(
+            color: Dt.pink.withValues(alpha: 0.55),
+            blurRadius: 60,
+            spreadRadius: 10,
+          ),
+          BoxShadow(
             color: Dt.pink.withValues(alpha: 0.25),
-            blurRadius: 32,
-            spreadRadius: 2,
+            blurRadius: 100,
+            spreadRadius: 30,
           ),
         ],
       ),
       child: Center(
         child: CustomPaint(
-          size: const Size(42, 38),
+          size: const Size(54, 50),
           painter: _HeartPainter(),
         ),
       ),

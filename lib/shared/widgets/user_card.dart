@@ -1,13 +1,13 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../features/auth/domain/user_profile.dart';
 import '../theme/design_tokens.dart';
 
-/// 用户卡片 — Dt v4 / Ferrari + Sanity 风格
-/// 哲学: 摄影是唯一颜色源, UI 退到背景。
-/// 删除: 装饰双阴影 / 顶部 vignette / 底部 BackdropFilter blur / 渐变 fallback
-/// 改为: borderRing 影子即边框 + photoOverlay 统一渐变 + 单色 fallback
+/// 用户卡片 — Tinder 级别全屏卡片, 高级荷尔蒙风格
+/// 多照片切换 / 卡片电影感 vignette / 底部毛玻璃信息面板 / 多层阴影
+/// 主人原则: "卡片电影感 RadialGradient 暗角 vignette" 是高级感来源
 class UserCard extends StatefulWidget {
   final UserProfile user;
   const UserCard({super.key, required this.user});
@@ -29,23 +29,22 @@ class _UserCardState extends State<UserCard> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
-        borderRadius: Dt.rXl,
-        // [v4] 影子即边框 (Vercel) + 单层底部投影, 删除装饰双阴影
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          const BoxShadow(
-            color: Dt.borderSubtle,
-            blurRadius: 0,
-            spreadRadius: 1,
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.4),
+            blurRadius: 32,
+            offset: const Offset(0, 14),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: 28,
-            offset: const Offset(0, 12),
+            color: Dt.pink.withValues(alpha: 0.08),
+            blurRadius: 40,
+            spreadRadius: 2,
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: Dt.rXl,
+        borderRadius: BorderRadius.circular(20),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -85,7 +84,22 @@ class _UserCardState extends State<UserCard> {
                 ),
               ),
 
-            // [v4] 删除装饰性 vignette — Ferrari/SpaceX 共识: 摄影本身是深度
+            // 卡片暗角 vignette — 电影感的核心 (主人原则)
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.center,
+                    radius: 0.85,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.18),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             // 顶部照片进度条指示器
             if (hasMultiplePhotos)
               Positioned(
@@ -110,15 +124,21 @@ class _UserCardState extends State<UserCard> {
                 ),
               ),
 
-            // [v4] 底部信息面板 — 删除 BackdropFilter blur 装饰
-            // Ferrari/Renault/SpaceX 共识: 纯黑色渐变 + 文本, 让摄影呼吸
+            // 底部毛玻璃信息面板 — Glassmorphism 高级感
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
               child: GestureDetector(
                 onTap: () => setState(() => _expanded = !_expanded),
-                child: _buildInfoOverlay(user),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                      bottom: Radius.circular(20)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                    child: _buildInfoOverlay(user),
+                  ),
+                ),
               ),
             ),
           ],
@@ -205,26 +225,15 @@ class _UserCardState extends State<UserCard> {
     );
   }
 
-  /// 构建底部信息遮罩层 — Dt v4 photoOverlay 渐变
+  /// 构建底部毛玻璃信息面板
   Widget _buildInfoOverlay(UserProfile user) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
-      // [v4] 摄影覆盖渐变 — Ferrari/Renault/SpaceX 共识
-      // rgba(0,0,0,0.85→0) 提升文本可读性, 替代纯色 0.5 黑
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            Color(0xE6000000),  // 90% 黑
-            Color(0xCC000000),  // 80% 黑
-            Color(0x00000000),  // 0%
-          ],
-          stops: [0.0, 0.4, 1.0],
-        ),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.55),
       ),
-      padding: const EdgeInsets.fromLTRB(20, 32, 20, 20),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

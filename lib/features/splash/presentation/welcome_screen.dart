@@ -1,9 +1,12 @@
-import '../../../shared/theme/design_tokens.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-// [v4] mesh_gradient 装饰删除 (Lambo 哲学: 装饰即廉价)
+import 'package:mesh_gradient/mesh_gradient.dart';
+import '../../../shared/theme/design_tokens.dart';
 
-/// 欢迎引导页 — 暗色沉浸式，荷尔蒙风格
+/// 欢迎引导页 — Hinge / Tinder / Bumble 沉浸式风格
+/// 全屏大图 + 暗色渐变蒙层 + 大字宣言 + 渐变发光 CTA
+/// 主人原则: "我要高级荷尔蒙丰富的风格", "启动页要丰富有层次"
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -15,24 +18,25 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final _controller = PageController();
   int _current = 0;
 
+  // 三页沉浸式 — 真实人像大图（Unsplash 公共 CDN）+ 品牌色情绪
   static const _pages = [
     _WelcomePage(
-      icon: Icons.local_fire_department_rounded,
-      iconColors: [Dt.pink, Dt.pinkLight],
+      // 浪漫黄昏剪影
+      imageUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=900&q=80',
       title: '心动\n就在下一次滑动',
-      subtitle: '向右滑动，开启一段新故事',
+      subtitle: '认识此刻在你身边的有趣灵魂',
     ),
     _WelcomePage(
-      icon: Icons.chat_bubble_rounded,
-      iconColors: [Color(0xFF8B5CF6), Dt.pink],
+      // 灯光下的女生
+      imageUrl: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=900&q=80',
       title: '让心意\n不再沉默',
-      subtitle: '文字、语音、礼物，用你喜欢的方式靠近',
+      subtitle: '文字、语音、礼物 — 用你喜欢的方式靠近',
     ),
     _WelcomePage(
-      icon: Icons.shield_rounded,
-      iconColors: [Dt.orange, Dt.pink],
+      // 城市夜景情侣
+      imageUrl: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=900&q=80',
       title: '每一次相遇\n都值得安心',
-      subtitle: '实名认证 · AI审核 · 7×24守护',
+      subtitle: '实名认证 · AI 审核 · 7×24 守护',
     ),
   ];
 
@@ -48,197 +52,326 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final mq = MediaQuery.of(context);
 
     return Scaffold(
-      backgroundColor: Dt.bgDeep,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // [v4] 单色径向光晕替代流体渐变 (Sanity 启发)
-          const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment(0, -0.4),
-                radius: 1.0,
-                colors: [Color(0x26FF4D88), Dt.bgDeep],
-                stops: [0.0, 0.65],
-              ),
+          // 流体渐变 fallback (图片加载前)
+          AnimatedMeshGradient(
+            colors: const [
+              Color(0xFF1A0A2E),
+              Color(0xFF2D1B4E),
+              Dt.pink,
+              Color(0xFF0A0614),
+            ],
+            options: AnimatedMeshGradientOptions(
+              speed: 2,
+              frequency: 2,
+              amplitude: 40,
+              grain: 0.3,
             ),
           ),
 
-          // 页面内容
+          // 全屏大图轮播
           PageView.builder(
             controller: _controller,
             itemCount: _pages.length,
             onPageChanged: (i) => setState(() => _current = i),
-            itemBuilder: (_, i) => _buildPage(_pages[i]),
+            itemBuilder: (_, i) => _ImmersivePage(page: _pages[i]),
           ),
 
-          // 右上角登录入口（每页都显示）
+          // 顶部右侧"登录"
           Positioned(
-            top: mq.padding.top + 8,
+            top: mq.padding.top + 12,
             right: 16,
             child: TextButton(
               onPressed: () => context.go('/auth/login'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.black.withValues(alpha: 0.35),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                shape: const StadiumBorder(),
+              ),
               child: const Text('登录',
                   style: TextStyle(
-                      color: Dt.pink,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600)),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  )),
             ),
           ),
 
-          // 底部操作区
+          // 底部内容区 — 渐变蒙层 + 标题 + 指示点 + CTA
           Positioned(
-            left: 28,
-            right: 28,
-            bottom: mq.padding.bottom + 40,
-            child: Column(
-              children: [
-                // 指示点
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    _pages.length,
-                    (i) => AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: i == _current ? 28 : 8,
-                      height: 8,
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      decoration: BoxDecoration(
-                        gradient: i == _current
-                            ? const LinearGradient(
-                                colors: [Dt.pink, Color(0xFF8B5CF6)])
-                            : null,
-                        color: i == _current
-                            ? null
-                            : Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(4),
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(28, 60, 28, mq.padding.bottom + 32),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0x00000000),
+                    Color(0xCC000000),
+                    Color(0xFF000000),
+                  ],
+                  stops: [0.0, 0.4, 1.0],
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 大标题 — 大字 + 紧 lh + 可换行
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 380),
+                    transitionBuilder: (child, anim) => FadeTransition(
+                      opacity: anim,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0, 0.15),
+                          end: Offset.zero,
+                        ).animate(anim),
+                        child: child,
+                      ),
+                    ),
+                    child: Text(
+                      _pages[_current].title,
+                      key: ValueKey(_current),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 38,
+                        fontWeight: FontWeight.w700,
+                        height: 1.1,
+                        letterSpacing: -0.6,
+                        shadows: [
+                          Shadow(color: Color(0x99000000), blurRadius: 16),
+                        ],
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 36),
+                  const SizedBox(height: 14),
 
-                // [v4] 主按钮 — Sanity/Uber 极简纯色 pill, 删渐变装饰
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: isLast
-                        ? () => context.go('/auth/register')
-                        : () => _controller.nextPage(
-                              duration: const Duration(milliseconds: 400),
-                              curve: Curves.easeInOut,
-                            ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Dt.pink,
-                      foregroundColor: Colors.white,
-                      shadowColor: Dt.pink.withValues(alpha: 0.3),
-                      elevation: 6,
-                      shape: const StadiumBorder(),
-                    ),
+                  // 副标题
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 380),
                     child: Text(
-                      isLast ? '开始遇见' : '继续',
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5),
+                      _pages[_current].subtitle,
+                      key: ValueKey('sub_$_current'),
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.78),
+                        fontSize: 15,
+                        height: 1.55,
+                        letterSpacing: 0.2,
+                        shadows: const [
+                          Shadow(color: Color(0x66000000), blurRadius: 12),
+                        ],
+                      ),
                     ),
                   ),
-                ),
 
-                if (isLast) ...[
-                  const SizedBox(height: 14),
-                  TextButton(
-                    onPressed: () => context.go('/auth/login'),
-                    child: Text.rich(TextSpan(
-                      text: '已有账号？',
-                      style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                      children: const [
-                        TextSpan(
-                          text: '立即登录',
-                          style: TextStyle(
-                            color: Dt.pink,
-                            fontWeight: FontWeight.w600,
+                  const SizedBox(height: 32),
+
+                  // 指示点
+                  Row(
+                    children: List.generate(_pages.length, (i) {
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.only(right: 6),
+                        width: i == _current ? 32 : 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          gradient: i == _current
+                              ? const LinearGradient(
+                                  colors: [Dt.pink, Dt.pinkLight],
+                                )
+                              : null,
+                          color: i == _current
+                              ? null
+                              : Colors.white.withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: i == _current
+                              ? [
+                                  BoxShadow(
+                                    color: Dt.pink.withValues(alpha: 0.5),
+                                    blurRadius: 12,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                      );
+                    }),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // 主 CTA — 渐变 + 多层光晕，大按钮浮现
+                  SizedBox(
+                    width: double.infinity,
+                    height: 58,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Dt.pink, Dt.pinkLight, Dt.orange],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(29),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Dt.pink.withValues(alpha: 0.55),
+                            blurRadius: 32,
+                            offset: const Offset(0, 12),
+                          ),
+                          BoxShadow(
+                            color: Dt.pink.withValues(alpha: 0.25),
+                            blurRadius: 60,
+                            spreadRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(29),
+                          onTap: isLast
+                              ? () => context.go('/auth/register')
+                              : () => _controller.nextPage(
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeOutCubic,
+                                  ),
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  isLast ? '开 始 遇 见' : '继 续',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                                if (!isLast) ...[
+                                  const SizedBox(width: 8),
+                                  const Icon(Icons.arrow_forward_rounded,
+                                      color: Colors.white, size: 20),
+                                ],
+                              ],
+                            ),
                           ),
                         ),
-                      ],
-                    )),
+                      ),
+                    ),
                   ),
-                ] else
-                  const SizedBox(height: 14),
-              ],
+
+                  if (isLast) ...[
+                    const SizedBox(height: 14),
+                    Center(
+                      child: TextButton(
+                        onPressed: () => context.go('/auth/login'),
+                        child: Text.rich(TextSpan(
+                          text: '已有账号？',
+                          style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.6),
+                              fontSize: 13),
+                          children: const [
+                            TextSpan(
+                              text: '立即登录',
+                              style: TextStyle(
+                                color: Dt.pink,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        )),
+                      ),
+                    ),
+                  ] else
+                    const SizedBox(height: 14),
+                ],
+              ),
             ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildPage(_WelcomePage page) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 36),
-        child: Column(
-          children: [
-            const Spacer(flex: 3),
-            // [v4] 图标 — 单色 + 单层细微光晕, 删渐变装饰
-            Container(
-              width: 88,
-              height: 88,
-              decoration: BoxDecoration(
-                color: page.iconColors.first,
-                borderRadius: Dt.rXl,
-                boxShadow: [
-                  BoxShadow(
-                    color: page.iconColors.first.withValues(alpha: 0.22),
-                    blurRadius: 28,
-                  ),
+/// 沉浸式单页 — 全屏大图 + 顶部暗角
+class _ImmersivePage extends StatelessWidget {
+  final _WelcomePage page;
+  const _ImmersivePage({required this.page});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // 全屏照片
+        CachedNetworkImage(
+          imageUrl: page.imageUrl,
+          fit: BoxFit.cover,
+          // 加载中显示流体渐变 (复用 mesh_gradient)
+          placeholder: (_, __) => Container(
+            color: Colors.transparent,
+          ),
+          errorWidget: (_, __, ___) => Container(
+            color: Colors.transparent,
+          ),
+        ),
+
+        // 顶部暗角（让"登录"按钮可读）
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 180,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.45),
+                  Colors.transparent,
                 ],
               ),
-              child: Icon(page.icon, color: Colors.white, size: 42),
             ),
-            const SizedBox(height: 56),
-            // [v4] 大标题 — Lambo 紧 lh + 负字距
-            Text(
-              page.title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Dt.textPrimary,
-                fontSize: 38,
-                fontWeight: FontWeight.w600,
-                height: 1.05,
-                letterSpacing: -0.8,
-              ),
-            ),
-            const SizedBox(height: 20),
-            // [v4] 副标题 — Linear 暖灰
-            Text(
-              page.subtitle,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Dt.textSecondary,
-                fontSize: 16,
-                height: 1.55,
-                letterSpacing: 0.1,
-              ),
-            ),
-            const Spacer(flex: 4),
-          ],
+          ),
         ),
-      ),
+
+        // 中部柔和暗角 vignette — 电影感
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.center,
+                radius: 1.2,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.25),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
 class _WelcomePage {
-  final IconData icon;
-  final List<Color> iconColors;
+  final String imageUrl;
   final String title;
   final String subtitle;
 
   const _WelcomePage({
-    required this.icon,
-    required this.iconColors,
+    required this.imageUrl,
     required this.title,
     required this.subtitle,
   });
