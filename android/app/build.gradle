@@ -50,9 +50,10 @@ android {
             signingConfig = keystorePropertiesFile.exists()
                 ? signingConfigs.release
                 : signingConfigs.debug
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // [fix] R8 混淆删了 Flutter 反射类导致打不开, 关闭混淆
+            // 代价: APK 大 30%, 但 demo 阶段稳定性优先
+            minifyEnabled false
+            shrinkResources false
         }
     }
 }
