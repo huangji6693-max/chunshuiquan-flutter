@@ -309,42 +309,88 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 }
 
-/// 沉浸式单页 — 全屏大图 + 顶部暗角
-class _ImmersivePage extends StatelessWidget {
+/// 沉浸式单页 — 全屏大图 + Ken Burns 缓慢缩放平移 + 三层暗角
+/// Hinge / Tinder 引导页核心动效: 让静态大图"活"起来, 制造电影感
+class _ImmersivePage extends StatefulWidget {
   final _WelcomePage page;
   const _ImmersivePage({required this.page});
+
+  @override
+  State<_ImmersivePage> createState() => _ImmersivePageState();
+}
+
+class _ImmersivePageState extends State<_ImmersivePage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _kbCtrl;
+  late Animation<double> _scale;
+  late Animation<Offset> _offset;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ken Burns: 14 秒缓慢循环, 每次方向不同制造"看不完"的感觉
+    _kbCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 14),
+    )..repeat(reverse: true);
+
+    _scale = Tween<double>(begin: 1.0, end: 1.18).animate(
+      CurvedAnimation(parent: _kbCtrl, curve: Curves.easeInOutSine),
+    );
+    _offset = Tween<Offset>(
+      begin: const Offset(-0.04, -0.03),
+      end: const Offset(0.04, 0.03),
+    ).animate(
+      CurvedAnimation(parent: _kbCtrl, curve: Curves.easeInOutSine),
+    );
+  }
+
+  @override
+  void dispose() {
+    _kbCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
       children: [
-        // 全屏照片
-        CachedNetworkImage(
-          imageUrl: page.imageUrl,
-          fit: BoxFit.cover,
-          // 加载中显示流体渐变 (复用 mesh_gradient)
-          placeholder: (_, __) => Container(
-            color: Colors.transparent,
+        // Ken Burns 大图 — 缓慢缩放 + 平移 = 电影感
+        AnimatedBuilder(
+          animation: _kbCtrl,
+          builder: (_, child) => Transform.translate(
+            offset: Offset(
+              _offset.value.dx * MediaQuery.of(context).size.width,
+              _offset.value.dy * MediaQuery.of(context).size.height,
+            ),
+            child: Transform.scale(
+              scale: _scale.value,
+              child: child,
+            ),
           ),
-          errorWidget: (_, __, ___) => Container(
-            color: Colors.transparent,
+          child: CachedNetworkImage(
+            imageUrl: widget.page.imageUrl,
+            fit: BoxFit.cover,
+            fadeInDuration: const Duration(milliseconds: 600),
+            placeholder: (_, __) => const SizedBox.shrink(),
+            errorWidget: (_, __, ___) => const SizedBox.shrink(),
           ),
         ),
 
-        // 顶部暗角（让"登录"按钮可读）
+        // 顶部暗角 — 让"登录"按钮可读
         Positioned(
           top: 0,
           left: 0,
           right: 0,
-          height: 180,
+          height: 200,
           child: DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withValues(alpha: 0.45),
+                  Colors.black.withValues(alpha: 0.55),
                   Colors.transparent,
                 ],
               ),
@@ -352,16 +398,16 @@ class _ImmersivePage extends StatelessWidget {
           ),
         ),
 
-        // 中部柔和暗角 vignette — 电影感
+        // 中部柔和 vignette — 电影感聚焦中心
         Positioned.fill(
           child: DecoratedBox(
             decoration: BoxDecoration(
               gradient: RadialGradient(
                 center: Alignment.center,
-                radius: 1.2,
+                radius: 1.1,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.25),
+                  Colors.black.withValues(alpha: 0.35),
                 ],
               ),
             ),

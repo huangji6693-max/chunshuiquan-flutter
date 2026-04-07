@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../shared/theme/design_tokens.dart';
 
-/// 动作按钮 — Dt v4 / Raycast 毛玻璃风格
-/// 漂浮在用户照片上, 半透明让照片透出, scale hover (Wise 启发)
+/// 动作按钮 — Tinder 风格毛玻璃 + 彩色发光浮现
+/// 漂浮在用户照片上, 半透明白让照片透出, scale 按压反馈
 class ActionButton extends StatefulWidget {
   final IconData icon;
   final Color color;
@@ -65,19 +64,24 @@ class _ActionButtonState extends State<ActionButton>
             width: widget.size,
             height: widget.size,
             decoration: BoxDecoration(
-              // [v4] 半透明黑替代半透明白 — 与照片融合更深, 不抢戏
-              color: const Color(0x33000000),  // 20% 黑
+              // 毛玻璃白 + 彩色发光浮现 (主人原则: "按钮从背景中发光浮现")
+              color: Colors.white.withValues(alpha: 0.12),
               shape: BoxShape.circle,
-              // [v4] 单层细微光晕 — Sentry 启发, 删除装饰 spreadRadius
               boxShadow: [
                 BoxShadow(
-                  color: widget.color.withValues(alpha: 0.18),
-                  blurRadius: 14,
+                  color: widget.color.withValues(alpha: 0.35),
+                  blurRadius: 24,
+                  spreadRadius: 2,
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
               ],
               border: Border.all(
-                color: Dt.borderMedium,
-                width: 1,
+                color: Colors.white.withValues(alpha: 0.18),
+                width: 1.2,
               ),
             ),
             child: Icon(widget.icon,

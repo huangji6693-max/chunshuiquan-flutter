@@ -80,15 +80,23 @@ class _BoostButtonState extends ConsumerState<BoostButton>
               height: 44,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                // [v4] 与 ActionButton/SuperLikeBtn 统一: 半透明黑 + 单层光晕
-                color: const Color(0x33000000),
+                color: Colors.white.withValues(alpha: 0.12),
                 boxShadow: [
                   BoxShadow(
-                    color: Dt.boost.withValues(alpha: 0.18),
-                    blurRadius: 14,
+                    color: Dt.boost.withValues(alpha: 0.4),
+                    blurRadius: 24,
+                    spreadRadius: 2,
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
                 ],
-                border: Border.all(color: Dt.borderMedium, width: 1),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.18),
+                  width: 1.2,
+                ),
               ),
               child: Icon(
                 _active ? Icons.rocket_launch : Icons.bolt_rounded,
