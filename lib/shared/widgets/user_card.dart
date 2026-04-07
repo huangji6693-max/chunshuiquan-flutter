@@ -356,25 +356,34 @@ class _UserCardState extends State<UserCard> {
               ),
             ],
 
-            // 兴趣标签
+            // 兴趣标签 — 粉色发光高级感
             if (user.tags.isNotEmpty) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               Wrap(
-                spacing: 6,
-                runSpacing: 6,
+                spacing: 8,
+                runSpacing: 8,
                 children: user.tags.take(6).map((tag) => Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 5),
+                      horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: const Color(0x1A000000),
-                    borderRadius: Dt.rSm,
-                    border: Border.all(color: Dt.borderSubtle, width: 1),
+                    color: Dt.pink.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                        color: Dt.pink.withValues(alpha: 0.45), width: 1),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Dt.pink.withValues(alpha: 0.18),
+                        blurRadius: 12,
+                        spreadRadius: 0,
+                      ),
+                    ],
                   ),
                   child: Text(tag,
                       style: const TextStyle(
-                        color: Dt.textPrimary,
+                        color: Dt.pinkLight,
                         fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
                       )),
                 )).toList(),
               ),
@@ -392,25 +401,33 @@ class _UserCardState extends State<UserCard> {
                     height: 1.3,
                   )),
             ],
-            // 未展开时，简短显示兴趣标签
+            // 未展开时，简短显示兴趣标签 — 粉色发光胶囊
             if (user.tags.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 physics: const NeverScrollableScrollPhysics(),
                 child: Row(
                   children: user.tags.take(4).map((tag) => Padding(
-                    padding: const EdgeInsets.only(right: 6),
+                    padding: const EdgeInsets.only(right: 8),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
+                          horizontal: 12, vertical: 5),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
-                        borderRadius: Dt.rSm,
+                        color: Dt.pink.withValues(alpha: 0.16),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: Dt.pink.withValues(alpha: 0.4), width: 1),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Dt.pink.withValues(alpha: 0.16),
+                            blurRadius: 10,
+                          ),
+                        ],
                       ),
                       child: Text(tag,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Dt.pinkLight,
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                           )),
