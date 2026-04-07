@@ -152,24 +152,32 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // [v4] 品牌Logo——单色 + 单层细微光晕, 对齐 splash
+            // 品牌 Logo — 双色径向 + 多层粉色光晕浮现
             Container(
-              width: 32,
-              height: 32,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
-                color: Dt.pink,
                 shape: BoxShape.circle,
+                gradient: const RadialGradient(
+                  colors: [Dt.pinkLight, Dt.pink, Color(0xFFE8366D)],
+                  stops: [0.0, 0.6, 1.0],
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Dt.pink.withValues(alpha: 0.25),
-                    blurRadius: 12,
-                    spreadRadius: 1,
+                    color: Dt.pink.withValues(alpha: 0.45),
+                    blurRadius: 18,
+                    spreadRadius: 2,
+                  ),
+                  BoxShadow(
+                    color: Dt.pink.withValues(alpha: 0.18),
+                    blurRadius: 32,
+                    spreadRadius: 6,
                   ),
                 ],
               ),
               child: Center(
                 child: CustomPaint(
-                  size: const Size(15, 14),
+                  size: const Size(17, 16),
                   painter: MiniHeartPainter(),
                 ),
               ),

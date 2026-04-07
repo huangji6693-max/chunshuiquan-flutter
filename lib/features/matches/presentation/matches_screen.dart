@@ -26,17 +26,43 @@ class MatchesScreen extends ConsumerWidget {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        // [v4] 大标题布局 — Sanity / Apple "Large Title" 启发
         toolbarHeight: 72,
         titleSpacing: 20,
-        title: const Text('匹配',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -0.8,
-              height: 1.0,
-              color: Dt.textPrimary,
-            )),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 品牌 Logo — 与 discover/splash 一致的发光浮现
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const RadialGradient(
+                  colors: [Dt.pinkLight, Dt.pink, Color(0xFFE8366D)],
+                  stops: [0.0, 0.6, 1.0],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Dt.pink.withValues(alpha: 0.45),
+                    blurRadius: 18,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.favorite_rounded,
+                  color: Colors.white, size: 16),
+            ),
+            const SizedBox(width: 14),
+            const Text('匹配',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.6,
+                  height: 1.0,
+                  color: Dt.textPrimary,
+                )),
+          ],
+        ),
       ),
       body: state.when(
         loading: () => const MatchesSkeleton(),
@@ -213,24 +239,29 @@ class _NewMatchAvatar extends StatelessWidget {
       }),
       child: Column(
         children: [
-          // 渐变光环头像（粉→橙）
+          // 渐变光环头像（粉→橙）+ 多层柔和发光
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: Dt.gradientAccent,
               boxShadow: [
                 BoxShadow(
-                  color: Dt.pink.withValues(alpha:0.35),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+                  color: Dt.pink.withValues(alpha: 0.5),
+                  blurRadius: 20,
+                  spreadRadius: 1,
+                ),
+                BoxShadow(
+                  color: Dt.orange.withValues(alpha: 0.25),
+                  blurRadius: 36,
+                  spreadRadius: 3,
                 ),
               ],
             ),
             padding: const EdgeInsets.all(3),
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.surface,
+                color: Dt.bgDeep,
               ),
               padding: const EdgeInsets.all(2),
               child: CircleAvatar(
