@@ -69,6 +69,23 @@
   </div>
 
   <script>
+    // [fix] 强制注销已安装的 service worker 并清空所有缓存
+    // 解决 demo 期主人测试时拿到旧版本代码的问题
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        for (var i = 0; i < regs.length; i++) {
+          regs[i].unregister();
+        }
+      });
+    }
+    if (window.caches) {
+      caches.keys().then(function(names) {
+        for (var i = 0; i < names.length; i++) {
+          caches.delete(names[i]);
+        }
+      });
+    }
+
     window.addEventListener('flutter-first-frame', function() {
       var el = document.getElementById('loading');
       if (el) { el.classList.add('hidden'); setTimeout(function() { el.remove(); }, 500); }
