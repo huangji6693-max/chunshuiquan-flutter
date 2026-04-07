@@ -219,31 +219,66 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     style: TextStyle(color: cs.error, fontSize: 13)),
               ),
 
-            // ---- 底部按钮 ----
+            // ---- 底部渐变发光 CTA (与 welcome/register/login 一致) ----
             Padding(
               padding: EdgeInsets.fromLTRB(
-                  24, 8, 24, MediaQuery.of(context).padding.bottom + 12),
+                  24, 8, 24, MediaQuery.of(context).padding.bottom + 16),
               child: SizedBox(
                 width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _uploading ? null : _next,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: pink,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: pink.withValues(alpha: 0.4),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
+                height: 58,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: _uploading
+                          ? [pink.withValues(alpha: 0.4), pink.withValues(alpha: 0.4)]
+                          : const [Dt.pink, Dt.pinkLight, Dt.orange],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(29),
+                    boxShadow: _uploading
+                        ? []
+                        : [
+                            BoxShadow(
+                              color: pink.withValues(alpha: 0.55),
+                              blurRadius: 32,
+                              offset: const Offset(0, 12),
+                            ),
+                            BoxShadow(
+                              color: pink.withValues(alpha: 0.25),
+                              blurRadius: 60,
+                              spreadRadius: 4,
+                            ),
+                          ],
                   ),
-                  child: _uploading
-                      ? const SizedBox(
-                          width: 20, height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white))
-                      : Text(_page < 2 ? '继续' : '开始探索',
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700)),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(29),
+                      onTap: _uploading ? null : _next,
+                      child: Center(
+                        child: _uploading
+                            ? const SizedBox(
+                                width: 22, height: 22,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2.5, color: Colors.white))
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(_page < 2 ? '继 续' : '开 始 探 索',
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 3)),
+                                  const SizedBox(width: 10),
+                                  const Icon(Icons.arrow_forward_rounded,
+                                      color: Colors.white, size: 20),
+                                ],
+                              ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

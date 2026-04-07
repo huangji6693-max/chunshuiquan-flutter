@@ -116,7 +116,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/auth/login',
         pageBuilder: (_, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: const LoginScreen(),
+          child: LoginScreen(prefilledEmail: state.uri.queryParameters['email']),
           transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
         ),
       ),
