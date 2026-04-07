@@ -77,24 +77,25 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 流体渐变背景 — 春水圈品牌色, 制造层次感
+          // 流体渐变背景 — 暖电影感, 与引导页大图调子协调
+          // 暖紫黑 + 玫瑰红 + 暗紫 + 落日橙 (替代之前的霓虹粉+紫)
           AnimatedMeshGradient(
             colors: const [
-              Color(0xFF1A0A2E),
-              Dt.pink,
-              Color(0xFF0A0614),
-              Color(0xFF7C3AED),
+              Color(0xFF14091C),  // 深暖紫黑
+              Dt.pink,             // 玫瑰红 (新)
+              Color(0xFF0A0614),  // 近黑
+              Color(0xFF3D1A1F),  // 暖红棕
             ],
             options: AnimatedMeshGradientOptions(
-              speed: 3,
+              speed: 2.2,
               frequency: 2,
-              amplitude: 50,
-              grain: 0.35,
+              amplitude: 45,
+              grain: 0.25,
             ),
           ),
 
-          // 暗层加深氛围
-          Container(color: Colors.black.withValues(alpha: 0.3)),
+          // 暗层加深氛围 + 增加电影感对比
+          Container(color: Colors.black.withValues(alpha: 0.4)),
 
           // Logo 居中
           Center(

@@ -25,10 +25,12 @@ class Dt {
   //  颜色 — 单一品牌色约束 (Spotify/Linear/Apple都只用1种accent)
   // ============================================================
 
-  // 品牌色 — 仅用于Like/CTA/匹配通知，禁止装饰
-  static const Color pink = Color(0xFFFF4D88);
-  static const Color pinkLight = Color(0xFFFF6B9D);
-  static const Color orange = Color(0xFFFF8A5C);
+  // 品牌色 — 暖玫瑰红 + 珊瑚渐变 (与电影感大图协调)
+  // 主人反馈: 之前 #FF4D88 霓虹荧光粉太刺眼, 不搭温暖电影感
+  // 升级到降饱和高级调: 玫瑰红 → 暖珊瑚 → 落日橙
+  static const Color pink = Color(0xFFE63E5C);       // 玫瑰红 (主品牌)
+  static const Color pinkLight = Color(0xFFFF6B7A);  // 暖珊瑚 (高光)
+  static const Color orange = Color(0xFFFF8A5C);     // 落日橙 (渐变收尾)
 
   // 功能色
   static const Color like = Color(0xFF4CAF50);
