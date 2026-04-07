@@ -52,24 +52,42 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
           // ====== 顶部 ======
           SliverAppBar(
             floating: true,
-            
             surfaceTintColor: Colors.transparent,
+            toolbarHeight: 64,
+            titleSpacing: 20,
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // 与 discover/matches/splash 一致的发光浮现 logo
                 Container(
-                  width: 28,
-                  height: 28,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Dt.pinkLight, Dt.pink],
-                    ),
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
+                    gradient: const RadialGradient(
+                      colors: [Dt.pinkLight, Dt.pink, Color(0xFFE8366D)],
+                      stops: [0.0, 0.6, 1.0],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Dt.pink.withValues(alpha: 0.45),
+                        blurRadius: 18,
+                        spreadRadius: 2,
+                      ),
+                    ],
                   ),
-                  child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 14),
+                  child: const Icon(Icons.location_on_rounded,
+                      color: Colors.white, size: 17),
                 ),
-                const SizedBox(width: 10),
-                const Text('附近的人'),
+                const SizedBox(width: 14),
+                const Text('附近的人',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.5,
+                      height: 1.0,
+                      color: Dt.textPrimary,
+                    )),
               ],
             ),
             actions: [
@@ -273,8 +291,20 @@ class _NearbyCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Dt.bgElevated,
-          borderRadius: Dt.rLg,
-          boxShadow: Dt.shadowMd,
+          borderRadius: BorderRadius.circular(20),
+          // 多层阴影 + 微弱粉色光晕浮现
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.4),
+              blurRadius: 24,
+              offset: const Offset(0, 10),
+            ),
+            BoxShadow(
+              color: Dt.pink.withValues(alpha: 0.08),
+              blurRadius: 32,
+              spreadRadius: 1,
+            ),
+          ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
@@ -289,7 +319,8 @@ class _NearbyCard extends StatelessWidget {
                 placeholder: (_, __) => Container(
                   color: Dt.bgHighest,
                   child: const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2)),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Dt.pink)),
                 ),
                 errorWidget: (_, __, ___) => Container(
                   color: Dt.bgHighest,
@@ -302,21 +333,39 @@ class _NearbyCard extends StatelessWidget {
                 child: const Icon(Icons.person, size: 48, color: Dt.textTertiary),
               ),
 
-            // 底部渐变信息
+            // 顶部柔和暗角 vignette (电影感)
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.center,
+                    radius: 0.85,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.18),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // 底部渐变信息 — 三段渐变 (电影感)
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
               child: Container(
-                padding: const EdgeInsets.fromLTRB(12, 32, 12, 12),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.fromLTRB(14, 36, 14, 14),
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.7),
+                      Color(0x00000000),
+                      Color(0xCC000000),
+                      Color(0xE6000000),
                     ],
+                    stops: [0.0, 0.5, 1.0],
                   ),
                 ),
                 child: Column(
@@ -328,9 +377,14 @@ class _NearbyCard extends StatelessWidget {
                           child: Text(
                             '${user.name}, ${user.age}',
                             style: const TextStyle(
-                              
-                              fontSize: 16,
+                              color: Colors.white,
+                              fontSize: 17,
                               fontWeight: FontWeight.w700,
+                              letterSpacing: -0.3,
+                              height: 1.1,
+                              shadows: [
+                                Shadow(color: Color(0x99000000), blurRadius: 8),
+                              ],
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -350,15 +404,17 @@ class _NearbyCard extends StatelessWidget {
                     ),
                     if (user.city?.isNotEmpty == true)
                       Padding(
-                        padding: const EdgeInsets.only(top: 2),
+                        padding: const EdgeInsets.only(top: 4),
                         child: Row(
                           children: [
-                            const Icon(Icons.location_on,
-                                color: Colors.white70, size: 12),
-                            const SizedBox(width: 2),
+                            Icon(Icons.location_on,
+                                color: Colors.white.withValues(alpha: 0.75), size: 12),
+                            const SizedBox(width: 3),
                             Text(user.city!,
-                                style: const TextStyle(
-                                    color: Colors.white70, fontSize: 12)),
+                                style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.75),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500)),
                           ],
                         ),
                       ),
@@ -367,21 +423,27 @@ class _NearbyCard extends StatelessWidget {
               ),
             ),
 
-            // 在线状态
+            // 在线状态 — 双层发光绿点
             Positioned(
-              top: 10,
-              right: 10,
+              top: 12,
+              right: 12,
               child: Container(
-                width: 10,
-                height: 10,
+                width: 12,
+                height: 12,
                 decoration: BoxDecoration(
                   color: Dt.online,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.green.withValues(alpha: 0.4),
-                      blurRadius: 6,
+                      color: Dt.online.withValues(alpha: 0.6),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    ),
+                    BoxShadow(
+                      color: Dt.online.withValues(alpha: 0.3),
+                      blurRadius: 18,
+                      spreadRadius: 3,
                     ),
                   ],
                 ),

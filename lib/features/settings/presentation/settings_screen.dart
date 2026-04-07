@@ -16,9 +16,19 @@ class SettingsScreen extends ConsumerWidget {
     final balanceAsync = ref.watch(coinBalanceProvider);
 
     return Scaffold(
-      
       appBar: AppBar(
-        title: const Text('设置'),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 64,
+        titleSpacing: 20,
+        title: const Text('设置',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.6,
+              height: 1.0,
+              color: Dt.textPrimary,
+            )),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 12),

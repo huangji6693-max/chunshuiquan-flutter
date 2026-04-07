@@ -20,44 +20,74 @@ class MomentsScreen extends ConsumerWidget {
     return Scaffold(
       
       appBar: AppBar(
+        toolbarHeight: 64,
+        titleSpacing: 20,
+        surfaceTintColor: Colors.transparent,
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // 双色径向 + 多层光晕浮现 logo
             Container(
-              width: 28,
-              height: 28,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Dt.pinkLight, Dt.pink],
-                ),
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                gradient: const RadialGradient(
+                  colors: [Dt.pinkLight, Dt.pink, Color(0xFFE8366D)],
+                  stops: [0.0, 0.6, 1.0],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Dt.pink.withValues(alpha: 0.45),
+                    blurRadius: 18,
+                    spreadRadius: 2,
+                  ),
+                ],
               ),
-              child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 14),
+              child: const Icon(Icons.dynamic_feed_rounded,
+                  color: Colors.white, size: 17),
             ),
-            const SizedBox(width: 10),
-            const Text('动态'),
+            const SizedBox(width: 14),
+            const Text('动态',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
+                  height: 1.0,
+                  color: Dt.textPrimary,
+                )),
           ],
         ),
-        
-        surfaceTintColor: Colors.transparent,
         actions: [
-          IconButton(
-            icon: Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                    colors: [Dt.pink, Dt.orange]),
-                borderRadius: BorderRadius.circular(10),
+          // + 按钮 — 渐变发光浮现
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: GestureDetector(
+              onTap: () async {
+                final created = await context.push<bool>('/moments/create');
+                if (created == true) ref.invalidate(momentsTimelineProvider);
+              },
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [Dt.pink, Dt.pinkLight, Dt.orange],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Dt.pink.withValues(alpha: 0.45),
+                      blurRadius: 16,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.add_rounded,
+                    color: Colors.white, size: 22),
               ),
-              child: const Icon(Icons.add, color: Colors.white, size: 20),
             ),
-            onPressed: () async {
-              final created = await context.push<bool>('/moments/create');
-              if (created == true) ref.invalidate(momentsTimelineProvider);
-            },
           ),
-          const SizedBox(width: 8),
         ],
       ),
       body: RefreshIndicator(

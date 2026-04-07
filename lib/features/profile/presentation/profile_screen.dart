@@ -209,41 +209,26 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
       slivers: [
         // 顶部大图 AppBar + 视差 + 照片轮播
         SliverAppBar(
-          expandedHeight: 360,
+          expandedHeight: 420,
           pinned: true,
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: Dt.bgDeep,
           actions: [
-            IconButton(
-              icon: Container(
-                width: 36, height: 36,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.black.withValues(alpha:0.3),
-                ),
-                child: Icon(_editing ? Icons.close : Icons.edit,
-                    color: Colors.white, size: 18),
-              ),
-              onPressed: () => setState(() => _editing = !_editing),
+            _GlassActionBtn(
+              icon: _editing ? Icons.close_rounded : Icons.edit_rounded,
+              onTap: () => setState(() => _editing = !_editing),
             ),
-            IconButton(
-              icon: Container(
-                width: 36, height: 36,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.black.withValues(alpha:0.3),
-                ),
-                child: const Icon(Icons.settings_outlined,
-                    color: Colors.white, size: 18),
-              ),
-              onPressed: () => context.go('/settings'),
+            const SizedBox(width: 8),
+            _GlassActionBtn(
+              icon: Icons.settings_rounded,
+              onTap: () => context.go('/settings'),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 12),
           ],
           flexibleSpace: FlexibleSpaceBar(
             background: Stack(
               fit: StackFit.expand,
               children: [
-                // 照片轮播（视差效果）
+                // 照片轮播 — 暗色 fallback (无渐变 AI 感)
                 if (photos.isNotEmpty)
                   PageView.builder(
                     itemCount: photos.length,
@@ -252,80 +237,111 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                       memCacheWidth: 800,
                       imageUrl: photos[i],
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Dt.pink, Dt.orange],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                        ),
-                      ),
-                      errorWidget: (_, __, ___) => Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Dt.pink, Dt.orange],
-                          ),
-                        ),
-                      ),
+                      placeholder: (_, __) => const ColoredBox(color: Dt.bgHighest),
+                      errorWidget: (_, __, ___) => const ColoredBox(color: Dt.bgHighest),
                     ),
                   )
                 else
                   Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Dt.pink, Dt.orange],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
+                    color: Dt.bgHighest,
                     child: Center(
                       child: Text(
                         user.name.isNotEmpty ? user.name[0] : '?',
-                        style: const TextStyle(
-                            fontSize: 80,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700),
+                        style: TextStyle(
+                            fontSize: 120,
+                            color: Colors.white.withValues(alpha: 0.18),
+                            fontWeight: FontWeight.w300,
+                            letterSpacing: -4),
                       ),
                     ),
                   ),
 
-                // 底部渐变
+                // 顶部柔和暗角 (action 按钮可读)
                 Positioned(
-                  bottom: 0, left: 0, right: 0,
-                  child: Container(
-                    height: 120,
+                  top: 0, left: 0, right: 0,
+                  height: 140,
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
+                          Colors.black.withValues(alpha: 0.45),
                           Colors.transparent,
-                          Colors.black.withValues(alpha:0.5),
                         ],
                       ),
                     ),
                   ),
                 ),
 
-                // 照片指示器小点
+                // 中部柔和 vignette
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.center,
+                        radius: 1.0,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.25),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // 底部三段渐变 (深 → 透明)
+                Positioned(
+                  bottom: 0, left: 0, right: 0,
+                  height: 200,
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0x00000000),
+                          Color(0xCC000000),
+                          Color(0xFF07080A),
+                        ],
+                        stops: [0.0, 0.5, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // 照片指示器 — 渐变发光
                 if (photos.length > 1)
                   Positioned(
-                    bottom: 16,
-                    left: 0,
-                    right: 0,
+                    top: MediaQuery.of(context).padding.top + 12,
+                    left: 16,
+                    right: 16,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(photos.length, (i) {
-                        return Container(
-                          width: i == _headerPhotoIndex ? 20 : 8,
-                          height: 8,
-                          margin: const EdgeInsets.symmetric(horizontal: 3),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: i == _headerPhotoIndex
-                                ? Colors.white
-                                : Colors.white.withValues(alpha:0.4),
+                        return Expanded(
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            height: 3,
+                            margin: const EdgeInsets.symmetric(horizontal: 3),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(2),
+                              gradient: i == _headerPhotoIndex
+                                  ? const LinearGradient(
+                                      colors: [Dt.pink, Dt.pinkLight],
+                                    )
+                                  : null,
+                              color: i == _headerPhotoIndex
+                                  ? null
+                                  : Colors.white.withValues(alpha: 0.25),
+                              boxShadow: i == _headerPhotoIndex
+                                  ? [
+                                      BoxShadow(
+                                        color: Dt.pink.withValues(alpha: 0.5),
+                                        blurRadius: 8,
+                                      ),
+                                    ]
+                                  : null,
+                            ),
                           ),
                         );
                       }),
@@ -1099,37 +1115,92 @@ class _SectionCard extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Dt.bgElevated,
-        borderRadius: Dt.rLg,
-        boxShadow: Dt.shadowMd,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+            color: Colors.white.withValues(alpha: 0.06), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.35),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: Dt.pink.withValues(alpha: 0.06),
+            blurRadius: 32,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
+              // 渐变小竖条 + 微弱光晕
               Container(
                 width: 3,
-                height: 14,
+                height: 16,
                 decoration: BoxDecoration(
-                  color: Dt.pink,
+                  gradient: const LinearGradient(
+                    colors: [Dt.pink, Dt.pinkLight],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
                   borderRadius: BorderRadius.circular(2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Dt.pink.withValues(alpha: 0.5),
+                      blurRadius: 6,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Text(title,
                   style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
                       color: Dt.pink,
-                      letterSpacing: 0.5)),
+                      letterSpacing: 1.2)),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 14),
           child,
         ],
+      ),
+    );
+  }
+}
+
+/// 玻璃 Action 按钮 (profile AppBar 用)
+class _GlassActionBtn extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  const _GlassActionBtn({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.black.withValues(alpha: 0.42),
+          border: Border.all(
+              color: Colors.white.withValues(alpha: 0.22), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 12,
+            ),
+          ],
+        ),
+        child: Icon(icon, color: Colors.white, size: 18),
       ),
     );
   }

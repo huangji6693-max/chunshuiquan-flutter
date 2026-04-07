@@ -246,50 +246,72 @@ class _VipScreenState extends ConsumerState<VipScreen>
             ),
           ),
 
-          // ====== 购买按钮 ======
+          // ====== 购买按钮 — 金色多层光晕浮现 ======
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 48),
               child: SizedBox(
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _selectedPlan != null && !_purchasing
-                      ? _handlePurchase
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    elevation: _selectedPlan != null ? 8 : 0,
-                    shadowColor: Dt.vipGold.withValues(alpha:0.4),
-                  ),
-                  child: Ink(
-                    decoration: BoxDecoration(
-                      gradient: _selectedPlan != null
-                          ? const LinearGradient(
-                              colors: [Dt.vipGold, Dt.vipGoldDark])
-                          : null,
-                      color: _selectedPlan == null ? Dt.bgHighest : null,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Center(
-                      child: _purchasing
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                  color: Colors.white, strokeWidth: 2.5),
-                            )
-                          : Text(
-                              _selectedPlan != null ? '立即开通' : '请选择套餐',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: _selectedPlan != null
-                                    ? Dt.textPrimary
-                                    : Colors.white60,
-                              ),
+                width: double.infinity,
+                height: 60,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 280),
+                  decoration: BoxDecoration(
+                    gradient: _selectedPlan != null
+                        ? const LinearGradient(
+                            colors: [Dt.vipGold, Dt.vipGoldDark],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          )
+                        : null,
+                    color: _selectedPlan == null ? Dt.bgElevated : null,
+                    borderRadius: BorderRadius.circular(30),
+                    border: _selectedPlan == null
+                        ? Border.all(
+                            color: Colors.white.withValues(alpha: 0.12),
+                            width: 1)
+                        : null,
+                    boxShadow: _selectedPlan != null
+                        ? [
+                            BoxShadow(
+                              color: Dt.vipGold.withValues(alpha: 0.55),
+                              blurRadius: 32,
+                              offset: const Offset(0, 12),
                             ),
+                            BoxShadow(
+                              color: Dt.vipGold.withValues(alpha: 0.25),
+                              blurRadius: 60,
+                              spreadRadius: 4,
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(30),
+                      onTap: _selectedPlan != null && !_purchasing
+                          ? _handlePurchase
+                          : null,
+                      child: Center(
+                        child: _purchasing
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                    color: Color(0xFF1a1408), strokeWidth: 2.5),
+                              )
+                            : Text(
+                                _selectedPlan != null ? '立 即 开 通' : '请 选 择 套 餐',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 4,
+                                  color: _selectedPlan != null
+                                      ? const Color(0xFF1a1408)
+                                      : Colors.white.withValues(alpha: 0.4),
+                                ),
+                              ),
+                      ),
                     ),
                   ),
                 ),
@@ -316,27 +338,42 @@ class _VipScreenState extends ConsumerState<VipScreen>
             setState(() => _selectedPlan = plan.id);
           },
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 120,
-            margin: const EdgeInsets.only(right: 12),
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeOutCubic,
+            width: 130,
+            margin: const EdgeInsets.only(right: 14),
             decoration: BoxDecoration(
               color: isSelected
-                  ? accentColor.withValues(alpha:0.15)
-                  : const Color(0xFF252547),
-              borderRadius: BorderRadius.circular(16),
+                  ? accentColor.withValues(alpha: 0.18)
+                  : Dt.bgElevated,
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isSelected ? accentColor : Colors.white12,
-                width: isSelected ? 2.5 : 1,
+                color: isSelected
+                    ? accentColor
+                    : Colors.white.withValues(alpha: 0.12),
+                width: isSelected ? 2 : 1,
               ),
+              // 选中时多层发光浮现
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: accentColor.withValues(alpha:0.25),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                        color: accentColor.withValues(alpha: 0.5),
+                        blurRadius: 24,
+                        spreadRadius: 1,
+                      ),
+                      BoxShadow(
+                        color: accentColor.withValues(alpha: 0.2),
+                        blurRadius: 48,
+                        spreadRadius: 4,
                       ),
                     ]
-                  : null,
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
             ),
             child: Stack(
               children: [

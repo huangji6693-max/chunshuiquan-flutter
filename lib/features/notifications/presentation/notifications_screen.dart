@@ -49,12 +49,45 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
     const pink = Dt.pink;
 
     return Scaffold(
-      // backgroundColor从theme获取
       appBar: AppBar(
-        // backgroundColor从theme获取
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        title: const Text('通知'),
+        toolbarHeight: 64,
+        titleSpacing: 20,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const RadialGradient(
+                  colors: [Dt.pinkLight, Dt.pink, Color(0xFFE8366D)],
+                  stops: [0.0, 0.6, 1.0],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Dt.pink.withValues(alpha: 0.45),
+                    blurRadius: 18,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.notifications_rounded,
+                  color: Colors.white, size: 17),
+            ),
+            const SizedBox(width: 14),
+            const Text('通知',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
+                  height: 1.0,
+                  color: Dt.textPrimary,
+                )),
+          ],
+        ),
         actions: [
           if (notifications.isNotEmpty)
             TextButton(

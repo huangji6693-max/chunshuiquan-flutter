@@ -173,36 +173,53 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Dt.bgPrimary,
+        toolbarHeight: 68,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios,
-              size: 20, color: Theme.of(context).colorScheme.onSurface),
+          icon: const Icon(Icons.arrow_back_ios_rounded,
+              size: 20, color: Dt.textPrimary),
           onPressed: () => Navigator.of(context).pop(),
         ),
         titleSpacing: 0,
         title: Row(
           children: [
-            // 对方头像 + Hero过渡
+            // 对方头像 — 渐变光环 (与 matches 一致)
             Hero(
               tag: 'avatar_${widget.matchId}',
-              child: CircleAvatar(
-                radius: 18,
-                backgroundImage: widget.partnerAvatarUrl != null &&
-                        widget.partnerAvatarUrl!.isNotEmpty
-                    ? ResizeImage(
-                        CachedNetworkImageProvider(widget.partnerAvatarUrl!),
-                        width: 200,
-                      )
-                    : null,
-                backgroundColor: Dt.bgElevated,
-                child: widget.partnerAvatarUrl == null ||
-                        widget.partnerAvatarUrl!.isEmpty
-                    ? const Icon(Icons.person,
-                        size: 18, color: Dt.textTertiary)
-                    : null,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [Dt.pink, Dt.pinkLight, Dt.orange],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Dt.pink.withValues(alpha: 0.4),
+                      blurRadius: 14,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(2),
+                child: CircleAvatar(
+                  radius: 19,
+                  backgroundImage: widget.partnerAvatarUrl != null &&
+                          widget.partnerAvatarUrl!.isNotEmpty
+                      ? ResizeImage(
+                          CachedNetworkImageProvider(widget.partnerAvatarUrl!),
+                          width: 200,
+                        )
+                      : null,
+                  backgroundColor: Dt.bgElevated,
+                  child: widget.partnerAvatarUrl == null ||
+                          widget.partnerAvatarUrl!.isEmpty
+                      ? const Icon(Icons.person,
+                          size: 20, color: Dt.textTertiary)
+                      : null,
+                ),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 12),
 
             // 名字 + 在线状态
             Expanded(
@@ -213,28 +230,37 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   Text(
                     widget.partnerName ?? '聊天',
                     style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.1,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.3,
                         color: Dt.textPrimary),
                   ),
-                  const SizedBox(height: 1),
+                  const SizedBox(height: 3),
                   Row(
                     children: [
+                      // 双层发光绿点
                       Container(
                         width: 7,
                         height: 7,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Dt.online,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Dt.online.withValues(alpha: 0.6),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      Text('在线',
+                      const SizedBox(width: 6),
+                      const Text('在线',
                           style: TextStyle(
-                              fontSize: 12,
-                              color: Dt.textTertiary,
-                              fontWeight: FontWeight.w400)),
+                              fontSize: 11,
+                              color: Dt.online,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.3)),
                     ],
                   ),
                 ],
@@ -337,32 +363,47 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // 双色径向 + 多层光晕浮现 (与 logo 一致)
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 88,
+                  height: 88,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        Dt.pink.withValues(alpha:0.1),
-                        Dt.orange.withValues(alpha:0.1),
-                      ],
+                    gradient: const RadialGradient(
+                      colors: [Dt.pinkLight, Dt.pink, Color(0xFFE8366D)],
+                      stops: [0.0, 0.6, 1.0],
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Dt.pink.withValues(alpha: 0.5),
+                        blurRadius: 32,
+                        spreadRadius: 4,
+                      ),
+                      BoxShadow(
+                        color: Dt.pink.withValues(alpha: 0.18),
+                        blurRadius: 60,
+                        spreadRadius: 12,
+                      ),
+                    ],
                   ),
-                  child: const Icon(Icons.chat_bubble_outline,
-                      size: 36, color: Dt.pink),
+                  child: const Icon(Icons.chat_bubble_rounded,
+                      size: 36, color: Colors.white),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  '说点什么打破沉默吧 ☺️',
+                const SizedBox(height: 24),
+                const Text(
+                  '说点什么打破沉默吧',
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
+                      color: Dt.textPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.3),
                 ),
-                const SizedBox(height: 4),
-                Text('也许一句Hi就是故事的开头',
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
+                const SizedBox(height: 6),
+                const Text('也许一句 Hi 就是故事的开头',
+                    style: TextStyle(
+                        color: Dt.textTertiary,
+                        fontSize: 14,
+                        letterSpacing: 0.2)),
               ],
             ),
           ),
