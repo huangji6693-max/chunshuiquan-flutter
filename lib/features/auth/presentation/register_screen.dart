@@ -74,17 +74,38 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() { _loading = true; _error = null; });
+    final repo = ref.read(authRepositoryProvider);
+    final email = _emailCtrl.text.trim();
+    final password = _passCtrl.text;
     try {
-      final email = _emailCtrl.text.trim();
-      await ref.read(authRepositoryProvider).register(
+      await repo.register(
         name: email.split('@')[0],
         email: email,
-        password: _passCtrl.text,
+        password: password,
         birthDate: '2000-01-01',
         gender: _gender,
       );
       if (mounted) context.go('/onboarding');
     } on AppException catch (e) {
+      // [fix] 邮箱已注册 → 自动用同密码尝试登录, 无缝救援
+      if (e.isEmailExists) {
+        try {
+          await repo.login(email: email, password: password);
+          if (mounted) context.go('/discover');
+          return;
+        } on AppException catch (loginErr) {
+          if (!mounted) return;
+          // 登录也失败 → 提示用户去登录页手动处理
+          setState(() => _error = '该邮箱已注册，密码不对。请直接登录');
+          // 1.5 秒后自动跳登录页, 预填邮箱
+          Future.delayed(const Duration(milliseconds: 1500), () {
+            if (mounted) context.go('/auth/login?email=$email');
+          });
+          // 避免 loginErr 未使用警告
+          assert(loginErr.message.isNotEmpty || true);
+          return;
+        }
+      }
       if (!mounted) return;
       setState(() => _error = e.message);
     } finally {

@@ -13,11 +13,16 @@ class AppException implements Exception {
       AppException(message: msg, type: AppExceptionType.validation);
   factory AppException.server(String msg, [int? code]) =>
       AppException(message: msg, statusCode: code, type: AppExceptionType.server);
+  factory AppException.conflict(String msg) =>
+      AppException(message: msg, statusCode: 409, type: AppExceptionType.conflict);
   factory AppException.unknown() =>
       AppException(message: '未知错误，请稍后重试', type: AppExceptionType.unknown);
+
+  /// 邮箱已注册：前端可识别后跳转登录页
+  bool get isEmailExists => statusCode == 409;
 
   @override
   String toString() => 'AppException($type): $message';
 }
 
-enum AppExceptionType { network, unauthorized, validation, server, unknown }
+enum AppExceptionType { network, unauthorized, validation, conflict, server, unknown }

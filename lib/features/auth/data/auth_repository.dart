@@ -90,14 +90,30 @@ class AuthRepository {
 
   AppException _handleError(DioException e) {
     if (e.response?.statusCode == 401) return AppException.unauthorized();
+    // [fix] 409 Conflict — 邮箱已注册, 前端可识别后跳转登录页
+    if (e.response?.statusCode == 409) {
+      final msg = e.response?.data?['error'] ?? '该邮箱已注册';
+      return AppException.conflict(msg);
+    }
     if (e.response?.statusCode == 400) {
-      final msg = e.response?.data?['error'] ?? e.response?.data?['message'] ?? '请求错误';
+      final raw = e.response?.data;
+      String msg = '请求错误';
+      if (raw is Map) {
+        msg = raw['error']?.toString() ?? raw['message']?.toString() ?? '请求错误';
+        // 携带详细字段验证错误
+        final details = raw['details'];
+        if (details is List && details.isNotEmpty) {
+          msg = '$msg: ${details.first}';
+        }
+      }
       return AppException.validation(msg);
     }
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout) {
       return AppException.network('网络连接超时');
     }
-    return AppException.server(e.response?.data?['error'] ?? '服务器错误');
+    final raw = e.response?.data;
+    final serverMsg = raw is Map ? raw['error']?.toString() : null;
+    return AppException.server(serverMsg ?? '服务器错误');
   }
 }

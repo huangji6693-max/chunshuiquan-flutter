@@ -18,25 +18,32 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final _controller = PageController();
   int _current = 0;
 
-  // 三页沉浸式 — 真实人像大图（Unsplash 公共 CDN）+ 品牌色情绪
+  // 沉浸式引导 — 顶级 Unsplash 摄影 (1600px 高分辨率, 时尚情侣/人像)
+  // 精挑细选: 浪漫氛围 + 高对比度 + 适合暗色 UI
   static const _pages = [
     _WelcomePage(
-      // 浪漫黄昏剪影
-      imageUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=900&q=80',
+      // 黄昏夕阳情侣剪影 — 浪漫暖色调
+      imageUrl: 'https://images.unsplash.com/photo-1516589091380-5d8e87df6999?w=1600&q=90&fit=crop&auto=format',
       title: '心动\n就在下一次滑动',
       subtitle: '认识此刻在你身边的有趣灵魂',
     ),
     _WelcomePage(
-      // 灯光下的女生
-      imageUrl: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=900&q=80',
+      // 都市夜灯下的女性肖像 — 时尚高级
+      imageUrl: 'https://images.unsplash.com/photo-1542596594-649edbc13630?w=1600&q=90&fit=crop&auto=format',
       title: '让心意\n不再沉默',
       subtitle: '文字、语音、礼物 — 用你喜欢的方式靠近',
     ),
     _WelcomePage(
-      // 城市夜景情侣
-      imageUrl: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=900&q=80',
+      // 城市夜景情侣 — 蓝紫色调氛围
+      imageUrl: 'https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=1600&q=90&fit=crop&auto=format',
       title: '每一次相遇\n都值得安心',
       subtitle: '实名认证 · AI 审核 · 7×24 守护',
+    ),
+    _WelcomePage(
+      // 自然光下的浪漫氛围 — 温暖治愈
+      imageUrl: 'https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=1600&q=90&fit=crop&auto=format',
+      title: '春水有意\n知遇心动',
+      subtitle: '每一段关系，都值得被温柔以待',
     ),
   ];
 
