@@ -112,8 +112,16 @@ class AuthRepository {
         e.type == DioExceptionType.receiveTimeout) {
       return AppException.network('网络连接超时');
     }
+    // [debug] 500 时附带 detail 字段帮助主人定位 Railway 问题
     final raw = e.response?.data;
-    final serverMsg = raw is Map ? raw['error']?.toString() : null;
+    String? serverMsg;
+    if (raw is Map) {
+      serverMsg = raw['error']?.toString();
+      final detail = raw['detail']?.toString();
+      if (detail != null && detail.isNotEmpty) {
+        serverMsg = '${serverMsg ?? "服务器错误"}\n$detail';
+      }
+    }
     return AppException.server(serverMsg ?? '服务器错误');
   }
 }
