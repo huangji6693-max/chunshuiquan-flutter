@@ -1,12 +1,13 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../features/auth/domain/user_profile.dart';
 import '../theme/design_tokens.dart';
 
-/// 用户卡片 - Tinder级别的全屏卡片
-/// 支持多照片切换、照片进度条、点击展开详情
+/// 用户卡片 — Dt v4 / Ferrari + Sanity 风格
+/// 哲学: 摄影是唯一颜色源, UI 退到背景。
+/// 删除: 装饰双阴影 / 顶部 vignette / 底部 BackdropFilter blur / 渐变 fallback
+/// 改为: borderRing 影子即边框 + photoOverlay 统一渐变 + 单色 fallback
 class UserCard extends StatefulWidget {
   final UserProfile user;
   const UserCard({super.key, required this.user});
@@ -28,22 +29,23 @@ class _UserCardState extends State<UserCard> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: Dt.rXl,
+        // [v4] 影子即边框 (Vercel) + 单层底部投影, 删除装饰双阴影
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
+          const BoxShadow(
+            color: Dt.borderSubtle,
+            blurRadius: 0,
+            spreadRadius: 1,
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.35),
+            blurRadius: 28,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: Dt.rXl,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -83,22 +85,7 @@ class _UserCardState extends State<UserCard> {
                 ),
               ),
 
-            // 顶部暗角——电影感vignette
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment.center,
-                    radius: 0.85,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.15),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
+            // [v4] 删除装饰性 vignette — Ferrari/SpaceX 共识: 摄影本身是深度
             // 顶部照片进度条指示器
             if (hasMultiplePhotos)
               Positioned(
@@ -123,20 +110,15 @@ class _UserCardState extends State<UserCard> {
                 ),
               ),
 
-            // 底部毛玻璃面板 + 信息
+            // [v4] 底部信息面板 — 删除 BackdropFilter blur 装饰
+            // Ferrari/Renault/SpaceX 共识: 纯黑色渐变 + 文本, 让摄影呼吸
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
               child: GestureDetector(
                 onTap: () => setState(() => _expanded = !_expanded),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                    child: _buildInfoOverlay(user),
-                  ),
-                ),
+                child: _buildInfoOverlay(user),
               ),
             ),
           ],
@@ -151,7 +133,7 @@ class _UserCardState extends State<UserCard> {
     if (url.isEmpty) {
       // 无照片时——深色质感背景+居中首字母（不用彩色渐变避免塑料感）
       return Container(
-        color: Theme.of(context).colorScheme.surfaceContainer,
+        color: Dt.bgHighest,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -199,23 +181,23 @@ class _UserCardState extends State<UserCard> {
         width: double.infinity,
         height: double.infinity,
         placeholder: (_, __) => Shimmer.fromColors(
-          baseColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-          highlightColor: Theme.of(context).colorScheme.outlineVariant,
+          baseColor: Dt.bgHighest,
+          highlightColor: Dt.bgElevated,
           child: Container(
-            color: Colors.white,
+            color: Dt.bgHighest,
           ),
         ),
+        // [v4] 删除粉橙渐变 fallback — Ferrari 共识: 失败也用单色, 不加装饰
         errorWidget: (_, __, ___) => Container(
-          decoration: BoxDecoration(
-            gradient: Dt.gradientAccent,
-          ),
+          color: Dt.bgHighest,
           child: Center(
             child: Text(
               widget.user.name.isNotEmpty ? widget.user.name[0] : '?',
               style: const TextStyle(
-                  color: Colors.white,
+                  color: Dt.textTertiary,
                   fontSize: 80,
-                  fontWeight: FontWeight.w700),
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: -2.4),
             ),
           ),
         ),
@@ -223,20 +205,31 @@ class _UserCardState extends State<UserCard> {
     );
   }
 
-  /// 构建底部信息遮罩层
+  /// 构建底部信息遮罩层 — Dt v4 photoOverlay 渐变
   Widget _buildInfoOverlay(UserProfile user) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.5),
+      curve: Curves.easeOutCubic,
+      // [v4] 摄影覆盖渐变 — Ferrari/Renault/SpaceX 共识
+      // rgba(0,0,0,0.85→0) 提升文本可读性, 替代纯色 0.5 黑
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [
+            Color(0xE6000000),  // 90% 黑
+            Color(0xCC000000),  // 80% 黑
+            Color(0x00000000),  // 0%
+          ],
+          stops: [0.0, 0.4, 1.0],
+        ),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+      padding: const EdgeInsets.fromLTRB(20, 32, 20, 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 名字 + 年龄
+          // 名字 + 年龄 — Lambo 风格紧 lh + 负字距
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
@@ -244,20 +237,20 @@ class _UserCardState extends State<UserCard> {
               Text(user.name,
                   style: const TextStyle(
                     color: Dt.textPrimary,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.6,
-                    height: 1.1,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w600,  // [v4] w700→w600
+                    letterSpacing: -0.8,           // [v4] -0.6→-0.8
+                    height: 1.0,                    // [v4] 1.1→1.0
                   )),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               if (user.age != null)
                 Text('${user.age}',
                     style: const TextStyle(
                       color: Dt.textPrimary,
-                      fontSize: 24,
+                      fontSize: 26,
                       fontWeight: FontWeight.w300,
-                      letterSpacing: 0,
-                      height: 1.1,
+                      letterSpacing: -0.4,
+                      height: 1.0,
                     )),
               const Spacer(),
               // 展开/收起箭头
@@ -266,7 +259,7 @@ class _UserCardState extends State<UserCard> {
                     ? Icons.keyboard_arrow_down
                     : Icons.keyboard_arrow_up,
                 color: Dt.textTertiary,
-                size: 24,
+                size: 22,
               ),
             ],
           ),
@@ -322,7 +315,7 @@ class _UserCardState extends State<UserCard> {
 
             // Bio
             if (user.bio?.isNotEmpty == true) ...[
-              Text('关于我',
+              const Text('关于我',
                   style: TextStyle(
                       color: Dt.textTertiary,
                       fontSize: 12,
@@ -364,12 +357,13 @@ class _UserCardState extends State<UserCard> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: const Color(0x1A000000),
                     borderRadius: Dt.rSm,
+                    border: Border.all(color: Dt.borderSubtle, width: 1),
                   ),
                   child: Text(tag,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Dt.textPrimary,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       )),
@@ -423,7 +417,7 @@ class _UserCardState extends State<UserCard> {
   }
 }
 
-/// 信息小标签组件
+/// 信息小标签 — Dt v4 边界驱动风格 (cardMinimal)
 class _InfoTag extends StatelessWidget {
   final IconData icon;
   final String text;
@@ -432,21 +426,24 @@ class _InfoTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
+        // [v4] 透明 + 1px borderSubtle, 替代纯色填充 (Sentry/Composio)
+        color: const Color(0x1A000000),  // 10% 黑, 让照片透出
         borderRadius: Dt.rSm,
+        border: Border.all(color: Dt.borderSubtle, width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 12, color: Dt.textSecondary),
-          const SizedBox(width: 4),
+          const SizedBox(width: 5),
           Text(text,
               style: const TextStyle(
-                color: Colors.white,
+                color: Dt.textPrimary,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
+                letterSpacing: 0.1,
               )),
         ],
       ),

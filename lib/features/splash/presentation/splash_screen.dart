@@ -2,11 +2,12 @@ import '../../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mesh_gradient/mesh_gradient.dart';
 import '../../../core/storage/token_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// 启动页 — 对标 Tinder：巨大品牌Logo + 流体渐变 + 极简
+/// 启动页 — Dt v4 / Lambo + Sanity 风格
+/// 哲学：UI消失，人闪耀。删除流体渐变装饰，改为纯黑 + 单色径向光晕。
+/// "春水圈"作为宣言时刻 (Lambo 0.92 lh)。
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
   @override
@@ -72,30 +73,30 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Dt.bgDeep,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 流体渐变背景
-          AnimatedMeshGradient(
-            colors: const [
-              Color(0xFF1A0A2E),
-              Dt.pink,
-              Color(0xFF0A0614),
-              Color(0xFF7C3AED),
-            ],
-            options: AnimatedMeshGradientOptions(
-              speed: 3,
-              frequency: 2,
-              amplitude: 50,
-              grain: 0.35,
+          // [v4] 单一径向光晕 — Sanity 启发，替代流体渐变装饰
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.center,
+                  radius: 0.8,
+                  colors: [
+                    Dt.pink.withValues(alpha: 0.18),
+                    Dt.bgDeep,
+                  ],
+                  stops: const [0.0, 0.7],
+                ),
+              ),
             ),
           ),
 
-          // 暗层
-          Container(color: Colors.black.withValues(alpha: 0.3)),
-
-          // Logo居中
-          Center(
+          // Logo 居中 (上 1/3 位置, 更接近 Lambo hero 节奏)
+          Align(
+            alignment: const Alignment(0, -0.25),
             child: AnimatedBuilder(
               animation: _ctrl,
               builder: (_, __) => Opacity(
@@ -108,38 +109,57 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             ),
           ),
 
-          // 底部品牌文字
-          Positioned(
-            bottom: MediaQuery.of(context).padding.bottom + 32,
-            left: 0,
-            right: 0,
+          // [v4] 品牌宣言时刻 — displayHero 0.96 lh -1.8 ls
+          Align(
+            alignment: const Alignment(0, 0.35),
             child: AnimatedBuilder(
               animation: _ctrl,
-              builder: (_, child) => Opacity(
-                opacity: _opacity.value,
-                child: child,
-              ),
+              builder: (_, child) => Opacity(opacity: _opacity.value, child: child),
               child: const Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     '春水圈',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
+                      color: Dt.textPrimary,
+                      fontSize: 56,
                       fontWeight: FontWeight.w600,
+                      height: 0.96,
+                      letterSpacing: -1.4,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    '遇 见 心 动',
+                    style: TextStyle(
+                      color: Dt.textTertiary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: 6,
                     ),
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    '遇见心动',
-                    style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 12,
-                      letterSpacing: 4,
-                    ),
-                  ),
                 ],
+              ),
+            ),
+          ),
+
+          // [v4] 底部 1px 边界进度环, 隐式表达"加载中" (Vercel 影子即边框)
+          Positioned(
+            bottom: MediaQuery.of(context).padding.bottom + 48,
+            left: 0,
+            right: 0,
+            child: AnimatedBuilder(
+              animation: _ctrl,
+              builder: (_, child) => Opacity(opacity: _opacity.value * 0.6, child: child),
+              child: const Center(
+                child: SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    color: Dt.pink,
+                    strokeWidth: 1.5,
+                  ),
+                ),
               ),
             ),
           ),
@@ -149,42 +169,30 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 }
 
-/// 品牌Logo——自定义绘制水滴形心形
-/// 不依赖Material Icons，有独特辨识度
+/// 品牌Logo — Dt v4 极简版
+/// Lambo 启发: 单色 + 单层细微光晕, 删除 3 色径向 + 多层装饰
 class _BrandLogo extends StatelessWidget {
   const _BrandLogo();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
-      height: 120,
+      width: 96,
+      height: 96,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const RadialGradient(
-          colors: [
-            Dt.pinkLight,
-            Dt.pink,
-            Color(0xFFE8366D),
-          ],
-          stops: [0.0, 0.6, 1.0],
-        ),
+        color: Dt.pink,
         boxShadow: [
           BoxShadow(
-            color: Dt.pink.withValues(alpha: 0.5),
-            blurRadius: 60,
-            spreadRadius: 20,
-          ),
-          BoxShadow(
-            color: Dt.pink.withValues(alpha: 0.2),
-            blurRadius: 120,
-            spreadRadius: 40,
+            color: Dt.pink.withValues(alpha: 0.25),
+            blurRadius: 32,
+            spreadRadius: 2,
           ),
         ],
       ),
       child: Center(
         child: CustomPaint(
-          size: const Size(52, 48),
+          size: const Size(42, 38),
           painter: _HeartPainter(),
         ),
       ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../shared/theme/design_tokens.dart';
 
-/// 动作按钮 - Tinder风格纯icon圆形按钮
+/// 动作按钮 — Dt v4 / Raycast 毛玻璃风格
+/// 漂浮在用户照片上, 半透明让照片透出, scale hover (Wise 启发)
 class ActionButton extends StatefulWidget {
   final IconData icon;
   final Color color;
@@ -63,17 +65,18 @@ class _ActionButtonState extends State<ActionButton>
             width: widget.size,
             height: widget.size,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
+              // [v4] 半透明黑替代半透明白 — 与照片融合更深, 不抢戏
+              color: const Color(0x33000000),  // 20% 黑
               shape: BoxShape.circle,
+              // [v4] 单层细微光晕 — Sentry 启发, 删除装饰 spreadRadius
               boxShadow: [
                 BoxShadow(
-                  color: widget.color.withValues(alpha: 0.2),
-                  blurRadius: 20,
-                  spreadRadius: 2,
+                  color: widget.color.withValues(alpha: 0.18),
+                  blurRadius: 14,
                 ),
               ],
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.15),
+                color: Dt.borderMedium,
                 width: 1,
               ),
             ),

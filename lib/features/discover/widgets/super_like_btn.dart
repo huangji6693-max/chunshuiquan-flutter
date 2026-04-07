@@ -54,18 +54,15 @@ class _SuperLikeBtnState extends State<SuperLikeBtn>
             height: _size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.1),
+              // [v4] 与 ActionButton 统一: 半透明黑 + 单层细微光晕
+              color: const Color(0x33000000),
               boxShadow: [
                 BoxShadow(
-                  color: _blue.withValues(alpha: 0.2),
-                  blurRadius: 20,
-                  spreadRadius: 2,
+                  color: _blue.withValues(alpha: 0.18),
+                  blurRadius: 14,
                 ),
               ],
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.15),
-                width: 1,
-              ),
+              border: Border.all(color: Dt.borderMedium, width: 1),
             ),
             child: const Icon(Icons.star_rounded,
                 color: _blue, size: 22),
