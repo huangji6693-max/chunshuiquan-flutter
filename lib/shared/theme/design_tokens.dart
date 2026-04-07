@@ -1,11 +1,20 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-/// 春水圈 Design Token 系统 v2
-/// 基于56个世界顶级品牌设计系统提炼
+/// 春水圈 Design Token 系统 v4
+/// 基于 awesome-design-md 全 58 个 DESIGN.md 深度学习提炼
 ///
-/// 参考: Spotify(暗色), Linear(极简), Stripe(精致), Raycast(暗色工具),
-///       Superhuman(奢华), Airbnb(温暖), Vercel(边框即阴影)
+/// v3 来源: Spotify/Linear/Stripe/Apple/Vercel/Superhuman/Airbnb/Coinbase/Raycast/Framer (10 品牌)
+/// v4 新增: Sanity(夜空奢华映射) + Ferrari/Lamborghini(品牌色克制) + Pinterest(照片驱动)
+///         + Sentry(生物发光过渡) + Tesla/Revolut/Wise(超紧 line-height)
+///         + Composio/Lambo(色阶分层替代阴影)
+///
+/// 跨 58 品牌 5 大共识法则:
+///   1. 阴影已死 — 边界 + 表面分层当道 (Lambo/Tesla/Sanity/Supabase 共证)
+///   2. 超紧 lh 0.85-1.10 是奢华信号 (Lambo 0.92 / Wise 0.85 / Composio 0.87)
+///   3. 字重单一化 500 主导，零 700+ (Cursor/Mistral/Tesla/Cal 共证)
+///   4. 品牌色仅信号化，零装饰 (Spotify/Ferrari/Lambo/Pinterest 共证)
+///   5. 摄影/内容是唯一颜色源 (Ferrari/Lambo/Tesla/SpaceX/Sanity/Pinterest 共证)
 ///
 /// 核心哲学: "UI消失，人闪耀" — UI隐没于用户照片，品牌色仅点缀关键时刻
 
@@ -45,7 +54,15 @@ class Dt {
   static const Color borderSubtle = Color(0x14FFFFFF);  // 8% 白色
   static const Color borderMedium = Color(0x1FFFFFFF);  // 12% 白色
 
-  // 品牌渐变
+  // [v4] 粉色"生物发光"过渡 (Sentry/Composio 启发)
+  // 用于 focus ring / hover 层 / 微弱品牌点缀，禁止用作背景填充
+  static const Color pinkGlow15 = Color(0x26FF4D88);  // 15% alpha
+  static const Color pinkGlow30 = Color(0x4DFF4D88);  // 30% alpha
+
+  // [v4] 粉色 1px 边界环 — 比 box-shadow 更高级的强调
+  static const Color borderRingPink = Color(0x26FF4D88);  // 与 pinkGlow15 同值
+
+  // 品牌渐变 (v3 保留向后兼容；v4 推荐零渐变, 仅 CTA 极端时使用)
   static const LinearGradient gradientPrimary = LinearGradient(
     colors: [pink, pinkLight],
   );
@@ -57,6 +74,24 @@ class Dt {
   static const LinearGradient gradientVip = LinearGradient(
     colors: [vipGold, vipGoldDark],
   );
+
+  // [v4] 摄影覆盖渐变 (Ferrari/Renault/SpaceX 共识)
+  // 用户照片底部统一覆盖, 提升文本可读性, 替代任何文本阴影
+  static const LinearGradient photoOverlay = LinearGradient(
+    begin: Alignment.bottomCenter,
+    end: Alignment.topCenter,
+    colors: [Color(0xCC000000), Color(0x00000000)],  // 0.8 → 0.0
+    stops: [0.0, 0.5],
+  );
+
+  // [v4] 暗色色阶分层 (Lamborghini #000→#181818→#202020 启发)
+  // 用 List 表达"深度仅靠颜色分割"哲学
+  static const List<Color> surfaceLayered = [
+    bgDeep,      // #07080A — Z0 最深
+    bgPrimary,   // #0F1012 — Z1 卡片底
+    bgElevated,  // #161719 — Z2 提升表面
+    bgHighest,   // #1E1F22 — Z3 浮层/模态
+  ];
 
   // ============================================================
   //  间距 — 8px网格 (所有顶级品牌统一标准)
@@ -70,6 +105,12 @@ class Dt {
   static const double s32 = 32;
   static const double s48 = 48;
   static const double s64 = 64;
+
+  // [v4] 超大段距 — 电影感留白 (Expo 96-144px / Revolut 80-120px / Sanity 64-120px 共识)
+  // 用于 hero → CTA, section 之间, 营造"奢华隔离感"
+  static const double s80 = 80;
+  static const double s96 = 96;
+  static const double s120 = 120;
 
   // ============================================================
   //  圆角 — 二进制系统 (Superhuman: 只有8和16, 加上药丸)
@@ -189,6 +230,29 @@ class Dt {
   //  排版参数 (Superhuman: 0.96行高显示 + 1.5正文, 负字间距)
   // ============================================================
 
+  // [v4] 行高常量 — D 组共识: 超紧 lh 0.85-1.10 是奢华信号
+  // (Lambo 0.92 / Wise 0.85 / Renault 0.95 / Composio 0.87 / Sentry 0.96)
+  static const double lhDisplay = 0.95;   // hero / display, 0.92-1.05
+  static const double lhHeading = 1.15;   // section heading, 1.10-1.25
+  static const double lhBody = 1.50;      // 正文, 1.40-1.60
+  static const double lhCaption = 1.40;   // 小字 / 标签
+
+  // [v4] 字距常量 — Linear/Sanity/Composio 共识: 显示层负字距, 标签层正字距
+  static const double tsDisplay = -0.6;   // 大尺寸压紧, -0.5~-0.8
+  static const double tsHeading = -0.3;   // 中尺寸略压, -0.2~-0.4
+  static const double tsBody = 0.0;       // 正文标准
+  static const double tsLabel = 0.5;      // 小尺寸放宽, +0.4~+0.6 (Raycast/NVIDIA)
+
+  // [v4] Mega Display (Lambo 120px / Revolut 136px 启发)
+  // 仅用于启动页 / 匹配成功页 等"宣言时刻", 极少使用
+  static const TextStyle displayMega = TextStyle(
+    fontSize: 96,
+    fontWeight: FontWeight.w600,  // 500-600 区间, Cursor/Mistral 共识
+    height: 0.92,                  // Lambo 启发, 极紧
+    letterSpacing: -2.4,
+    color: textPrimary,
+  );
+
   // 显示文本: 紧凑行高 + 负字间距 = 视觉冲击
   static const TextStyle displayHero = TextStyle(
     fontSize: 48,
@@ -247,10 +311,27 @@ class Dt {
   // ============================================================
 
   /// 标准卡片 (Vercel影子边框 + Airbnb多层阴影)
-  static BoxDecoration cardDecoration(BuildContext context) => BoxDecoration(
-    color: Theme.of(context).colorScheme.surfaceContainerHigh,
+  /// [v4 修复] 移除 v3 残留的 surfaceContainerHigh, 直接用 Dt.bgElevated
+  static BoxDecoration cardDecoration() => BoxDecoration(
+    color: bgElevated,
     borderRadius: rLg,
     boxShadow: shadowSm,
+  );
+
+  /// [v4 新增] 极简卡片 — Sanity/Lambo 启发: 仅靠色阶 + 1px ring
+  /// 用于 Pinterest 风格 masonry / 用户照片网格 — 最大化"内容驱动"哲学
+  static BoxDecoration cardMinimal({Color? color}) => BoxDecoration(
+    color: color ?? bgElevated,
+    borderRadius: rLg,
+    border: Border.all(color: borderSubtle, width: 1),
+  );
+
+  /// [v4 新增] 粉色信号边界卡片 — 用于 Like 状态 / 焦点强调
+  /// 不用 box-shadow 也能传达"高亮", 比品牌光晕装饰更克制
+  static BoxDecoration cardPinkRing({Color? color}) => BoxDecoration(
+    color: color ?? bgElevated,
+    borderRadius: rLg,
+    border: Border.all(color: borderRingPink, width: 1),
   );
 
   /// 毛玻璃按钮 (Raycast风格: 半透明 + 品牌光晕)
@@ -264,7 +345,7 @@ class Dt {
   );
 
   /// 品牌CTA按钮样式 (Spotify药丸)
-  static BoxDecoration ctaButton = BoxDecoration(
+  static final BoxDecoration ctaButton = BoxDecoration(
     gradient: gradientAccent,
     borderRadius: rLg,
     boxShadow: [
@@ -274,5 +355,19 @@ class Dt {
         offset: const Offset(0, 6),
       ),
     ],
+  );
+
+  /// [v4 新增] 极简 CTA — Sanity/Ferrari 启发: 纯色 + pill, 无渐变无阴影
+  /// "颜色对比就是深度", 移除装饰阴影
+  static final BoxDecoration ctaButtonMinimal = BoxDecoration(
+    color: pink,
+    borderRadius: rPill,
+  );
+
+  /// [v4 新增] Pill 按钮 — Uber/Wise/Revolut/Mintlify 共识 9999px
+  static final BoxDecoration pillButton = BoxDecoration(
+    color: bgElevated,
+    borderRadius: rPill,
+    border: Border.all(color: borderMedium, width: 1),
   );
 }
