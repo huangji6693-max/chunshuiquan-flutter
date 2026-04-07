@@ -42,89 +42,98 @@ class _VipScreenState extends ConsumerState<VipScreen>
       body: CustomScrollView(
         slivers: [
           // ====== 顶部展示区 ======
+          // [v4] Hero 区 — Lambo 宣言时刻 + Sanity 单色 + 金色径向光晕
           SliverAppBar(
-            expandedHeight: 280,
+            expandedHeight: 320,
             pinned: true,
-            backgroundColor: const Color(0xFF1A1A2E),
+            backgroundColor: Dt.bgDeep,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              icon: const Icon(Icons.arrow_back_ios, color: Dt.textPrimary),
               onPressed: () => Navigator.pop(context),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Color(0xFF2D1B69), Color(0xFF1A1A2E)],
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // [v4] 金色径向光晕替代紫色线性渐变
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment(0, -0.3),
+                        radius: 0.9,
+                        colors: [Color(0x33FFD700), Dt.bgDeep],
+                        stops: [0.0, 0.65],
+                      ),
+                    ),
                   ),
-                ),
-                child: SafeArea(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 30),
-                      // 皇冠图标
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: const LinearGradient(
-                            colors: [Dt.vipGold, Dt.vipGoldDark],
+                  SafeArea(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 32),
+                        // [v4] 皇冠 — 单层光晕, 删 spreadRadius 装饰
+                        Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Dt.vipGold,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Dt.vipGold.withValues(alpha: 0.25),
+                                blurRadius: 28,
+                              ),
+                            ],
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Dt.vipGold.withValues(alpha:0.4),
-                              blurRadius: 24,
-                              spreadRadius: 4,
-                            ),
-                          ],
+                          child: const Icon(Icons.workspace_premium,
+                              color: Color(0xFF1a1408), size: 38),
                         ),
-                        child: const Icon(Icons.workspace_premium,
-                            color: Colors.white, size: 44),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text('春水圈 VIP',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 2,
-                          )),
-                      const SizedBox(height: 8),
-                      // 当前状态
-                      statusAsync.when(
-                        data: (status) => status.isVip
-                            ? Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 6),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: status.isDiamond
-                                        ? [Dt.boost, const Color(0xFFE040FB)]
-                                        : [Dt.vipGold, Dt.vipGoldDark],
+                        const SizedBox(height: 24),
+                        // [v4] displayHero 风格宣言: 48px w600 lh0.96 -1.4
+                        const Text('春水圈 VIP',
+                            style: TextStyle(
+                              color: Dt.textPrimary,
+                              fontSize: 44,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -1.2,
+                              height: 0.96,
+                            )),
+                        const SizedBox(height: 12),
+                        // [v4] 状态/标语 — Sanity label 极简
+                        statusAsync.when(
+                          data: (status) => status.isVip
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0x1AFFD700),
+                                    borderRadius: Dt.rPill,
+                                    border: Border.all(
+                                        color: Dt.vipGold.withValues(alpha: 0.4),
+                                        width: 1),
                                   ),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  '${status.isDiamond ? "💎 钻石" : "👑 黄金"}会员 · 剩余${status.daysLeft}天',
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 13),
-                                ),
-                              )
-                            : Text('让每一次心动都不留遗憾',
-                                style: TextStyle(
-                                    color: Colors.white.withValues(alpha:0.6),
-                                    fontSize: 14)),
-                        loading: () => const SizedBox.shrink(),
-                        error: (_, __) => const SizedBox.shrink(),
-                      ),
-                    ],
+                                  child: Text(
+                                    '${status.isDiamond ? "钻石" : "黄金"}会员 · 剩余 ${status.daysLeft} 天',
+                                    style: const TextStyle(
+                                        color: Dt.vipGold,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                        letterSpacing: 0.5),
+                                  ),
+                                )
+                              : const Text('让 每 一 次 心 动 都 不 留 遗 憾',
+                                  style: TextStyle(
+                                      color: Dt.textTertiary,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 2)),
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, __) => const SizedBox.shrink(),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ),

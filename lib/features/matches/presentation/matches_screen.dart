@@ -24,27 +24,19 @@ class MatchesScreen extends ConsumerWidget {
     return Scaffold(
       
       appBar: AppBar(
-        
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Dt.pinkLight, Dt.pink],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 14),
-            ),
-            const SizedBox(width: 10),
-            const Text('匹配'),
-          ],
-        ),
+        // [v4] 大标题布局 — Sanity / Apple "Large Title" 启发
+        toolbarHeight: 72,
+        titleSpacing: 20,
+        title: const Text('匹配',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.8,
+              height: 1.0,
+              color: Dt.textPrimary,
+            )),
       ),
       body: state.when(
         loading: () => const MatchesSkeleton(),
@@ -91,85 +83,43 @@ class MatchesScreen extends ConsumerWidget {
             onRefresh: () async => ref.invalidate(matchesProvider),
             child: CustomScrollView(
               slivers: [
-                // 新匹配区域
+                // [v4] 新匹配区域 — Sanity 极简 eyebrow 标题
                 if (newMatches.isNotEmpty) ...[
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [Color(0xFFFFB347), Color(0xFFFFCC33)],
-                        ).createShader(bounds),
-                        child: const Text('新匹配',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                letterSpacing: 1)),
-                      ),
-                    ),
+                  const SliverToBoxAdapter(
+                    child: _SectionEyebrow(label: 'NEW MATCHES'),
                   ),
                   SliverToBoxAdapter(
                     child: SizedBox(
                       height: 110,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         itemCount: newMatches.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 14),
+                        separatorBuilder: (_, __) => const SizedBox(width: 16),
                         itemBuilder: (_, i) => _NewMatchAvatar(match: newMatches[i]),
                       ),
                     ),
                   ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 8)),
-                  SliverToBoxAdapter(
-                    child: const Divider(height: 1, color: Dt.borderSubtle),
-                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
                 ] else ...[
-                  // 空匹配占位
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [Color(0xFFFFB347), Color(0xFFFFCC33)],
-                        ).createShader(bounds),
-                        child: const Text('新匹配',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                letterSpacing: 1)),
-                      ),
-                    ),
+                  const SliverToBoxAdapter(
+                    child: _SectionEyebrow(label: 'NEW MATCHES'),
                   ),
-                  SliverToBoxAdapter(
+                  const SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                      child: Center(
-                        child: Text('去发现页多滑滑，好事即将发生 ✨',
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                fontSize: 14)),
-                      ),
+                      padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
+                      child: Text('去发现页多滑滑，好事即将发生',
+                          style: TextStyle(
+                              color: Dt.textTertiary,
+                              fontSize: 14,
+                              letterSpacing: 0.1)),
                     ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: const Divider(height: 1, color: Dt.borderSubtle),
                   ),
                 ],
 
-                // 消息列表标题
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                    child: Text('消息',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            letterSpacing: 1)),
-                  ),
+                // [v4] 消息列表标题 — eyebrow 风格
+                const SliverToBoxAdapter(
+                  child: _SectionEyebrow(label: 'MESSAGES'),
                 ),
 
                 // 消息列表 + staggered 动画
@@ -509,5 +459,36 @@ class _ConversationTile extends ConsumerWidget {
     }
     if (diff.inDays < 7) return '${diff.inDays}天前';
     return DateFormat('MM/dd').format(dt);
+  }
+}
+
+/// [v4] Section eyebrow 标题 — Sanity / Composio 风格
+/// 大写 + 字距 + 短横线 + 极小尺寸 = 编辑感
+class _SectionEyebrow extends StatelessWidget {
+  final String label;
+  const _SectionEyebrow({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 28, 20, 14),
+      child: Row(
+        children: [
+          Container(
+            width: 24,
+            height: 1,
+            color: Dt.pink,
+          ),
+          const SizedBox(width: 10),
+          Text(label,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Dt.pink,
+                letterSpacing: 1.2,
+              )),
+        ],
+      ),
+    );
   }
 }

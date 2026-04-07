@@ -1,7 +1,7 @@
 import '../../../shared/theme/design_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mesh_gradient/mesh_gradient.dart';
+// [v4] mesh_gradient 装饰删除 (Lambo 哲学: 装饰即廉价)
 
 /// 欢迎引导页 — 暗色沉浸式，荷尔蒙风格
 class WelcomeScreen extends StatefulWidget {
@@ -48,26 +48,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final mq = MediaQuery.of(context);
 
     return Scaffold(
+      backgroundColor: Dt.bgDeep,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 流体渐变背景
-          AnimatedMeshGradient(
-            colors: const [
-              Color(0xFF0F0A1A),
-              Color(0xFF1A0E2E),
-              Dt.pink,
-              Color(0xFF0F0A1A),
-            ],
-            options: AnimatedMeshGradientOptions(
-              speed: 1.5,
-              frequency: 2,
-              amplitude: 30,
-              grain: 0.2,
+          // [v4] 单色径向光晕替代流体渐变 (Sanity 启发)
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment(0, -0.4),
+                radius: 1.0,
+                colors: [Color(0x26FF4D88), Dt.bgDeep],
+                stops: [0.0, 0.65],
+              ),
             ),
           ),
-          // 暗层让内容更突出
-          Container(color: Colors.black.withValues(alpha: 0.4)),
 
           // 页面内容
           PageView.builder(
@@ -123,42 +118,30 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
                 const SizedBox(height: 36),
 
-                // 主按钮
+                // [v4] 主按钮 — Sanity/Uber 极简纯色 pill, 删渐变装饰
                 SizedBox(
                   width: double.infinity,
                   height: 56,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Dt.pink, Dt.pinkLight],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Dt.pink.withValues(alpha: 0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
+                  child: ElevatedButton(
+                    onPressed: isLast
+                        ? () => context.go('/auth/register')
+                        : () => _controller.nextPage(
+                              duration: const Duration(milliseconds: 400),
+                              curve: Curves.easeInOut,
+                            ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Dt.pink,
+                      foregroundColor: Colors.white,
+                      shadowColor: Dt.pink.withValues(alpha: 0.3),
+                      elevation: 6,
+                      shape: const StadiumBorder(),
                     ),
-                    child: ElevatedButton(
-                      onPressed: isLast
-                          ? () => context.go('/auth/register')
-                          : () => _controller.nextPage(
-                                duration: const Duration(milliseconds: 400),
-                                curve: Curves.easeInOut,
-                              ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                      ),
-                      child: Text(
-                        isLast ? '开始遇见' : '继续',
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w700),
-                      ),
+                    child: Text(
+                      isLast ? '开始遇见' : '继续',
+                      style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5),
                     ),
                   ),
                 ),
@@ -198,46 +181,45 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: Column(
           children: [
             const Spacer(flex: 3),
-            // 图标
+            // [v4] 图标 — 单色 + 单层细微光晕, 删渐变装饰
             Container(
-              width: 100,
-              height: 100,
+              width: 88,
+              height: 88,
               decoration: BoxDecoration(
-                gradient: LinearGradient(colors: page.iconColors),
-                borderRadius: BorderRadius.circular(28),
+                color: page.iconColors.first,
+                borderRadius: Dt.rXl,
                 boxShadow: [
                   BoxShadow(
-                    color: page.iconColors.first.withValues(alpha: 0.4),
-                    blurRadius: 30,
-                    offset: const Offset(0, 10),
+                    color: page.iconColors.first.withValues(alpha: 0.22),
+                    blurRadius: 28,
                   ),
                 ],
               ),
-              child: Icon(page.icon, color: Colors.white, size: 48),
+              child: Icon(page.icon, color: Colors.white, size: 42),
             ),
-            const SizedBox(height: 48),
-            // 大标题
+            const SizedBox(height: 56),
+            // [v4] 大标题 — Lambo 紧 lh + 负字距
             Text(
               page.title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                color: Colors.white,
-                fontSize: 34,
-                fontWeight: FontWeight.w800,
-                height: 1.2,
-                letterSpacing: 1,
+                color: Dt.textPrimary,
+                fontSize: 38,
+                fontWeight: FontWeight.w600,
+                height: 1.05,
+                letterSpacing: -0.8,
               ),
             ),
-            const SizedBox(height: 18),
-            // 副标题
+            const SizedBox(height: 20),
+            // [v4] 副标题 — Linear 暖灰
             Text(
               page.subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.55),
+              style: const TextStyle(
+                color: Dt.textSecondary,
                 fontSize: 16,
-                height: 1.6,
-                letterSpacing: 0.5,
+                height: 1.55,
+                letterSpacing: 0.1,
               ),
             ),
             const Spacer(flex: 4),
