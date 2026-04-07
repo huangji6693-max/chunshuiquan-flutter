@@ -9,5 +9,5 @@ if (!window._flutter) {
 _flutter.buildConfig = {"engineRevision":"82bd5b7209295a5b7ff8cae0df96e7870171e3a5","builds":[{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"}]};
 
 
-// [fix] 禁用 service worker — 主人测试不再卡缓存
+// [fix] 禁用 service worker
 _flutter.loader.load({});
