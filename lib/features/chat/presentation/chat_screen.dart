@@ -194,11 +194,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         width: 200,
                       )
                     : null,
-                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                backgroundColor: Dt.bgElevated,
                 child: widget.partnerAvatarUrl == null ||
                         widget.partnerAvatarUrl!.isEmpty
-                    ? Icon(Icons.person,
-                        size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant)
+                    ? const Icon(Icons.person,
+                        size: 18, color: Dt.textTertiary)
                     : null,
               ),
             ),
@@ -286,21 +286,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             // 自己的消息：品牌粉
             primaryColor: Dt.pink,
             // 对方的消息：暗色卡片
-            secondaryColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            inputBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+            secondaryColor: Dt.bgElevated,
+            backgroundColor: Dt.bgPrimary,
+            inputBackgroundColor: Dt.bgElevated,
             inputBorderRadius: BorderRadius.circular(28),
             messageBorderRadius: 20,
-            inputTextColor: Theme.of(context).colorScheme.onSurface,
+            inputTextColor: Dt.textPrimary,
             inputTextStyle: const TextStyle(fontSize: 15),
             inputPadding: const EdgeInsets.symmetric(
                 horizontal: 16, vertical: 12),
-            inputContainerDecoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainer,
+            inputContainerDecoration: const BoxDecoration(
+              color: Dt.bgPrimary,
               border: Border(
-                top: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha:0.3),
-                ),
+                top: BorderSide(color: Dt.borderSubtle),
               ),
             ),
             sentMessageBodyTextStyle: const TextStyle(
@@ -308,13 +306,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               fontSize: 15,
               height: 1.4,
             ),
-            receivedMessageBodyTextStyle: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
+            receivedMessageBodyTextStyle: const TextStyle(
+              color: Dt.textPrimary,
               fontSize: 15,
               height: 1.4,
             ),
-            dateDividerTextStyle: TextStyle(
-              color: Theme.of(context).colorScheme.outline,
+            dateDividerTextStyle: const TextStyle(
+              color: Dt.textTertiary,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -323,13 +321,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               color: Dt.pink,
               size: 24,
             ),
-            sendingIcon: Icon(
+            sendingIcon: const Icon(
               Icons.access_time,
               size: 12,
-              color: Theme.of(context).colorScheme.outline,
+              color: Dt.textTertiary,
             ),
-            emptyChatPlaceholderTextStyle: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            emptyChatPlaceholderTextStyle: const TextStyle(
+              color: Dt.textSecondary,
               fontSize: 15,
             ),
             receivedMessageDocumentIconColor: Dt.pink,
@@ -378,7 +376,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       width: 200,
                     )
                   : null,
-              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+              backgroundColor: Dt.bgElevated,
               child: author.imageUrl == null
                   ? Text(
                       (author.firstName ?? '?')[0].toUpperCase(),
@@ -453,12 +451,10 @@ class _ChatInputState extends State<_ChatInput> {
     return Container(
       padding: EdgeInsets.fromLTRB(
           8, 8, 8, MediaQuery.of(context).padding.bottom + 8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
+      decoration: const BoxDecoration(
+        color: Dt.bgPrimary,
         border: Border(
-          top: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha:0.3),
-          ),
+          top: BorderSide(color: Dt.borderSubtle),
         ),
       ),
       child: Row(
@@ -480,7 +476,7 @@ class _ChatInputState extends State<_ChatInput> {
                       Container(
                         width: 36, height: 4,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.outlineVariant,
+                          color: Dt.borderMedium,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -543,14 +539,14 @@ class _ChatInputState extends State<_ChatInput> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                color: Dt.bgElevated,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: TextField(
                 controller: _controller,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: '输入消息...',
-                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 15),
+                  hintStyle: TextStyle(color: Dt.textTertiary, fontSize: 15),
                   border: InputBorder.none,
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 16, vertical: 10),

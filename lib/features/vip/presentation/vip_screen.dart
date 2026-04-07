@@ -251,9 +251,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                           ? const LinearGradient(
                               colors: [Dt.vipGold, Dt.vipGoldDark])
                           : null,
-                      color: _selectedPlan == null
-                          ? Theme.of(context).colorScheme.surfaceContainerHighest
-                          : null,
+                      color: _selectedPlan == null ? Dt.bgHighest : null,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Center(
@@ -270,7 +268,7 @@ class _VipScreenState extends ConsumerState<VipScreen>
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: _selectedPlan != null
-                                    ? Theme.of(context).colorScheme.onSurface
+                                    ? Dt.textPrimary
                                     : Colors.white60,
                               ),
                             ),

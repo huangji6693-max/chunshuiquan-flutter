@@ -318,10 +318,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         width: w,
         height: h,
         decoration: BoxDecoration(
-          color: cs.surfaceContainerHigh,
+          color: hasPhoto ? cs.surfaceContainerHigh : Dt.bgElevated,
           borderRadius: BorderRadius.circular(radius),
           border: Border.all(
-            color: hasPhoto ? Colors.transparent : cs.outlineVariant.withValues(alpha: 0.3),
+            color: hasPhoto ? Colors.transparent : Dt.borderSubtle,
             width: 1,
           ),
         ),

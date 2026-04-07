@@ -123,7 +123,7 @@ class MatchesScreen extends ConsumerWidget {
                   ),
                   const SliverToBoxAdapter(child: SizedBox(height: 8)),
                   SliverToBoxAdapter(
-                    child: Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
+                    child: const Divider(height: 1, color: Dt.borderSubtle),
                   ),
                 ] else ...[
                   // 空匹配占位
@@ -155,7 +155,7 @@ class MatchesScreen extends ConsumerWidget {
                     ),
                   ),
                   SliverToBoxAdapter(
-                    child: Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
+                    child: const Divider(height: 1, color: Dt.borderSubtle),
                   ),
                 ],
 
@@ -291,7 +291,7 @@ class _NewMatchAvatar extends StatelessWidget {
                         width: 200,
                       )
                     : null,
-                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                backgroundColor: Dt.bgElevated,
                 child: match.otherAvatarUrl == null
                     ? Text(
                         match.otherName.isNotEmpty
@@ -376,7 +376,7 @@ class _ConversationTile extends ConsumerWidget {
                               width: 200,
                             )
                           : null,
-                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                      backgroundColor: Dt.bgElevated,
                       child: match.otherAvatarUrl == null
                           ? Text(
                               match.otherName.isNotEmpty

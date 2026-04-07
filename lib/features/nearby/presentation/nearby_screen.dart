@@ -272,18 +272,9 @@ class _NearbyCard extends StatelessWidget {
       onTap: () => _openProfile(context),
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.12),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          color: Dt.bgElevated,
+          borderRadius: Dt.rLg,
+          boxShadow: Dt.shadowMd,
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
@@ -296,19 +287,19 @@ class _NearbyCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 memCacheWidth: 400,
                 placeholder: (_, __) => Container(
-                  color: Theme.of(context).colorScheme.outlineVariant,
+                  color: Dt.bgHighest,
                   child: const Center(
                       child: CircularProgressIndicator(strokeWidth: 2)),
                 ),
                 errorWidget: (_, __, ___) => Container(
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                  child: Icon(Icons.person, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  color: Dt.bgHighest,
+                  child: const Icon(Icons.person, size: 48, color: Dt.textTertiary),
                 ),
               )
             else
               Container(
-                color: Theme.of(context).colorScheme.outlineVariant,
-                child: Icon(Icons.person, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                color: Dt.bgHighest,
+                child: const Icon(Icons.person, size: 48, color: Dt.textTertiary),
               ),
 
             // 底部渐变信息
@@ -421,18 +412,9 @@ class _NearbyListTile extends StatelessWidget {
       child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.08),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: Dt.bgElevated,
+        borderRadius: Dt.rMd,
+        boxShadow: Dt.shadowSm,
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(12),
@@ -447,11 +429,11 @@ class _NearbyListTile extends StatelessWidget {
                     fit: BoxFit.cover,
                     memCacheWidth: 200,
                     errorWidget: (_, __, ___) =>
-                        Container(color: Theme.of(context).colorScheme.outlineVariant),
+                        Container(color: Dt.bgHighest),
                   )
                 : Container(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                    child: Icon(Icons.person, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    color: Dt.bgHighest,
+                    child: const Icon(Icons.person, color: Dt.textTertiary),
                   ),
           ),
         ),

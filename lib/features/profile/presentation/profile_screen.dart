@@ -620,7 +620,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                 suffixText: 'cm',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                  borderSide: const BorderSide(color: Dt.borderMedium),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12, vertical: 10),
@@ -694,7 +694,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
       hintText: hint,
       prefixIcon: Icon(icon, size: 18, color: Dt.pink),
       filled: true,
-      fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      fillColor: Dt.bgElevated,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide.none,
@@ -752,9 +752,9 @@ class _DropdownSelector extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+        border: Border.all(color: Dt.borderMedium),
         borderRadius: BorderRadius.circular(10),
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        color: Dt.bgElevated,
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -863,13 +863,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.08),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              boxShadow: Dt.shadowSm,
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
@@ -880,7 +874,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                 width: double.infinity,
                 height: double.infinity,
                 placeholder: (_, __) => Container(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: Dt.bgHighest,
                   child: const Center(
                     child: SizedBox(
                       width: 20, height: 20,
@@ -889,8 +883,8 @@ class _PhotoGridState extends State<_PhotoGrid> {
                   ),
                 ),
                 errorWidget: (_, __, ___) => Container(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  color: Dt.bgHighest,
+                  child: const Icon(Icons.broken_image, color: Dt.textTertiary),
                 ),
               ),
             ),
@@ -972,7 +966,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                 onTap: widget.uploading ? null : widget.onAdd,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color: Dt.bgHighest,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: Dt.pink.withValues(alpha:0.4),
@@ -1045,7 +1039,7 @@ class _PhotoGridState extends State<_PhotoGrid> {
                   height: cardHeight,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color: Dt.bgHighest,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: Dt.pink.withValues(alpha:0.3),
@@ -1107,15 +1101,9 @@ class _SectionCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.12),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: Dt.bgElevated,
+        borderRadius: Dt.rLg,
+        boxShadow: Dt.shadowMd,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

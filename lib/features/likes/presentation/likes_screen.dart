@@ -204,13 +204,7 @@ class _LikeCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withValues(alpha:0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: Dt.shadowSm,
       ),
       child: Stack(
         fit: StackFit.expand,
@@ -232,7 +226,7 @@ class _LikeCard extends StatelessWidget {
                     memCacheWidth: 400,
                   )
           else
-            Container(color: Theme.of(context).colorScheme.outlineVariant),
+            Container(color: Dt.bgHighest),
 
           // Super Like 标签
           if (item.direction == 'UP')
